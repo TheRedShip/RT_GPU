@@ -29,7 +29,7 @@ SRCS_DIR	:=	srcs
 
 OBJS_DIR	:=	.objs
 
-ALL_SRCS	:=	RT.cpp						\
+ALL_SRCS	:=	RT.cpp	gl.cpp			\
 
 				
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)

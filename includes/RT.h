@@ -13,6 +13,12 @@
 #ifndef RT_H
 # define RT_H
 
+# define WIDTH 1920
+# define HEIGHT 1080
+
+# include "glad/gl.h"
+# include "GLFW/glfw3.h"
+
 # include <iostream>
 
 #endif
