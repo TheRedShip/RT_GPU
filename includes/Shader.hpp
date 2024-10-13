@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Shader.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/13 18:10:10 by TheRed           ###   ########.fr       */
+/*   Updated: 2024/10/13 20:57:49 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,14 +18,14 @@
 class Shader
 {
 	public:
-		Shader(void);
+		Shader(char *vertexPath, char *fragmentPath);
 		Shader(Shader const &src);
 		~Shader(void);
 
 		Shader	&operator=(Shader const &rhs);
 
 		// void	compile(const char *vertexSource, const char *fragmentSource);
-		// void	use(void) const;
+		void	attach(void);
 
 		// void	setBool(const std::string &name, bool value) const;
 		// void	setInt(const std::string &name, int value) const;
@@ -35,8 +35,15 @@ class Shader
 		// void	setVec4(const std::string &name, const RT::Vec4f &value) const;
 		// void	setMat4(const std::string &name, const RT::Mat4f &value) const;
 
-	private:
-		unsigned int	_id;
+		GLuint	getProgram(void) const;
 
-		// void	checkCompileErrors(unsigned int shader, std::string type);
+	private:
+		GLuint	_program;
+
+		GLuint	_vertex;
+		GLuint	_fragment;
+
+		void	checkCompileErrors(unsigned int shader);
 };
+
+#endif

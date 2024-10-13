@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   window.cpp                                         :+:      :+:    :+:   */
+/*   Window.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/13 16:16:24 by TheRed           ###   ########.fr       */
+/*   Updated: 2024/10/13 20:52:00 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,21 +61,23 @@ Window::~Window(void)
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    
+    (void) win; (void) key; (void) scancode; (void) mods;
 	if (action == GLFW_PRESS)
 	{
-
+	
     }
 }
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    (void) win; (void) xpos; (void) ypos;
 
 	win->_mousePos = RT::Vec2i(xpos, ypos);
 }
 void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    (void) win; (void) button; (void) mods;
 	
     if (action == GLFW_PRESS)
 	{
