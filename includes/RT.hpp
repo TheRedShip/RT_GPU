@@ -1,29 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RT.c                                               :+:      :+:    :+:   */
+/*   RT.h                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2024/09/27 14:51:49 by TheRed           ###   ########.fr       */
+/*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
+/*   Updated: 2024/09/27 14:52:10 by TheRed           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "RT.hpp"
+#ifndef RT__HPP
+# define RT__HPP
 
-int main(void)
-{
-	Window		window;
-	GLFWwindow	*win = window.getWindow();
+# define WIDTH 1920
+# define HEIGHT 1080
 
-	while (!window.shouldClose())
-	{
-		glClear(GL_COLOR_BUFFER_BIT);
+# include "glad/gl.h"
+# include "GLFW/glfw3.h"
 
-		window.display();
-		window.pollEvents();
-	}
-	
-	return (0);
-}
+# include <iostream>
+
+# include "Vector/Vector.hpp"
+# include "Window.hpp"
+
+#endif
