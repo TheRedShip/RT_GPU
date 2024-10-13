@@ -30,7 +30,7 @@ SRCS_DIR	:=	srcs
 OBJS_DIR	:=	.objs
 
 ALL_SRCS	:=	RT.cpp	gl.cpp			\
-				Window.cpp
+				Window.cpp Shader.cpp	\
 
 				
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
@@ -38,7 +38,7 @@ SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 
-CC          :=	g++
+CC          :=	g++ -Wextra -Wall -Werror
 
 IFLAGS	    :=	-Ofast -I./includes -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 

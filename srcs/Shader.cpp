@@ -37,23 +37,10 @@ char* load_file(char const* path)
 	return buffer;
 }
 
-void Shader::checkCompileErrors(GLuint shader)
+Shader::Shader(std::string vertexPath, std::string fragmentPath)
 {
-	GLint success;
-	GLchar infoLog[512];
-	
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
-	if (!success)
-	{
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
-		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
-	}
-}
-
-Shader::Shader(char *vertexPath, char *fragmentPath)
-{
-	const char *vertexCode = load_file(vertexPath);
-	const char *fragmentCode = load_file(fragmentPath);
+	const char *vertexCode = load_file(vertexPath.c_str());
+	const char *fragmentCode = load_file(fragmentPath.c_str());
 	
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	
@@ -68,15 +55,6 @@ Shader::Shader(char *vertexPath, char *fragmentPath)
 	glCompileShader(_fragment);
 
 	checkCompileErrors(_fragment);
-}
-
-void Shader::attach(void)
-{
-	_program = glCreateProgram();
-	
-	glAttachShader(_program, _vertex);
-	glAttachShader(_program, _fragment);
-	glLinkProgram(_program);
 }
 
 Shader::Shader(Shader const &src)
@@ -100,6 +78,28 @@ Shader::~Shader(void)
 	glDeleteShader(_vertex);
 	glDeleteShader(_fragment);
 	glDeleteProgram(_program);
+}
+
+void Shader::attach(void)
+{
+	_program = glCreateProgram();
+	
+	glAttachShader(_program, _vertex);
+	glAttachShader(_program, _fragment);
+	glLinkProgram(_program);
+}
+
+void Shader::checkCompileErrors(GLuint shader)
+{
+	GLint success;
+	GLchar infoLog[512];
+	
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (!success)
+	{
+		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
+	}
 }
 
 GLuint	Shader::getProgram(void) const
