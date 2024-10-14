@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 20:21:13 by ycontre           #+#    #+#             */
-/*   Updated: 2024/10/13 20:58:02 by ycontre          ###   ########.fr       */
+/*   Updated: 2024/10/14 19:52:40 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,35 @@ void Shader::checkCompileErrors(GLuint shader)
 		glGetShaderInfoLog(shader, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+}
+
+void Shader::setupVertexBuffer(const RT::Vec2f* vertices, size_t size)
+{
+	glGenVertexArrays(1, &_screen_VAO);
+    glGenBuffers(1, &_screen_VBO);
+	
+    glBindVertexArray(_screen_VAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, _screen_VBO);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+}
+
+void	Shader::drawTriangles(void)
+{
+	glBindVertexArray(_screen_VAO);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
+}
+
+
+void	Shader::setVec2f(const std::string &name, const RT::Vec2f &value) const
+{
+	glUniform2f(glGetUniformLocation(_program, name.c_str()), value[0], value[1]);
 }
 
 GLuint	Shader::getProgram(void) const
