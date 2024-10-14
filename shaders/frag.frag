@@ -51,7 +51,8 @@ void    main()
 	vec2    uv;
 	vec4    color;
 
-	uv = gl_FragCoord.xy / u_resolution.xy * 2.0 - 1.0;
+	uv = gl_FragCoord.xy / u_resolution.xy;
+    uv = uv * 2.0 - 1.0;
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	vec3 rayOrigin = vec3(0.0, 0.0, 0.0); 
@@ -70,6 +71,6 @@ void    main()
         vec3 color = computeLighting(hitPoint, normal, viewDir);
         FragColor = vec4(color, 1.0);
     } else {
-        FragColor = vec4(0.0, 0.0, 0.0, 1.0); 
+        FragColor = vec4(0., 0.0, 0.0, 1.0); 
     }
 }

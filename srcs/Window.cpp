@@ -85,9 +85,15 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int
     }
 }
 
-
 void Window::display()
 {
+	static double	lastTime = glfwGetTime();
+	double			currentTime = glfwGetTime();
+	double			delta = currentTime - lastTime;
+
+	lastTime = currentTime;
+	_fps = 1.0f / delta;
+
     glfwSwapBuffers(_window);
 }
 void Window::pollEvents()
@@ -106,4 +112,9 @@ GLFWwindow	*Window::getWindow(void) const
 RT::Vec2i	Window::getMousePos(void) const
 {
 	return (_mousePos);
+}
+
+float		Window::getFps(void) const
+{
+	return (_fps);
 }

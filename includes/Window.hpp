@@ -26,7 +26,7 @@ class Window
 
 		GLFWwindow	*getWindow(void) const;
 		RT::Vec2i	getMousePos(void) const;
-
+		float		getFps(void) const;
 
 		void		display();
 		void		pollEvents();
@@ -39,6 +39,8 @@ class Window
 	private:
 		GLFWwindow	*_window;
 		RT::Vec2i	_mousePos;
+
+		float		_fps;
 
 };
 
