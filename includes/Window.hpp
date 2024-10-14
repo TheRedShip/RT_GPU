@@ -18,7 +18,7 @@
 class Window
 {
 	public:
-		Window(void);
+		Window(int width, int height, const char *title, int sleep);
 		Window(Window const &src);
 		~Window(void);
 

@@ -14,8 +14,8 @@
 
 int main(void)
 {
-	Window		window;
-	Shader		shader("shaders/vertex.glsl", "shaders/frag.glsl");
+	Window		window(WIDTH, HEIGHT, "RT_GPU", 1);
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag");
 	
 	shader.attach();
 
@@ -23,8 +23,9 @@ int main(void)
 			{ -1.0f, -1.0f }, { 1.0f, -1.0f }, { -1.0f, 1.0f },
 			{ 1.0f, -1.0f }, { 1.0f,  1.0f }, { -1.0f, 1.0f }
 	};
+	size_t size = sizeof(vertices) / sizeof(RT::Vec2f) / 3;
 
-	shader.setupVertexBuffer(vertices, sizeof(vertices));
+	shader.setupVertexBuffer(vertices, size);
 
 	while (!window.shouldClose())
 	{
@@ -33,7 +34,7 @@ int main(void)
 		shader.setVec2f("u_resolution", RT::Vec2f(WIDTH, HEIGHT));
 
 		glUseProgram(shader.getProgram());
-		shader.drawTriangles();
+		shader.drawTriangles(size);
 
 		window.display();
 		window.pollEvents();

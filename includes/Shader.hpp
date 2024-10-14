@@ -27,7 +27,7 @@ class Shader
 		// void	compile(const char *vertexSource, const char *fragmentSource);
 		void	attach(void);
 		void	setupVertexBuffer(const RT::Vec2f* vertices, size_t size);
-		void	drawTriangles(void);
+		void	drawTriangles(size_t size);
 
 
 		

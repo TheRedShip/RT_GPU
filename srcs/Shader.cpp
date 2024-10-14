@@ -110,7 +110,7 @@ void Shader::setupVertexBuffer(const RT::Vec2f* vertices, size_t size)
     glBindVertexArray(_screen_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, _screen_VBO);
-    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size * 3 * sizeof(RT::Vec2f), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -119,10 +119,10 @@ void Shader::setupVertexBuffer(const RT::Vec2f* vertices, size_t size)
     glBindVertexArray(0);
 }
 
-void	Shader::drawTriangles(void)
+void	Shader::drawTriangles(size_t size)
 {
 	glBindVertexArray(_screen_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, size * 3);
 }
 
 

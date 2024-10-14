@@ -12,7 +12,7 @@
 
 #include "Window.hpp"
 
-Window::Window(void)
+Window::Window(int width, int height, const char *title, int sleep)
 {
 	if (!glfwInit())
 	{
@@ -24,8 +24,8 @@ Window::Window(void)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 4);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	_window = glfwCreateWindow(WIDTH, HEIGHT, "RT_GPU", NULL, NULL);
-	if (!_window )
+	_window = glfwCreateWindow(width, height, title, NULL, NULL);
+	if (!_window)
 	{
 		fprintf( stderr, "Failed to open GLFW window. If you have an Intel GPU, they are not 3.3 compatible. Try the 2.1 version of the tutorials.\n" );
 		glfwTerminate();
@@ -40,7 +40,7 @@ Window::Window(void)
 	glfwSetMouseButtonCallback(_window, mouseButtonCallback);
 
 	gladLoadGL(glfwGetProcAddress);
-	glfwSwapInterval(1);
+	glfwSwapInterval(sleep);
 }
 Window::Window(Window const &src)
 {

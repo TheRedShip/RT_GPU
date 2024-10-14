@@ -1,39 +1,27 @@
 # **************************************************************************** #
 #                                                                              #
 #                                                         :::      ::::::::    #
-#    Makefile                                           :+:      :+:    :+:    #
+#    WMakefile                                          :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+         #
+#    By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/10/13 19:39:57 by ycontre           #+#    #+#              #
-#    Updated: 2024/10/14 19:31:54 by ycontre          ###   ########.fr        #
+#    Created: 2024/10/14 22:33:37 by TheRed            #+#    #+#              #
+#    Updated: 2024/10/14 22:33:37 by TheRed           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-BLACK		=	\033[30;49;3m
-RED			=	\033[31;49;3m
-GREEN		=	\033[32;49;3m
-YELLOW		=	\033[33;49;3m
-BLUE		=	\033[34;49;3m
-MAGENTA		=	\033[35;49;3m
-CYAN		=	\033[36;49;3m
-WHITE		=	\033[37;49;3m
+BLACK		=	[90m
+RED			=	[91m
+GREEN		=	[92m
+YELLOW		=	[93m
+BLUE		=	[94m
+MAGENTA		=	[95m
+CYAN		=	[96m
+WHITE		=	[97m
 
-BBLACK		=	\033[30;49;3;1m
-BRED		=	\033[31;49;3;1m
-BGREEN		=	\033[32;49;3;1m
-BYELLOW		=	\033[33;49;3;1m
-BBLUE		=	\033[34;49;3;1m
-BMAGENTA	=	\033[35;49;3;1m
-BCYAN		=	\033[36;49;3;1m
-BWHITE		=	\033[37;49;3;1m
-
-RESET		=	\033[0m
+RESET		=	[0m
 
 LINE_CLR	=	\33[2K\r
-
-FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
-CMP			=	1
 
 NAME        :=	RT
 
@@ -41,83 +29,46 @@ SRCS_DIR	:=	srcs
 
 OBJS_DIR	:=	.objs
 
-ASSETS_DIR	:=	assets
-
-SRC_ASSETS_DIR := assets_src 
-
-ALL_SRCS	:=	RT.cpp gl.cpp			\
+ALL_SRCS	:=	RT.cpp	gl.cpp			\
 				Window.cpp Shader.cpp	\
+
 				
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 
 
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 
-HEADERS		:=	includes/RT.hpp
+CC          :=	g++
 
-CC          :=	clang -Wextra -Werror -Wall
+IFLAGS	    :=	-Ofast -I./includes -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 
-CFLAGS      :=	-Ofast
-
-LDFLAGS		:= -lglfw -lstdc++
-
-IFLAGS	    :=	-I ./includes
-
-
-RM          :=	rm -rf
+RM          :=	del /f /s /q
 
 MAKEFLAGS   += --no-print-directory
 
-DIR_DUP     =	mkdir -p $(@D)
+DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
 
 # RULES ********************************************************************** #
 
 all: $(NAME)
 
-bonus: all
-
-$(NAME): $(OBJS) $(HEADERS) $(ASSETS)
-	@$(CC) $(LDFLAGS) $(CFLAGS) $(IFLAGS) $(OBJS) -o $(NAME)
-	@printf "$(LINE_CLR)$(BWHITE) $(NAME): PROJECT COMPILED !$(RESET)\n\n"
+$(NAME): $(OBJS) $(HEADERS)
+	@$(CC) -o $(NAME) $(OBJS) $(IFLAGS)
+	@echo $(WHITE) $(NAME): PROJECT COMPILED !$(RESET) & echo:
 
 $(OBJS_DIR)/%.o: %.cpp
 	@$(DIR_DUP)
-	@if [ $(CMP) -eq '1' ]; then \
-		printf "\n"; \
-	fi;
-	@printf "$(LINE_CLR)$(WHITE) $(NAME): $(CMP)/$(FILE) $(BWHITE)$<$(RESET) $(GREEN)compiling...$(RESET)"
-	@$(CC) $(CFLAGS) $(IFLAGS) -o $@ -c $^
-	@$(eval CMP=$(shell echo $$(($(CMP)+1))))
-	@if [ $(CMP) -gt $(FILE) ]; then \
-		printf "$(LINE_CLR)$(WHITE) $(NAME): $$(($(CMP)-1))/$(FILE)\n$(LINE_CLR)$(BGREEN) Compilation done !$(RESET)\n"; \
-	fi \
+	@echo $(WHITE) $(NAME): $(WHITE)$<$(RESET) $(GREEN)compiling...$(RESET)
+	@$(CC) -c $^ $(IFLAGS) -o $@ 
 
 
-clean:
-	@$(RM) $(OBJS)
-
-dclean: clean
-	@$(RM) $(OBJS_DIR)
-
-fclean: dclean
-	@make --quiet clean -C ${MINILIB_DIR}
-	@printf " $(BWHITE)$(NAME):$(BRED) cleaned.$(RESET)\n"
-	@$(RM) $(NAME)
-	@make -C $(LFT_DIR) fclean
-	@killall convert 2>/dev/null > /dev/null|| true && \
-	sleep 0.5 && rm -rf $(ASSETS_DIR)&
-
-mfclean: dclean
-	@$(RM) $(NAME)
-
-mre:
-	@make mfclean
-	@make all
+fclean:
+	@echo  $(WHITE)$(NAME):$(RED) cleaned.$(RESET)
+	@del /f /s /q $(NAME).exe
+	@rmdir /S /Q "$(OBJS_DIR)"
 
 re:
-	@make fclean
-	@make all
-
-# **************************************************************************** #
+	@$(MAKE) fclean
+	@$(MAKE) all
 
 .PHONY: all clean fclean dclean re bonus
