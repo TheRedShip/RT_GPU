@@ -39,6 +39,8 @@ class Window
 	private:
 		GLFWwindow	*_window;
 		RT::Vec2i	_mousePos;
+		RT::Vec2i	_prevMousePos;
+		RT::Vec2i	_mouseDelta;
 
 		float		_fps;
 

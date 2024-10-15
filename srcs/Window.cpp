@@ -72,7 +72,10 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
     (void) win; (void) xpos; (void) ypos;
 
+	win->_prevMousePos = win->_mousePos;
 	win->_mousePos = RT::Vec2i(xpos, ypos);
+
+	win->_mouseDelta = win->_mousePos - win->_prevMousePos;
 }
 void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {

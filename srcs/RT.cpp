@@ -29,7 +29,7 @@ int main(void)
 	size_t size = sizeof(vertices) / sizeof(RT::Vec2f) / 3;
 
 	shader.setupVertexBuffer(vertices, size);
-
+	
 	while (!window.shouldClose())
 	{
 		glClear(GL_COLOR_BUFFER_BIT);

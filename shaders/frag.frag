@@ -56,7 +56,7 @@ void    main()
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	vec3 rayOrigin = vec3(0.0, 0.0, 0.0); 
-    vec3 rayDirection = normalize(vec3(uv, -1.0)); 
+    vec3 rayDirection = normalize(vec3(uv, -1.0));
 
     Ray ray = Ray(rayOrigin, rayDirection);
     
