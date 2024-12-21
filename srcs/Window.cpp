@@ -82,7 +82,6 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
 	{
 		win->camera->process_movement(xoffset, yoffset, true);
-		glfwSetCursorPos(window, WIDTH / 2, HEIGHT / 2);
 
 		// scene.frameCount = 0;
 	}

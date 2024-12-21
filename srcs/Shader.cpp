@@ -102,7 +102,7 @@ void Shader::checkCompileErrors(GLuint shader)
 	}
 }
 
-void Shader::setupVertexBuffer(const RT::Vec2f* vertices, size_t size)
+void Shader::setupVertexBuffer(const glm::vec2* vertices, size_t size)
 {
 	glGenVertexArrays(1, &_screen_VAO);
     glGenBuffers(1, &_screen_VBO);
@@ -110,7 +110,7 @@ void Shader::setupVertexBuffer(const RT::Vec2f* vertices, size_t size)
     glBindVertexArray(_screen_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, _screen_VBO);
-    glBufferData(GL_ARRAY_BUFFER, size * 3 * sizeof(RT::Vec2f), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size * 3 * sizeof(glm::vec2), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -126,7 +126,7 @@ void	Shader::drawTriangles(size_t size)
 }
 
 
-void	Shader::setVec2f(const std::string &name, const RT::Vec2f &value) const
+void	Shader::setVec2f(const std::string &name, const glm::vec2 &value) const
 {
 	glUniform2f(glGetUniformLocation(_program, name.c_str()), value[0], value[1]);
 }

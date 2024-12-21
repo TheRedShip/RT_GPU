@@ -26,7 +26,7 @@ class Shader
 
 		// void	compile(const char *vertexSource, const char *fragmentSource);
 		void	attach(void);
-		void	setupVertexBuffer(const RT::Vec2f* vertices, size_t size);
+		void	setupVertexBuffer(const glm::vec2* vertices, size_t size);
 		void	drawTriangles(size_t size);
 
 
@@ -34,7 +34,7 @@ class Shader
 		// void	setBool(const std::string &name, bool value) const;
 		// void	setInt(const std::string &name, int value) const;
 		// void	setFloat(const std::string &name, float value) const;
-		void	setVec2f(const std::string &name, const RT::Vec2f &value) const;
+		void	setVec2f(const std::string &name, const glm::vec2 &value) const;
 		// void	setVec3(const std::string &name, const RT::Vec3f &value) const;
 		// void	setVec4(const std::string &name, const RT::Vec4f &value) const;
 		// void	setMat4(const std::string &name, const RT::Mat4f &value) const;

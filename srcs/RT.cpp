@@ -19,14 +19,14 @@ int main(void)
 	
 	shader.attach();
 
-	// RT::Vec2f vertices[6] = {
+	// glm::vec2 vertices[6] = {
 	// 		{ -1.0f, -1.0f }, { 1.0f, -1.0f }, { -1.0f, 1.0f },
 	// 		{ 1.0f, -1.0f }, { 1.0f,  1.0f }, { -1.0f, 1.0f }
 	// };
-	RT::Vec2f vertices[3] = {
+	glm::vec2 vertices[3] = {
 		{-1.0f, -1.0f}, {3.0f, -1.0f}, {-1.0f,  3.0f}
 	};
-	size_t size = sizeof(vertices) / sizeof(RT::Vec2f) / 3;
+	size_t size = sizeof(vertices) / sizeof(glm::vec2) / 3;
 
 	shader.setupVertexBuffer(vertices, size);
 	
@@ -34,7 +34,7 @@ int main(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		shader.setVec2f("u_resolution", RT::Vec2f(WIDTH, HEIGHT));
+		shader.setVec2f("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		glUseProgram(shader.getProgram());
 		shader.drawTriangles(size);
 

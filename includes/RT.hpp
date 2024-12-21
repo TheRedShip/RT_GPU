@@ -24,7 +24,6 @@
 # include <iostream>
 
 # include "Camera.hpp"
-# include "Vector/Vector.hpp"
 # include "Window.hpp"
 # include "Shader.hpp"
 
