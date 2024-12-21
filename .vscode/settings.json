@@ -44,6 +44,20 @@
 		"xtr1common": "cpp",
 		"xutility": "cpp",
 		"array": "cpp",
-		"vector": "cpp"
+		"vector": "cpp",
+		"deque": "cpp",
+		"string_view": "cpp",
+		"span": "cpp",
+		"*.tcc": "cpp",
+		"chrono": "cpp",
+		"string": "cpp",
+		"unordered_map": "cpp",
+		"unordered_set": "cpp",
+		"memory_resource": "cpp",
+		"optional": "cpp",
+		"format": "cpp",
+		"functional": "cpp",
+		"sstream": "cpp",
+		"variant": "cpp"
 	}
 }

@@ -30,7 +30,9 @@ SRCS_DIR	:=	srcs
 OBJS_DIR	:=	.objs
 
 ALL_SRCS	:=	RT.cpp	gl.cpp			\
-				Window.cpp Shader.cpp	\
+				Window.cpp				\
+				Shader.cpp				\
+				Camera.cpp
 
 				
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)

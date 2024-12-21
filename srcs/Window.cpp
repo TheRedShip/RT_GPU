@@ -14,6 +14,8 @@
 
 Window::Window(int width, int height, const char *title, int sleep)
 {
+	camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+
 	if (!glfwInit())
 	{
 		fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -42,18 +44,11 @@ Window::Window(int width, int height, const char *title, int sleep)
 	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(sleep);
 }
-Window::Window(Window const &src)
-{
-	*this = src;
-}
-Window	&Window::operator=(Window const &rhs)
-{
-	if (this != &rhs)
-		_window = rhs._window;
-	return (*this);
-}
+
 Window::~Window(void)
 {
+	delete camera;
+
 	glfwTerminate();
 }
 
@@ -69,13 +64,32 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 }
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
-    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    (void) win; (void) xpos; (void) ypos;
+	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	(void) win; (void) xpos; (void) ypos;
 
-	win->_prevMousePos = win->_mousePos;
-	win->_mousePos = RT::Vec2i(xpos, ypos);
+	static double lastX = 0;
+	static double lastY = 0;
 
-	win->_mouseDelta = win->_mousePos - win->_prevMousePos;
+	if (lastX == 0 && lastY == 0)
+	{
+		lastX = xpos;
+		lastY = ypos;
+	}
+
+	double xoffset = xpos - lastX;
+	double yoffset = lastY - ypos;
+
+	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
+	{
+		win->camera->process_movement(xoffset, yoffset, true);
+		glfwSetCursorPos(window, WIDTH / 2, HEIGHT / 2);
+
+		// scene.frameCount = 0;
+	}
+
+
+	lastX = xpos;
+	lastY = ypos;
 }
 void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int mods)
 {
@@ -111,10 +125,6 @@ bool Window::shouldClose()
 GLFWwindow	*Window::getWindow(void) const
 {
 	return (_window);
-}
-RT::Vec2i	Window::getMousePos(void) const
-{
-	return (_mousePos);
 }
 
 float		Window::getFps(void) const

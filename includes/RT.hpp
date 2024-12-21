@@ -16,11 +16,14 @@
 # define WIDTH 1920
 # define HEIGHT 1080
 
+# include "glm/glm.hpp"
+# include "glm/gtc/matrix_transform.hpp"
 # include "glad/gl.h"
 # include "GLFW/glfw3.h"
 
 # include <iostream>
 
+# include "Camera.hpp"
 # include "Vector/Vector.hpp"
 # include "Window.hpp"
 # include "Shader.hpp"

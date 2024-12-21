@@ -15,17 +15,15 @@
 
 # include "RT.hpp"
 
+class Camera;
+
 class Window
 {
 	public:
 		Window(int width, int height, const char *title, int sleep);
-		Window(Window const &src);
 		~Window(void);
 
-		Window	&operator=(Window const &rhs);
-
 		GLFWwindow	*getWindow(void) const;
-		RT::Vec2i	getMousePos(void) const;
 		float		getFps(void) const;
 
 		void		display();
@@ -38,9 +36,7 @@ class Window
 	
 	private:
 		GLFWwindow	*_window;
-		RT::Vec2i	_mousePos;
-		RT::Vec2i	_prevMousePos;
-		RT::Vec2i	_mouseDelta;
+		Camera		*camera;
 
 		float		_fps;
 
