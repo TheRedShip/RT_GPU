@@ -33,6 +33,8 @@ void		Camera::update_camera_vectors()
 
 	_right = glm::normalize(glm::cross(_forward, _up));
 	_up = glm::normalize(glm::cross(_right, _forward));
+
+	std::cout << _right.x << " " << _right.y << " " << _right.z << std::endl;
 }
 
 glm::mat4	Camera::get_view_matrix()
@@ -40,10 +42,15 @@ glm::mat4	Camera::get_view_matrix()
 	return (glm::lookAt(_position, _position + _forward, _up));
 }
 
-void		Camera::process_movement(float xoffset, float yoffset, bool constraint_pitch = true)
+glm::vec3	Camera::get_position()
 {
-	_yaw   += xoffset;
-	_pitch += yoffset;
+	return (_position);
+}
+
+void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch = true)
+{
+	_yaw   += xoffset * 0.2f;
+	_pitch += yoffset * 0.2f;
 
 	if (constraint_pitch)
 	{
@@ -54,4 +61,18 @@ void		Camera::process_movement(float xoffset, float yoffset, bool constraint_pit
 	update_camera_vectors();
 
 	std::cout << _yaw << " " << _pitch << std::endl;
+}
+
+void		Camera::process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down)
+{
+	float	speed;
+
+	speed = 1.0f;
+
+	if (forward) _position += _forward * speed;
+	if (backward) _position -= _forward * speed;
+	if (left) _position -= _right * speed;
+	if (right) _position += _right * speed;
+	if (up) _position += up * speed;
+	if (down) _position -= up * speed;
 }

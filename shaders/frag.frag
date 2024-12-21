@@ -2,6 +2,8 @@
 out vec4        FragColor;
 
 uniform vec2    u_resolution;
+uniform vec3    u_cameraPosition;
+uniform mat4    u_viewMatrix;
 
 vec3 sphereCenter = vec3(0.0, 0.0, -5.0);
 float sphereRadius = 1.0;
@@ -55,10 +57,10 @@ void    main()
     uv = uv * 2.0 - 1.0;
 	uv.x *= u_resolution.x / u_resolution.y;
 
-	vec3 rayOrigin = vec3(0.0, 0.0, 0.0); 
     vec3 rayDirection = normalize(vec3(uv, -1.0));
+    rayDirection = (u_viewMatrix * vec4(rayDirection, 0.0)).xyz;
 
-    Ray ray = Ray(rayOrigin, rayDirection);
+    Ray ray = Ray(u_cameraPosition, rayDirection);
     
     float t;
     if (intersectSphere(ray, sphereCenter, sphereRadius, t))

@@ -34,10 +34,10 @@ class Shader
 		// void	setBool(const std::string &name, bool value) const;
 		// void	setInt(const std::string &name, int value) const;
 		// void	setFloat(const std::string &name, float value) const;
-		void	setVec2f(const std::string &name, const glm::vec2 &value) const;
-		// void	setVec3(const std::string &name, const RT::Vec3f &value) const;
+		void	set_vec2(const std::string &name, const glm::vec2 &value) const;
+		void	set_vec3(const std::string &name, const glm::vec3 &value) const;
 		// void	setVec4(const std::string &name, const RT::Vec4f &value) const;
-		// void	setMat4(const std::string &name, const RT::Mat4f &value) const;
+		void	set_mat4(const std::string &name, const glm::mat4 &value) const;
 
 		GLuint	getProgram(void) const;
 		

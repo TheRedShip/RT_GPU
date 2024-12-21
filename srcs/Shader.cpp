@@ -126,9 +126,19 @@ void	Shader::drawTriangles(size_t size)
 }
 
 
-void	Shader::setVec2f(const std::string &name, const glm::vec2 &value) const
+void	Shader::set_vec2(const std::string &name, const glm::vec2 &value) const
 {
-	glUniform2f(glGetUniformLocation(_program, name.c_str()), value[0], value[1]);
+	glUniform2fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void	Shader::set_vec3(const std::string &name, const glm::vec3 &value) const
+{
+	glUniform3fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void	Shader::set_mat4(const std::string &name, const glm::mat4 &value) const
+{
+	glUniformMatrix4fv(glGetUniformLocation(_program, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
 GLuint	Shader::getProgram(void) const

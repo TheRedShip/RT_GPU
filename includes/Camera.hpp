@@ -23,10 +23,13 @@ class Camera
 		~Camera(void);
 
 		void		update_camera_vectors();
+
 		glm::mat4	get_view_matrix();
+		glm::vec3	get_position();
 
-		void		process_movement(float xoffset, float yoffset, bool constrainPitch);
-
+		void		process_mouse(float xoffset, float yoffset, bool constrainPitch);
+		void		process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
+		
 	private:
 
 		glm::vec3	_position;

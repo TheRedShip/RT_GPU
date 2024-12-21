@@ -24,6 +24,7 @@ class Window
 		~Window(void);
 
 		GLFWwindow	*getWindow(void) const;
+		Camera		*get_camera(void) const;
 		float		getFps(void) const;
 
 		void		display();
@@ -36,7 +37,7 @@ class Window
 	
 	private:
 		GLFWwindow	*_window;
-		Camera		*camera;
+		Camera		*_camera;
 
 		float		_fps;
 

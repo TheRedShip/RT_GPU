@@ -58,6 +58,18 @@
 		"format": "cpp",
 		"functional": "cpp",
 		"sstream": "cpp",
-		"variant": "cpp"
+		"variant": "cpp",
+		"charconv": "cpp",
+		"cstdarg": "cpp",
+		"cwctype": "cpp",
+		"map": "cpp",
+		"set": "cpp",
+		"algorithm": "cpp",
+		"numeric": "cpp",
+		"random": "cpp",
+		"ratio": "cpp",
+		"iomanip": "cpp",
+		"numbers": "cpp",
+		"cinttypes": "cpp"
 	}
 }
