@@ -31,10 +31,8 @@ void		Camera::update_camera_vectors()
 	frontTemp.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 	_forward = glm::normalize(frontTemp);
 
-	_right = glm::normalize(glm::cross(_forward, _up));
+	_right = glm::normalize(glm::cross(_forward, glm::vec3(0.0f, 1.0f, 0.0f)));
 	_up = glm::normalize(glm::cross(_right, _forward));
-
-	std::cout << _right.x << " " << _right.y << " " << _right.z << std::endl;
 }
 
 glm::mat4	Camera::get_view_matrix()
@@ -59,20 +57,18 @@ void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch 
 	}
 
 	update_camera_vectors();
-
-	std::cout << _yaw << " " << _pitch << std::endl;
 }
 
 void		Camera::process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down)
 {
 	float	speed;
 
-	speed = 1.0f;
+	speed = .1f;
 
 	if (forward) _position += _forward * speed;
 	if (backward) _position -= _forward * speed;
 	if (left) _position -= _right * speed;
 	if (right) _position += _right * speed;
-	if (up) _position += up * speed;
-	if (down) _position -= up * speed;
+	if (up) _position += _up * speed;
+	if (down) _position -= _up * speed;
 }

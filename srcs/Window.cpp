@@ -55,18 +55,17 @@ Window::~Window(void)
 
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-    (void) win; (void) key; (void) scancode; (void) mods;
+	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+	(void) win; (void) key; (void) scancode; (void) mods;
+
 	bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
-    bool backward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
-    bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
-    bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
-    bool up = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-    bool down = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+	bool backward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
+	bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
+	bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
+	bool up = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
+	bool down = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
-    // Update the camera position based on keyboard input
-    win->_camera->process_keyboard(forward, backward, left, right, up, down);
-
+	win->_camera->process_keyboard(forward, backward, left, right, up, down);
 }
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -82,8 +81,8 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 		lastY = ypos;
 	}
 
-	double xoffset = lastX - xpos;
-	double yoffset = ypos - lastY;
+	double xoffset = xpos - lastX;
+	double yoffset = lastY - ypos;
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
 	{

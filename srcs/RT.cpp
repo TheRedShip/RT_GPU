@@ -19,10 +19,6 @@ int main(void)
 	
 	shader.attach();
 
-	// glm::vec2 vertices[6] = {
-	// 		{ -1.0f, -1.0f }, { 1.0f, -1.0f }, { -1.0f, 1.0f },
-	// 		{ 1.0f, -1.0f }, { 1.0f,  1.0f }, { -1.0f, 1.0f }
-	// };
 	glm::vec2 vertices[3] = {
 		{-1.0f, -1.0f}, {3.0f, -1.0f}, {-1.0f,  3.0f}
 	};
@@ -34,13 +30,9 @@ int main(void)
 	{
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glm::mat4 view = window.get_camera()->get_view_matrix();
-    	glm::mat4 projection = glm::perspective(glm::radians(45.0f), (float)WIDTH / HEIGHT, 0.1f, 100.0f);
-
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		shader.set_vec3("u_cameraPosition", window.get_camera()->get_position());
-		shader.set_mat4("u_viewMatrix", view);
-		shader.set_mat4("u_projectionMatrix", projection);
+		shader.set_mat4("u_viewMatrix", window.get_camera()->get_view_matrix());
 
 		glUseProgram(shader.getProgram());
 		shader.drawTriangles(size);

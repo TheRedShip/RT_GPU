@@ -4,6 +4,9 @@ out vec4        FragColor;
 uniform vec2    u_resolution;
 uniform vec3    u_cameraPosition;
 uniform mat4    u_viewMatrix;
+uniform mat4    u_projectionMatrix;
+
+uniform vec3    u_cameraDir;
 
 vec3 sphereCenter = vec3(0.0, 0.0, -5.0);
 float sphereRadius = 1.0;
@@ -57,9 +60,13 @@ void    main()
     uv = uv * 2.0 - 1.0;
 	uv.x *= u_resolution.x / u_resolution.y;
 
-    vec3 rayDirection = normalize(vec3(uv, -1.0));
-    rayDirection = (u_viewMatrix * vec4(rayDirection, 0.0)).xyz;
+    float fov = 90.0;
+    float focal_length = 1.0 / tan(radians(fov) / 2.0);
 
+    vec3 viewSpaceRay = normalize(vec3(uv.x, uv.y, -focal_length));
+
+    vec3 rayDirection = (inverse(u_viewMatrix) * vec4(viewSpaceRay, 0.0)).xyz;
+    rayDirection = normalize(rayDirection);
     Ray ray = Ray(u_cameraPosition, rayDirection);
     
     float t;
