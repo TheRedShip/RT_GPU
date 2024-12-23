@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/13 20:52:00 by ycontre          ###   ########.fr       */
+/*   Updated: 2024/12/23 17:39:55 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ Window::~Window(void)
 void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	(void) win; (void) key; (void) scancode; (void) mods;
+	(void) win; (void) key; (void) scancode; (void) mods; (void) action;
 
 	bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
 	bool backward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;

@@ -3,17 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   Camera.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/15 14:00:38 by TheRed           ###   ########.fr       */
+/*   Updated: 2024/12/23 17:42:20 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Camera.hpp"
 
 Camera::Camera(glm::vec3 start_pos, glm::vec3 start_up, float start_yaw, float start_pitch)
-			: _forward(glm::vec3(0.0f, 0.0f, -1.0f)), _yaw(start_yaw), _pitch(start_pitch), _position(start_pos), _up(start_up)
+			: _forward(glm::vec3(0.0f, 0.0f, -1.0f)), _position(start_pos), _up(start_up), _pitch(start_pitch), _yaw(start_yaw)
 {
 	update_camera_vectors();
 }
