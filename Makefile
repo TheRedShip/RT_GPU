@@ -1,18 +1,18 @@
 ifeq ($(OS),Windows_NT)
-	BLACK		=	[90m
-	RED			=	[91m
-	GREEN		=	[92m
-	YELLOW		=	[93m
-	BLUE		=	[94m
-	MAGENTA		=	[95m
-	CYAN		=	[96m
-	WHITE		=	[97m
-	RESET		=	[0m
+	BLACK		=	[90m
+	RED			=	[91m
+	GREEN		=	[92m
+	YELLOW		=	[93m
+	BLUE		=	[94m
+	MAGENTA		=	[95m
+	CYAN		=	[96m
+	WHITE		=	[97m
+	RESET		=	[0m
 	LINE_CLR	=	\33[2K\r
-	RM          :=	del /f /s /q
+	RM          :=	del /S /Q
 	DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
 	CC          :=	g++
-	IFLAGS	    :=	-I./includes
+	IFLAGS	    :=	-I./includes -I./includes/RT
 	LDFLAGS     :=  -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 else
 	BLACK		=	\033[30;49;3m
@@ -72,8 +72,12 @@ else
 	fi
 endif
 
+ifeq ($(OS),Windows_NT)
+clean:
+else
 clean:
 	@$(RM) $(OBJS)
+endif
 
 fclean: clean
 ifeq ($(OS),Windows_NT)
@@ -86,6 +90,10 @@ else
 	@$(RM) $(OBJS_DIR)
 endif
 
+ifeq ($(OS),Windows_NT)
+re: fclean windows
+else
 re: fclean linux
+endif
 
 .PHONY: all clean fclean re windows linux
