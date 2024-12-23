@@ -1,35 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RT.hpp                                             :+:      :+:    :+:   */
+/*   Sphere.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 19:04:53 by ycontre          ###   ########.fr       */
+/*   Created: 2024/12/23 19:12:51 by ycontre           #+#    #+#             */
+/*   Updated: 2024/12/23 19:47:09 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT__HPP
-# define RT__HPP
+#ifndef RT_SPHERE__HPP
+# define RT_SPHERE__HPP
 
-# define WIDTH 1920
-# define HEIGHT 1080
+# include "RT.hpp"
 
-# include "glm/glm.hpp"
-# include "glm/gtc/matrix_transform.hpp"
-# include "glm/gtc/type_ptr.hpp"
+class Sphere : public Object
+{
+	public:
+		float		radius;
+		glm::vec3	position;
 
-# include "glad/gl.h"
-# include "GLFW/glfw3.h"
-
-# include <iostream>
-
-# include "Camera.hpp"
-# include "Window.hpp"
-# include "Shader.hpp"
-# include "Scene.hpp"
-
-
+		
+	private:
+		
+		
+};
 
 #endif

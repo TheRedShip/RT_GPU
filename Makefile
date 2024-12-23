@@ -29,7 +29,7 @@ else
 	DIR_DUP     =	mkdir -p $(@D)
 	CC          :=	clang++
 	CFLAGS      :=	-Ofast -Wall -Wextra -Werror
-	IFLAGS	    :=	-I./includes -I/usr/include
+	IFLAGS	    :=	-I./includes -I./includes/RT -I/usr/include
 	LDFLAGS		:=  -L/usr/lib/x86_64-linux-gnu -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lstdc++
 	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
 	CMP			=	1
@@ -39,9 +39,10 @@ NAME        :=	RT
 SRCS_DIR	:=	srcs
 OBJS_DIR	:=	.objs
 ALL_SRCS	:=	RT.cpp	gl.cpp			\
-				Window.cpp				\
-				Shader.cpp				\
-				Camera.cpp
+				class/Window.cpp		\
+				class/Shader.cpp		\
+				class/Camera.cpp		\
+				class/Scene.cpp
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

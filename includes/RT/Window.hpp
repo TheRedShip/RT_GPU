@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/13 20:48:46 by ycontre          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:35:35 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 
 # include "RT.hpp"
 
-class Camera;
+class Scene;
 
 class Window
 {
@@ -24,7 +24,7 @@ class Window
 		~Window(void);
 
 		GLFWwindow	*getWindow(void) const;
-		Camera		*get_camera(void) const;
+		Scene		*getScene(void) const;
 		float		getFps(void) const;
 
 		void		display();
@@ -37,7 +37,7 @@ class Window
 	
 	private:
 		GLFWwindow	*_window;
-		Camera		*_camera;
+		Scene		*_scene;
 
 		float		_fps;
 

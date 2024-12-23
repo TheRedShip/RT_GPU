@@ -1,35 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RT.hpp                                             :+:      :+:    :+:   */
+/*   Scene.hpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 19:04:53 by ycontre          ###   ########.fr       */
+/*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
+/*   Updated: 2024/12/23 18:46:13 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT__HPP
-# define RT__HPP
+#ifndef RT_SCENE__HPP
+# define RT_SCENE__HPP
 
-# define WIDTH 1920
-# define HEIGHT 1080
+# include "RT.hpp"
 
-# include "glm/glm.hpp"
-# include "glm/gtc/matrix_transform.hpp"
-# include "glm/gtc/type_ptr.hpp"
+class Camera;
 
-# include "glad/gl.h"
-# include "GLFW/glfw3.h"
+class Scene
+{
+	public:
+		Scene();
+		~Scene();
 
-# include <iostream>
-
-# include "Camera.hpp"
-# include "Window.hpp"
-# include "Shader.hpp"
-# include "Scene.hpp"
-
-
+		Camera		*getCamera(void) const;
+		// Object		*getObjects(void) const;
+		
+	private:
+		// Object	*_objects;
+		Camera	*_camera;
+};
 
 #endif

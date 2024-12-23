@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 17:39:55 by ycontre          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:39:37 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 Window::Window(int width, int height, const char *title, int sleep)
 {
-	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+	_scene = new Scene();
 
 	if (!glfwInit())
 	{
@@ -47,7 +47,7 @@ Window::Window(int width, int height, const char *title, int sleep)
 
 Window::~Window(void)
 {
-	delete _camera;
+	delete _scene;
 
 	glfwTerminate();
 }
@@ -65,7 +65,7 @@ void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, 
 	bool up = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	bool down = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
-	win->_camera->process_keyboard(forward, backward, left, right, up, down);
+	win->_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
 }
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
@@ -86,7 +86,7 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
 	{
-		win->_camera->process_mouse(xoffset, yoffset, true);
+		win->_scene->getCamera()->process_mouse(xoffset, yoffset, true);
 
 		// scene.frameCount = 0;
 	}
@@ -125,14 +125,14 @@ bool Window::shouldClose()
     return glfwWindowShouldClose(_window);
 }
 
-Camera		*Window::get_camera(void) const
-{
-	return (_camera);
-}
-
 GLFWwindow	*Window::getWindow(void) const
 {
 	return (_window);
+}
+
+Scene		*Window::getScene(void) const
+{
+	return (_scene);
 }
 
 float		Window::getFps(void) const

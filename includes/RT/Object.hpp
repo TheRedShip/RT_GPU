@@ -1,35 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RT.hpp                                             :+:      :+:    :+:   */
+/*   Object.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 19:04:53 by ycontre          ###   ########.fr       */
+/*   Created: 2024/12/23 18:44:18 by ycontre           #+#    #+#             */
+/*   Updated: 2024/12/23 19:12:39 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT__HPP
-# define RT__HPP
+#ifndef RT_OBJECT__HPP
+# define RT_OBJECT__HPP
 
-# define WIDTH 1920
-# define HEIGHT 1080
+class Object
+{
+	public:
+		glm::vec3 position;
+		glm::vec3 color;   
+	
+		Object(const glm::vec3& pos, const glm::vec3& col) : position(pos), color(col) {}
+		virtual ~Object() = default;
+	
+		// virtual bool hit(const glm::vec3& rayOrigin, const glm::vec3& rayDir, float& t, glm::vec3& hitNormal) const = 0;
 
-# include "glm/glm.hpp"
-# include "glm/gtc/matrix_transform.hpp"
-# include "glm/gtc/type_ptr.hpp"
-
-# include "glad/gl.h"
-# include "GLFW/glfw3.h"
-
-# include <iostream>
-
-# include "Camera.hpp"
-# include "Window.hpp"
-# include "Shader.hpp"
-# include "Scene.hpp"
-
-
+		
+};
 
 #endif

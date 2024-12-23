@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/14 19:54:42 by ycontre          ###   ########.fr       */
+/*   Updated: 2024/12/23 18:38:38 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,8 @@ int main(void)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-		shader.set_vec3("u_cameraPosition", window.get_camera()->get_position());
-		shader.set_mat4("u_viewMatrix", window.get_camera()->get_view_matrix());
+		shader.set_vec3("u_cameraPosition", window.getScene()->getCamera()->get_position());
+		shader.set_mat4("u_viewMatrix", window.getScene()->getCamera()->get_view_matrix());
 
 		glUseProgram(shader.getProgram());
 		shader.drawTriangles(size);

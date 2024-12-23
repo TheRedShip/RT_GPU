@@ -1,35 +1,28 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   RT.hpp                                             :+:      :+:    :+:   */
+/*   Scene.cpp                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 19:04:53 by ycontre          ###   ########.fr       */
+/*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
+/*   Updated: 2024/12/23 18:40:17 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT__HPP
-# define RT__HPP
+#include "Scene.hpp"
 
-# define WIDTH 1920
-# define HEIGHT 1080
+Scene::Scene()
+{
+	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+}
 
-# include "glm/glm.hpp"
-# include "glm/gtc/matrix_transform.hpp"
-# include "glm/gtc/type_ptr.hpp"
+Scene::~Scene()
+{
+	delete _camera;
+}
 
-# include "glad/gl.h"
-# include "GLFW/glfw3.h"
-
-# include <iostream>
-
-# include "Camera.hpp"
-# include "Window.hpp"
-# include "Shader.hpp"
-# include "Scene.hpp"
-
-
-
-#endif
+Camera		*Scene::getCamera(void) const
+{
+	return (_camera);
+}
