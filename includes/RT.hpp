@@ -16,6 +16,7 @@
 # define WIDTH 1920
 # define HEIGHT 1080
 
+
 # include "glm/glm.hpp"
 # include "glm/gtc/matrix_transform.hpp"
 # include "glm/gtc/type_ptr.hpp"
@@ -23,7 +24,13 @@
 # include "glad/gl.h"
 # include "GLFW/glfw3.h"
 
+
 # include <iostream>
+
+struct Vertex {
+    glm::vec2 position;
+    glm::vec2 texCoord;
+};
 
 # include "Camera.hpp"
 # include "Window.hpp"

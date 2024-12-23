@@ -13,6 +13,8 @@
 #ifndef RT_OBJECT__HPP
 # define RT_OBJECT__HPP
 
+#include "RT.hpp"
+
 class Object
 {
 	public:

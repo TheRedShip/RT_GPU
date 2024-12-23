@@ -18,15 +18,12 @@
 class Shader
 {
 	public:
-		Shader(std::string vertexPath, std::string fragmentPath);
-		Shader(Shader const &src);
+		Shader(std::string vertexPath, std::string fragmentPath, std::string computePath);
 		~Shader(void);
-
-		Shader	&operator=(Shader const &rhs);
 
 		// void	compile(const char *vertexSource, const char *fragmentSource);
 		void	attach(void);
-		void	setupVertexBuffer(const glm::vec2* vertices, size_t size);
+		void	setupVertexBuffer(const Vertex* vertices, size_t size);
 		void	drawTriangles(size_t size);
 
 
@@ -40,15 +37,20 @@ class Shader
 		void	set_mat4(const std::string &name, const glm::mat4 &value) const;
 
 		GLuint	getProgram(void) const;
+		GLuint	getProgramCompute(void) const;
 		
 
 	private:
 		GLuint _screen_VAO, _screen_VBO;
 
 		GLuint	_program;
+		GLuint	_program_compute;
+
+		GLuint	_outputTexture;
 
 		GLuint	_vertex;
 		GLuint	_fragment;
+		GLuint	_compute;
 
 		void	checkCompileErrors(unsigned int shader);
 };
