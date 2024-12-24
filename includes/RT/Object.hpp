@@ -25,15 +25,15 @@ typedef struct s_Material
 class Object
 {
 	protected:
-		glm::vec3	_position;
-		Material	_material;
+		glm::vec3		_position;
+		const Material	*_material;
 
 	public:
-		Object(const glm::vec3& position, const Material& material) : _position(position), _material(material) {}
+		Object(const glm::vec3& position, const Material *material) : _position(position), _material(material) {}
 		virtual ~Object() = default;
 
-		const glm::vec3& getPosition() const { return (_position); }
-		const Material& getMaterial() const { return (_material); }
+		const glm::vec3	&getPosition() const { return (_position); }
+		const Material	*getMaterial() const { return (_material); }
 	
 		enum class Type {
         	SPHERE,

@@ -27,9 +27,9 @@ Camera		*Scene::getCamera(void) const
 	return (_camera);
 }
 
-void		Scene::addObject(std::unique_ptr<Object> object)
+void		Scene::addObject(Object *object)
 {
-	_objects.push_back(std::move(object));
+	_objects.push_back(object);
 
 	this->updateGPUData();
 }
@@ -41,13 +41,13 @@ void		Scene::updateGPUData()
 	{
 		GPUObject gpuObj;
 		gpuObj.position = obj->getPosition();
-		gpuObj.color = obj->getMaterial().color;
-		gpuObj.roughness = obj->getMaterial().roughness;
-		gpuObj.specular = obj->getMaterial().specular;
+		gpuObj.color = obj->getMaterial()->color;
+		gpuObj.roughness = obj->getMaterial()->roughness;
+		gpuObj.specular = obj->getMaterial()->specular;
 		gpuObj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE) {
-			auto sphere = static_cast<const Sphere*>(obj.get());
+			auto sphere = static_cast<const Sphere*>(obj);
 			gpuObj.radius = sphere->getRadius();
 		}
 		

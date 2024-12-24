@@ -37,13 +37,13 @@ class Scene
 		~Scene();
 
 		Camera							*getCamera(void) const;
-		void							addObject(std::unique_ptr<Object> object);
+		void							addObject(Object *object);
 
 		void							updateGPUData();
 		const std::vector<GPUObject>&	getGPUData() const;
 		
 	private:
-		std::vector<std::unique_ptr<Object>> _objects;
+		std::vector<Object *> _objects;
 		std::vector<GPUObject> _gpuObjects;
 
 		Camera	*_camera;

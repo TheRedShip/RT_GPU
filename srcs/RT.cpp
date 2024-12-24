@@ -30,7 +30,7 @@ int main(void)
 		glm::vec3 position(x, y, z);
 		float sphereSize = 0.8f + 0.4f * sin(angle * 2.0f);
 		
-		window.getScene()->addObject(std::make_unique<Sphere>(position, sphereSize, redMaterial));
+		window.getScene()->addObject(new Sphere(position, sphereSize, &redMaterial));
 	}
 
 	GLuint objectSSBO;
@@ -48,7 +48,9 @@ int main(void)
 		glUseProgram(shader.getProgramCompute());
 		
 		const std::vector<GPUObject> &gpu_data = window.getScene()->getGPUData();
-	
+
+		window.getScene()->updateGPUData();
+
 		// Update SSBO with latest object data
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, gpu_data.size() * sizeof(GPUObject), gpu_data.data(), GL_DYNAMIC_DRAW);

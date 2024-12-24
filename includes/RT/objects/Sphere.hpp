@@ -18,7 +18,7 @@
 class Sphere : public Object
 {
 	public:
-		Sphere(const glm::vec3& position, float radius, const Material& material)
+		Sphere(const glm::vec3& position, float radius, const Material *material)
 			: Object(position, material), _radius(radius) {}
 
 		float getRadius() const { return (_radius); }
