@@ -15,6 +15,19 @@
 
 # include "RT.hpp"
 
+struct GPUObject
+{
+	glm::vec3	position;
+	int			padding_1;
+	glm::vec3	color;
+	int			padding_2;
+	float		roughness;
+	float		specular;
+	float		radius;
+	int			type;
+};
+
+class Sphere;
 class Camera;
 
 class Scene
@@ -23,11 +36,16 @@ class Scene
 		Scene();
 		~Scene();
 
-		Camera		*getCamera(void) const;
-		// Object		*getObjects(void) const;
+		Camera							*getCamera(void) const;
+		void							addObject(std::unique_ptr<Object> object);
+
+		void							updateGPUData();
+		const std::vector<GPUObject>&	getGPUData() const;
 		
 	private:
-		// Object	*_objects;
+		std::vector<std::unique_ptr<Object>> _objects;
+		std::vector<GPUObject> _gpuObjects;
+
 		Camera	*_camera;
 };
 

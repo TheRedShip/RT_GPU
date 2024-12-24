@@ -18,13 +18,14 @@
 class Sphere : public Object
 {
 	public:
-		float		radius;
-		glm::vec3	position;
+		Sphere(const glm::vec3& position, float radius, const Material& material)
+			: Object(position, material), _radius(radius) {}
 
-		
+		float getRadius() const { return (_radius); }
+		Type getType() const override { return Type::SPHERE; }
+
 	private:
-		
-		
+		float	_radius;
 };
 
 #endif

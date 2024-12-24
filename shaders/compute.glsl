@@ -6,14 +6,30 @@ layout(local_size_x = 16, local_size_y = 16) in;
 // Output image
 layout(binding = 0, rgba32f) uniform image2D outputImage;
 
-// Uniforms for camera and scene
-uniform vec2 u_resolution;
-uniform vec3 u_cameraPosition;
-uniform mat4 u_viewMatrix;
+struct GPUObject {
+    vec3    position;       // 12 + 4
+    float   padding_1;      // 4
+    vec3    color;          // 12 + 4
+    float   padding_2;      // 4
+    float   roughness;      // 4
+    float   specular;       // 4
+    float   radius;         // 4
+    int     type;           // 4
+};
+
+layout(std430, binding = 1) buffer ObjectBuffer
+{
+    GPUObject objects[];
+};
+
+uniform int     u_objectsNum;
+uniform vec2    u_resolution;
+uniform vec3    u_cameraPosition;
+uniform mat4    u_viewMatrix;
+
 vec3 lightPos = vec3(5.0, 5.0, 5.0);
 vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
-// Scene definition
 vec3 sphereCenter = vec3(0.0, 0.0, -5.0);
 float sphereRadius = 1.0;
 vec3 objectColor = vec3(0.4, 0.7, 0.9);
@@ -23,7 +39,8 @@ struct Ray {
     vec3 direction;
 };
 
-bool intersectSphere(Ray ray, vec3 center, float radius, out float t) {
+bool intersectSphere(Ray ray, vec3 center, float radius, out float t)
+{
     vec3 oc = ray.origin - center;
     float a = dot(ray.direction, ray.direction);
     float b = 2.0 * dot(oc, ray.direction);
@@ -32,10 +49,13 @@ bool intersectSphere(Ray ray, vec3 center, float radius, out float t) {
 
     if (discriminant < 0.0) {
         return false;
-    } else {
-        t = (-b - sqrt(discriminant)) / (2.0 * a);
+    }
+    float t1 = (-b - sqrt(discriminant)) / (2.0 * a);
+    if (t1 > 0.001) {
+        t = t1;
         return true;
     }
+    return false;
 }
 
 vec3 computeLighting(vec3 point, vec3 normal, vec3 viewDir) {
@@ -46,7 +66,6 @@ vec3 computeLighting(vec3 point, vec3 normal, vec3 viewDir) {
 }
 
 void main() {
-    // Compute pixel coordinates
     ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
     if (pixelCoords.x >= int(u_resolution.x) || pixelCoords.y >= int(u_resolution.y)) {
         return;
@@ -64,14 +83,24 @@ void main() {
     rayDirection = normalize(rayDirection);
     Ray ray = Ray(u_cameraPosition, rayDirection);
 
-    float t;
+
     vec4 color = vec4(0.0, 0.0, 0.0, 1.0);
-    if (intersectSphere(ray, sphereCenter, sphereRadius, t)) {
-        vec3 hitPoint = ray.origin + t * ray.direction;
-        vec3 normal = normalize(hitPoint - sphereCenter);
-        vec3 viewDir = normalize(-ray.direction);
-        vec3 lighting = computeLighting(hitPoint, normal, viewDir);
-        color = vec4(lighting, 1.0);
+    float closest_t = 1e30;
+    for (int i = 0; i < u_objectsNum; i++)
+    {
+        float t;
+        if (intersectSphere(ray, objects[i].position, objects[i].radius, t))
+        {
+            if (t < closest_t)
+            {
+                closest_t = t;
+
+                vec3 hitPoint = ray.origin + t * ray.direction;
+                vec3 normal = normalize(hitPoint - objects[i].position);
+                
+                color = vec4(objects[i].color * normal.y, 1.0);
+            }
+        }
     }
 
     // Write to the output image

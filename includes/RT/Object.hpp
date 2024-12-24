@@ -13,20 +13,33 @@
 #ifndef RT_OBJECT__HPP
 # define RT_OBJECT__HPP
 
-#include "RT.hpp"
+# include "RT.hpp"
+
+typedef struct s_Material
+{
+	glm::vec3	color;
+	float		roughness;
+	float		specular;
+}				Material;
 
 class Object
 {
-	public:
-		glm::vec3 position;
-		glm::vec3 color;   
-	
-		Object(const glm::vec3& pos, const glm::vec3& col) : position(pos), color(col) {}
-		virtual ~Object() = default;
-	
-		// virtual bool hit(const glm::vec3& rayOrigin, const glm::vec3& rayDir, float& t, glm::vec3& hitNormal) const = 0;
+	protected:
+		glm::vec3	_position;
+		Material	_material;
 
-		
+	public:
+		Object(const glm::vec3& position, const Material& material) : _position(position), _material(material) {}
+		virtual ~Object() = default;
+
+		const glm::vec3& getPosition() const { return (_position); }
+		const Material& getMaterial() const { return (_material); }
+	
+		enum class Type {
+        	SPHERE,
+    	};
+
+    	virtual Type getType() const = 0;
 };
 
 #endif
