@@ -12,10 +12,10 @@
 
 #include "Window.hpp"
 
-Window::Window(int width, int height, const char *title, int sleep)
+Window::Window(Scene *scene, int width, int height, const char *title, int sleep)
 {
-	_scene = new Scene();
-
+	_scene = scene;
+	
 	if (!glfwInit())
 	{
 		fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -128,11 +128,6 @@ bool Window::shouldClose()
 GLFWwindow	*Window::getWindow(void) const
 {
 	return (_window);
-}
-
-Scene		*Window::getScene(void) const
-{
-	return (_scene);
 }
 
 float		Window::getFps(void) const

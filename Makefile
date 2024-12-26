@@ -42,7 +42,8 @@ ALL_SRCS	:=	RT.cpp	gl.cpp			\
 				class/Window.cpp		\
 				class/Shader.cpp		\
 				class/Camera.cpp		\
-				class/Scene.cpp
+				class/Scene.cpp			\
+				class/SceneParser.cpp
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

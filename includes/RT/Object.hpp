@@ -39,7 +39,7 @@ class Object
         	SPHERE,
     	};
 
-    	virtual Type getType() const = 0;
+    	virtual Type	getType() const = 0;
 };
 
 #endif

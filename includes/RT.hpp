@@ -24,7 +24,11 @@
 # include "GLFW/glfw3.h"
 
 # include <iostream>
+# include <fstream>
+# include <sstream>
+# include <string>
 # include <memory>
+# include <map>
 
 struct Vertex {
     glm::vec2 position;
@@ -38,6 +42,7 @@ struct Vertex {
 # include "Window.hpp"
 # include "Shader.hpp"
 # include "Scene.hpp"
+# include "SceneParser.hpp"
 
 
 

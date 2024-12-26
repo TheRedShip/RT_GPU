@@ -20,11 +20,10 @@ class Scene;
 class Window
 {
 	public:
-		Window(int width, int height, const char *title, int sleep);
+		Window(Scene *scene, int width, int height, const char *title, int sleep);
 		~Window(void);
 
 		GLFWwindow	*getWindow(void) const;
-		Scene		*getScene(void) const;
 		float		getFps(void) const;
 
 		void		display();

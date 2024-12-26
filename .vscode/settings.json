@@ -70,6 +70,7 @@
 		"ratio": "cpp",
 		"iomanip": "cpp",
 		"numbers": "cpp",
-		"cinttypes": "cpp"
+		"cinttypes": "cpp",
+		"fstream": "cpp"
 	}
 }
