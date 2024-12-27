@@ -10,8 +10,8 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT_SceneParser__HPP
-# define RT_SceneParser__HPP
+#ifndef RT_SCENEPARSER__HPP
+# define RT_SCENEPARSER__HPP
 
 # include "RT.hpp"
 
@@ -23,7 +23,10 @@ class SceneParser
 		bool		parseLine(const std::string &line);
 
 	private:
-		Scene *_scene;
+		void		parseMaterial(std::stringstream &line);
+		
+
+		Scene		*_scene;
 
 		std::map<std::string, std::function<Object *(std::stringstream &)>> object_parsers;
 };

@@ -17,10 +17,9 @@
 
 struct GPUObject
 {
-	glm::vec3	position;
-	int			padding_1;
-	glm::vec3	color;
-	int			padding_2;
+	alignas(16)	glm::vec3	position;
+	alignas(16)	glm::vec3	color;
+	float		emission;
 	float		roughness;
 	float		specular;
 	float		radius;
@@ -39,15 +38,20 @@ class Scene
 		bool							parseScene(char *name);
 
 		void							addObject(Object *object);
+		void							addMaterial(Material *material);
 
 		void							updateGPUData();
 
 		const std::vector<GPUObject>	&getGPUData() const;
 		Camera							*getCamera(void) const;
+
+		Material						*getMaterial(int material_index);
 		
 	private:
 		std::vector<Object *>	_objects;
 		std::vector<GPUObject>	_gpu_objects;
+
+		std::vector<Material *>	_materials;
 
 		Camera					*_camera;
 };

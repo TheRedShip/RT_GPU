@@ -18,6 +18,7 @@
 typedef struct s_Material
 {
 	glm::vec3	color;
+	float		emission;
 	float		roughness;
 	float		specular;
 }				Material;
@@ -26,14 +27,14 @@ class Object
 {
 	protected:
 		glm::vec3		_position;
-		const Material	*_material;
+		int				_mat_index;
 
 	public:
-		Object(const glm::vec3& position, const Material *material) : _position(position), _material(material) {}
+		Object(const glm::vec3& position, const int mat_index) : _position(position), _mat_index(mat_index) {}
 		virtual ~Object() = default;
 
+		int		getMaterialIndex() const {return (_mat_index); }
 		const glm::vec3	&getPosition() const { return (_position); }
-		const Material	*getMaterial() const { return (_material); }
 	
 		enum class Type {
         	SPHERE,

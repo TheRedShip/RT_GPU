@@ -8,13 +8,12 @@ layout(binding = 0, rgba32f) uniform image2D outputImage;
 
 struct GPUObject {
     vec3    position;       // 12 + 4
-    float   padding_1;      // 4
     vec3    color;          // 12 + 4
-    float   padding_2;      // 4
+    float   emission;       // 4
     float   roughness;      // 4
     float   specular;       // 4
     float   radius;         // 4
-    int     type;           // 4
+    int     type;           // 4 + 12
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer

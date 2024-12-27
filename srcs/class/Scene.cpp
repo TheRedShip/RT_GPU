@@ -56,17 +56,26 @@ void		Scene::addObject(Object *object)
 	this->updateGPUData();
 }
 
+void		Scene::addMaterial(Material *material)
+{
+	_materials.push_back(material);
+}
+
 void		Scene::updateGPUData()
 {
+	GPUObject	gpu_obj;
+	Material	*mat;
 
 	_gpu_objects.clear();
 	for (const auto& obj : _objects)
 	{
-		GPUObject gpu_obj;
+		mat = getMaterial(obj->getMaterialIndex());
+		
 		gpu_obj.position = obj->getPosition();
-		gpu_obj.color = obj->getMaterial()->color;
-		gpu_obj.roughness = obj->getMaterial()->roughness;
-		gpu_obj.specular = obj->getMaterial()->specular;
+		gpu_obj.color = mat->color;
+		gpu_obj.emission = mat->emission;
+		gpu_obj.roughness = mat->roughness;
+		gpu_obj.specular = mat->specular;
 		gpu_obj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE)
@@ -74,19 +83,33 @@ void		Scene::updateGPUData()
 			auto sphere = static_cast<const Sphere*>(obj);
 			gpu_obj.radius = sphere->getRadius();
 		}
-		
-		std::cout << gpu_obj.position.x << " " << gpu_obj.position.y << " " << gpu_obj.position.z << " " << gpu_obj.radius << " " << gpu_obj.roughness << " " << gpu_obj.specular << std::endl;
-		
+
 		_gpu_objects.push_back(gpu_obj);
 	}
 }
 
 const std::vector<GPUObject>&	Scene::getGPUData() const
 {
+	for (const auto& obj : _gpu_objects)
+	{
+		std::cout << "objType: " << obj.type << std::endl;
+		std::cout << "position: " << obj.position.x << " " << obj.position.y << " " << obj.position.z << std::endl;
+		std::cout << "color: " << obj.color.x << " " << obj.color.y << " " << obj.color.z << std::endl;
+		std::cout << "mat: " << obj.emission << " " << obj.roughness << " " << obj.specular << std::endl;
+		std::cout << "Size of GPUObject: " << sizeof(GPUObject) << " bytes" << std::endl;
+	}
+
 	return (_gpu_objects);
 }
 
 Camera		*Scene::getCamera(void) const
 {
 	return (_camera);
+}
+
+Material	*Scene::getMaterial(int material_index)
+{
+	if (material_index < 0 || material_index >= (int)_materials.size())
+		throw std::runtime_error("Incorrect material index");
+	return (_materials[material_index]);
 }
