@@ -118,6 +118,8 @@ void Window::display()
 	lastTime = currentTime;
 	_fps = 1.0f / delta;
 
+	_frameCount++;
+
     glfwSwapBuffers(_window);
 }
 void Window::pollEvents()
@@ -140,4 +142,9 @@ GLFWwindow	*Window::getWindow(void) const
 float		Window::getFps(void) const
 {
 	return (_fps);
+}
+
+int			Window::getFrameCount(void) const
+{
+	return (_frameCount);
 }

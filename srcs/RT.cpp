@@ -56,6 +56,7 @@ int main(int argc, char **argv)
         glBufferData(GL_SHADER_STORAGE_BUFFER, gpu_data.size() * sizeof(GPUObject), gpu_data.data(), GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
 
+		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", gpu_data.size());
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		shader.set_vec3("u_cameraPosition", scene.getCamera()->get_position());

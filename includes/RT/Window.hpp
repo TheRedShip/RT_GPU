@@ -23,9 +23,6 @@ class Window
 		Window(Scene *scene, int width, int height, const char *title, int sleep);
 		~Window(void);
 
-		GLFWwindow	*getWindow(void) const;
-		float		getFps(void) const;
-
 		void		display();
 		void		pollEvents();
 		bool		shouldClose();
@@ -35,11 +32,16 @@ class Window
 		static void	keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 		static void	mouseMoveCallback(GLFWwindow *window, double xpos, double ypos);
 		static void	mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
-	
+
+		GLFWwindow	*getWindow(void) const;
+		float		getFps(void) const;
+		int			getFrameCount(void) const;
+
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;
-
+		
+		int			_frameCount;
 		float		_fps;
 
 };
