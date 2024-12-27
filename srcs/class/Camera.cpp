@@ -13,7 +13,8 @@
 #include "Camera.hpp"
 
 Camera::Camera(glm::vec3 start_pos, glm::vec3 start_up, float start_yaw, float start_pitch)
-			: _forward(glm::vec3(0.0f, 0.0f, -1.0f)), _position(start_pos), _up(start_up), _pitch(start_pitch), _yaw(start_yaw)
+			:  _position(start_pos), _forward(glm::vec3(0.0f, 0.0f, -1.0f)), _up(start_up), _pitch(start_pitch), _yaw(start_yaw),
+				_velocity(0.0f), _acceleration(0.0f)
 {
 	update_camera_vectors();
 }
@@ -35,20 +36,32 @@ void		Camera::update_camera_vectors()
 	_up = glm::normalize(glm::cross(_right, _forward));
 }
 
-glm::mat4	Camera::get_view_matrix()
+void		Camera::update(float delta_time)
 {
-	return (glm::lookAt(_position, _position + _forward, _up));
+	_velocity += _acceleration * delta_time;
+	// std::cout << _acceleration.x << " " << _acceleration.y << " " << _acceleration.z << " " << std::endl;
+
+    // Apply deceleration when no acceleration
+    if (glm::length(_acceleration) < 0.1f)
+        _velocity *= (1.0f - _deceleration_rate * delta_time);
+    
+    // Clamp velocity to maximum speed
+    float speed = glm::length(_velocity);
+    if (speed > _maxSpeed)
+        _velocity = (_velocity / speed) * _maxSpeed;
+    
+    // Update position
+    _position += _velocity * delta_time;
+    
+    // Reset acceleration
+    _acceleration = glm::vec3(0.0f);
 }
 
-glm::vec3	Camera::get_position()
-{
-	return (_position);
-}
 
 void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch = true)
 {
-	_yaw   += xoffset * 0.2f;
-	_pitch += yoffset * 0.2f;
+	_yaw   += xoffset * _sensitivity;
+	_pitch += yoffset * _sensitivity;
 
 	if (constraint_pitch)
 	{
@@ -61,14 +74,27 @@ void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch 
 
 void		Camera::process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down)
 {
-	float	speed;
+	glm::vec3 acceleration(0.0f);
 
-	speed = .1f;
+	if (forward)  acceleration += _forward;
+    if (backward) acceleration -= _forward;
+    if (right)    acceleration += _right;
+    if (left)     acceleration -= _right;
+    if (up)       acceleration += _up;
+    if (down)     acceleration -= _up;
+    
+    if (glm::length(acceleration) > 0.1f)
+        acceleration = glm::normalize(acceleration) * _acceleration_rate;
+    
+    _acceleration = acceleration;
+}
 
-	if (forward) _position += _forward * speed;
-	if (backward) _position -= _forward * speed;
-	if (left) _position -= _right * speed;
-	if (right) _position += _right * speed;
-	if (up) _position += _up * speed;
-	if (down) _position -= _up * speed;
+glm::mat4	Camera::get_view_matrix()
+{
+	return (glm::lookAt(_position, _position + _forward, _up));
+}
+
+glm::vec3	Camera::get_position()
+{
+	return (_position);
 }

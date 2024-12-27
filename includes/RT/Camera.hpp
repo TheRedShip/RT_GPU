@@ -22,23 +22,32 @@ class Camera
 		Camera(glm::vec3 startPos, glm::vec3 startUp, float startYaw, float startPitch);
 		~Camera(void);
 
-		void		update_camera_vectors();
 
-		glm::mat4	get_view_matrix();
-		glm::vec3	get_position();
-
+		void		update(float deltaTime);
 		void		process_mouse(float xoffset, float yoffset, bool constrainPitch);
 		void		process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
 		
-	private:
+		glm::mat4	get_view_matrix();
+		glm::vec3	get_position();
 
-		glm::vec3	_forward;
+	private:
+		void		update_camera_vectors();
+
 		glm::vec3	_position;
+		glm::vec3	_forward;
 		glm::vec3	_up;
 		glm::vec3	_right;
 
 		float		_pitch;
 		float		_yaw;
+
+		glm::vec3	_velocity;
+    	glm::vec3	_acceleration;
+
+		float _maxSpeed = 10.0f;
+		float _acceleration_rate = 40.0f;
+		float _deceleration_rate = 40.0f;
+		float _sensitivity = 0.2f;
 };
 
 #endif

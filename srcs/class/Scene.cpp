@@ -90,15 +90,6 @@ void		Scene::updateGPUData()
 
 const std::vector<GPUObject>&	Scene::getGPUData() const
 {
-	for (const auto& obj : _gpu_objects)
-	{
-		std::cout << "objType: " << obj.type << std::endl;
-		std::cout << "position: " << obj.position.x << " " << obj.position.y << " " << obj.position.z << std::endl;
-		std::cout << "color: " << obj.color.x << " " << obj.color.y << " " << obj.color.z << std::endl;
-		std::cout << "mat: " << obj.emission << " " << obj.roughness << " " << obj.specular << std::endl;
-		std::cout << "Size of GPUObject: " << sizeof(GPUObject) << " bytes" << std::endl;
-	}
-
 	return (_gpu_objects);
 }
 

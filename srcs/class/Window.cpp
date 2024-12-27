@@ -53,20 +53,19 @@ Window::~Window(void)
 }
 
 
-void Window::keyCallback(GLFWwindow* window, int key, int scancode, int action, int mods)
+void Window::process_input()
 {
-	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
-	(void) win; (void) key; (void) scancode; (void) mods; (void) action;
 
-	bool forward = glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS;
-	bool backward = glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS;
-	bool left = glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS;
-	bool right = glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS;
-	bool up = glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS;
-	bool down = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
+	bool forward = glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS;
+	bool backward = glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS;
+	bool left = glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS;
+	bool right = glfwGetKey(_window, GLFW_KEY_D) == GLFW_PRESS;
+	bool up = glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS;
+	bool down = glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
-	win->_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
+	_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
 }
+
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 {
 	Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
@@ -104,6 +103,11 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int
 
     }
 }
+void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
+    (void) win; (void) key; (void) scancode; (void) action; (void) mods;
+}
 
 void Window::display()
 {
@@ -118,6 +122,9 @@ void Window::display()
 }
 void Window::pollEvents()
 {
+	this->process_input();
+	_scene->getCamera()->update(1.0f / _fps);
+	
     glfwPollEvents();
 }
 bool Window::shouldClose()

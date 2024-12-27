@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 		std::cout << "\rFPS: " << int(window.getFps()) << "        " << std::flush;
 
 		window.display();
-		window.pollEvents();
+		window.pollEvents();		
 	}
 	
 	return (0);
