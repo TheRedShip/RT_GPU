@@ -12,37 +12,48 @@
 
 #include "Shader.hpp"
 
-char* load_file(char const* path)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+const char *loadFileWithIncludes(const std::string& path)
 {
-	char* buffer = 0;
-	long length = 0;
-	FILE * f = fopen (path, "rb");
+    std::ifstream file(path);
+    if (!file.is_open()) {
+        std::cerr << "Failed to open file: " << path << std::endl;
+        return "";
+    }
 
-	if (f)
+    std::stringstream fileContent;
+    std::string line;
+
+    while (std::getline(file, line))
 	{
-		fseek (f, 0, SEEK_END);
-		length = ftell (f);
-		fseek (f, 0, SEEK_SET);
-		buffer = (char*)malloc ((length+1)*sizeof(char));
-		if (buffer)
+        if (line.rfind("#include", 0) == 0)
 		{
-		fread (buffer, sizeof(char), length, f);
-		}
-		fclose (f);
-	}
-	else
-		return (NULL);
-	buffer[length] = '\0';
+            size_t start = line.find_first_of("\"<");
+            size_t end = line.find_last_of("\">");
+            if (start != std::string::npos && end != std::string::npos && end > start)
+			{
+                std::string includePath = line.substr(start + 1, end - start - 1);
+                std::string includedContent = loadFileWithIncludes(includePath);
+                fileContent << includedContent << "\n";
+            }
+        }
+		else
+            fileContent << line << "\n";
+    }
 
-	return buffer;
+    return strdup(fileContent.str().c_str());
 }
+
 
 Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath)
 {
-	const char *vertexCode = load_file(vertexPath.c_str());
-	const char *fragmentCode = load_file(fragmentPath.c_str());
-	const char *computeCode = load_file(computePath.c_str());
-	
+	const char *vertexCode = loadFileWithIncludes(vertexPath);
+	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
+	const char *computeCode = loadFileWithIncludes(computePath);
+
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	
 	glShaderSource(_vertex, 1, &vertexCode, NULL);

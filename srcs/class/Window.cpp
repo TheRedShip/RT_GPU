@@ -15,6 +15,7 @@
 Window::Window(Scene *scene, int width, int height, const char *title, int sleep)
 {
 	_scene = scene;
+	_frameCount = 0;
 	
 	if (!glfwInit())
 	{

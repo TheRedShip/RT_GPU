@@ -22,6 +22,7 @@
 
 # include "glad/gl.h"
 # include "GLFW/glfw3.h"
+# include "ShadInclude.hpp"
 
 # include <iostream>
 # include <fstream>

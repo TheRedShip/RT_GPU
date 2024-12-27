@@ -1,4 +1,5 @@
 #version 430 core
+#include "shaders/utils.glsl"
 
 // Work group dimensions
 layout(local_size_x = 16, local_size_y = 16) in;
@@ -29,21 +30,6 @@ uniform int		u_frameCount;
 
 vec3 lightPos = vec3(5.0, 5.0, 5.0);
 vec3 lightColor = vec3(1.0, 1.0, 1.0);
-
-
-const float PHI = 1.61803398874989484820459; // Φ = Golden Ratio 
-float getRandom(in vec2 xy, float seed)
-{
-	return fract(tan(distance(xy*PHI, xy)*seed)*xy.x);
-}
-
-vec3 randomVec3(vec2 uv, int frame)
-{
-    float x = getRandom(uv, float(frame) + 0.1);
-    float y = getRandom(uv + vec2(1.0), float(frame) + 0.2);
-    float z = getRandom(uv + vec2(2.0), float(frame) + 0.3);
-    return vec3(x, y, z);
-}
 
 struct Ray {
 	vec3 origin;
@@ -113,6 +99,6 @@ void main() {
 
 	vec3 color = pathtrace(ray);
 
-	// Write to the output image
 	imageStore(outputImage, pixelCoords, vec4(randomVec3(uv, u_frameCount), 1.0));
 }
+
