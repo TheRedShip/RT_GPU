@@ -54,6 +54,8 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string com
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
 
+	std::cout << computeCode << std::endl;
+
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	
 	glShaderSource(_vertex, 1, &vertexCode, NULL);
@@ -90,7 +92,6 @@ void Shader::attach(void)
 	_program = glCreateProgram();
 	_program_compute = glCreateProgram();
 
-	
 	glAttachShader(_program, _vertex);
 	glAttachShader(_program, _fragment);
 	glAttachShader(_program_compute, _compute);
@@ -98,14 +99,23 @@ void Shader::attach(void)
 	glLinkProgram(_program);
 	glLinkProgram(_program_compute);
 
-	glGenTextures(1, &_outputTexture);
-	glBindTexture(GL_TEXTURE_2D, _outputTexture);
+	glGenTextures(1, &_output_texture);
+	glBindTexture(GL_TEXTURE_2D, _output_texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glBindImageTexture(0, _outputTexture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+
+	glGenTextures(1, &_accumulation_texture);
+    glBindTexture(GL_TEXTURE_2D, _accumulation_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(1, _accumulation_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 }
 
 void Shader::checkCompileErrors(GLuint shader)
@@ -146,7 +156,7 @@ void Shader::setupVertexBuffer(const Vertex* vertices, size_t size)
 void	Shader::drawTriangles(size_t size)
 {
 	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _outputTexture);
+	glBindTexture(GL_TEXTURE_2D, _output_texture);
 	glUniform1i(glGetUniformLocation(_program, "screenTexture"), 0);
 	
 	glBindVertexArray(_screen_VAO);

@@ -45,7 +45,8 @@ class Shader
 		GLuint	_program;
 		GLuint	_program_compute;
 
-		GLuint	_outputTexture;
+		GLuint	_output_texture;
+		GLuint	_accumulation_texture;
 
 		GLuint	_vertex;
 		GLuint	_fragment;

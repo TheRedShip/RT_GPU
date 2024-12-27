@@ -64,6 +64,8 @@ void Window::process_input()
 	bool up = glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	bool down = glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
+	if (forward || backward || left || right || up || down)
+		_frameCount = 0;
 	_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
 }
 

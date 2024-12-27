@@ -21,20 +21,6 @@ int main(int argc, char **argv)
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 1);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	
-	// Material redMaterial = {glm::vec3(1.0f, 0.2f, 0.2f), 1.0, 1.0, 0.0};
-	// scene.addMaterial(&redMaterial);
-
-	// for (int i = 0; i < 150; i++)
-	// {
-	// 	float angle = (2.0f * M_PI * i) / 150.0f;
-	// 	float x = 30.0f * cos(angle);
-	// 	float z = 30.0f * sin(angle);
-	// 	float y = 2.0f * sin(angle * 3.0f);
-	// 	glm::vec3 position(x, y, z);
-	// 	float sphereSize = 0.8f + 0.4f * sin(angle * 2.0f);
-	// 	scene.addObject(new Sphere(position, sphereSize, 0));
-	// }
 
 	GLuint objectSSBO;
     glGenBuffers(1, &objectSSBO);
