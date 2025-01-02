@@ -26,6 +26,7 @@ uniform vec2    u_resolution;
 uniform vec3    u_cameraPosition;
 uniform mat4    u_viewMatrix;
 uniform int		u_frameCount;
+uniform float	u_time;
 
 vec3 lightPos = vec3(5.0, 5.0, 5.0);
 vec3 lightColor = vec3(1.0, 1.0, 1.0);
@@ -118,7 +119,7 @@ vec3    pathtrace(Ray ray, vec2 random)
 
 		ray.origin = hit.position + hit.normal * 0.001;
 		//cosine weighted importance sampling
-		vec3 unit_sphere = normalize(randomVec3Mixed(random, u_frameCount, -1.0, 1.0));
+		vec3 unit_sphere = normalize(randomVec3(random, u_time));
 		if (dot(unit_sphere, hit.normal) < 0.0)
 			unit_sphere = -unit_sphere;
 		ray.direction = normalize(hit.normal + unit_sphere);
@@ -144,7 +145,7 @@ void main() {
 	Ray ray = Ray(u_cameraPosition, rayDirection);
 
 	vec3 color = pathtrace(ray, uv);
-
+	
 	vec4 accum = imageLoad(accumulationImage, pixelCoords);
     accum.rgb = accum.rgb * float(u_frameCount) / float(u_frameCount + 1) + color / float(u_frameCount + 1);
     accum.a = 1.0;

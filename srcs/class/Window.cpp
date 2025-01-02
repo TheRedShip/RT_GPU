@@ -90,7 +90,7 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 	{
 		win->_scene->getCamera()->process_mouse(xoffset, yoffset, true);
 
-		// scene.frameCount = 0;
+		win->_frameCount = 0;
 	}
 
 	lastX = xpos;

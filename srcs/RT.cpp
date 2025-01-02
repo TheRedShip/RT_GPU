@@ -44,6 +44,7 @@ int main(int argc, char **argv)
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", gpu_data.size());
+		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		shader.set_vec3("u_cameraPosition", scene.getCamera()->get_position());
 		shader.set_mat4("u_viewMatrix", scene.getCamera()->get_view_matrix());
