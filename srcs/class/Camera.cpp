@@ -38,8 +38,6 @@ void		Camera::update_camera_vectors()
 
 void		Camera::update(float delta_time)
 {
-	delta_time = 0.016;
-	
 	_velocity += _acceleration * delta_time;
 
     if (glm::length(_acceleration) < 0.1f)

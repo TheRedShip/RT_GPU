@@ -34,7 +34,7 @@ class Sphere : public Object
 					throw std::runtime_error("Missing material properties");
 
 				_position = glm::vec3(x, y, z);
-				_radius = radius;
+				_radius = radius / 2.0;
 				
 				_mat_index = mat_index;
 			}

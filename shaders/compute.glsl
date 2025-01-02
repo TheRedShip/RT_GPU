@@ -94,7 +94,7 @@ vec3    pathtrace(Ray ray, vec2 uv)
 
 	float	closest_t = 1e30;
 
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 4; i++)
 	{
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
@@ -134,7 +134,7 @@ void main()
 	Ray ray = Ray(u_cameraPosition, ray_direction);
 
 	vec3 color = pathtrace(ray, uv);
-	// color = vec3(sqrt(color.x), sqrt(color.y), sqrt(color.z));
+	color = vec3(sqrt(color.x), sqrt(color.y), sqrt(color.z));
 	
 	float blend = 1.0 / float(u_frameCount + 1);
     vec4 accum = imageLoad(accumulation_image, pixel_coords);
