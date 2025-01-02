@@ -72,16 +72,23 @@ void		Scene::updateGPUData()
 		mat = getMaterial(obj->getMaterialIndex());
 		
 		gpu_obj.position = obj->getPosition();
+
 		gpu_obj.color = mat->color;
 		gpu_obj.emission = mat->emission;
 		gpu_obj.roughness = mat->roughness;
 		gpu_obj.specular = mat->specular;
+		
 		gpu_obj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE)
 		{
-			auto sphere = static_cast<const Sphere*>(obj);
+			auto sphere = static_cast<const Sphere *>(obj);
 			gpu_obj.radius = sphere->getRadius();
+		}
+		else if (obj->getType() == Object::Type::PLANE)
+		{
+			auto plane = static_cast<const Plane *>(obj);
+			gpu_obj.normal = plane->getNormal();
 		}
 
 		_gpu_objects.push_back(gpu_obj);

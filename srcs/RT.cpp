@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 		shader.drawTriangles(size);
 
 		std::cout << "\rFrame: " << window.getFrameCount() << " Fps: " << int(window.getFps()) << "                        " << std::flush;
-
+		
 		window.display();
 		window.pollEvents();		
 	}

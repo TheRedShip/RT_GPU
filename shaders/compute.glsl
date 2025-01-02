@@ -1,19 +1,21 @@
 #version 430 core
 
-#include "shaders/random.glsl"
-
 layout(local_size_x = 16, local_size_y = 16) in;
-layout(binding = 0, rgba32f) uniform image2D outputImage;
-layout(binding = 1, rgba32f) uniform image2D accumulationImage;
+layout(binding = 0, rgba32f) uniform image2D output_image;
+layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
 struct GPUObject {
 	vec3    position;       // 12 + 4
+	
 	vec3    color;          // 12 + 4
 	float   emission;       // 4
 	float   roughness;      // 4
 	float   specular;       // 4
+	
 	float   radius;         // 4
-	int     type;           // 4 + 12
+	vec3	normal;			// 12 + 4
+
+	int     type;           // 4
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -27,9 +29,6 @@ uniform vec3    u_cameraPosition;
 uniform mat4    u_viewMatrix;
 uniform int		u_frameCount;
 uniform float	u_time;
-
-vec3 lightPos = vec3(5.0, 5.0, 5.0);
-vec3 lightColor = vec3(1.0, 1.0, 1.0);
 
 struct Ray
 {
@@ -45,29 +44,10 @@ struct hitInfo
 	int		obj_index;
 };
 
-bool intersectSphere(Ray ray, GPUObject obj, out hitInfo hit)
-{
-	vec3 oc = ray.origin - obj.position;
-	float a = dot(ray.direction, ray.direction);
-	float b = 2.0 * dot(oc, ray.direction);
-	float c = dot(oc, oc) - obj.radius * obj.radius;
-	float discriminant = b * b - 4.0 * a * c;
+#include "shaders/random.glsl"
+#include "shaders/intersect.glsl"
 
-	if (discriminant < 0.0)
-		return false;
-
-	float t = (-b - sqrt(discriminant)) / (2.0 * a);
-	if (t < 0.0)
-		t = (-b + sqrt(discriminant)) / (2.0 * a);
-
-	hit.t = t;
-	hit.position = ray.origin + ray.direction * t;
-	hit.normal = normalize(hit.position - obj.position);
-
-	return (true);
-}
-
-hitInfo	trace_ray(Ray ray)
+hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 	hit.t = 1e30;
@@ -77,31 +57,46 @@ hitInfo	trace_ray(Ray ray)
 	{
 		GPUObject obj = objects[i];
 
-		hitInfo tempHit;
-		if (intersectSphere(ray, obj, tempHit))
+		hitInfo temp_hit;
+		if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t)
 		{
-			if (tempHit.t > 0.0f && tempHit.t < hit.t)
-			{
-				hit.t = tempHit.t;
-				hit.obj_index = i;
-				hit.position = tempHit.position;
-				hit.normal = tempHit.normal;
-			}
+			hit.t = temp_hit.t;
+			hit.obj_index = i;
+			hit.position = temp_hit.position;
+			hit.normal = temp_hit.normal;
 		}
 	}
 
 	return (hit);
 }
 
-vec3    pathtrace(Ray ray, vec2 random)
+Ray		newRay(hitInfo hit, Ray ray, vec2 uv)
+{
+	Ray		new_ray;
+	vec3	in_unit_sphere;
+
+	in_unit_sphere = normalize(randomVec3(uv, u_time));
+	in_unit_sphere *= sign(dot(in_unit_sphere, hit.normal));
+	
+	vec3 diffuse_dir = normalize(hit.normal + in_unit_sphere);
+	vec3 specular_dir = reflect(ray.direction, hit.normal);
+	
+	new_ray.origin = hit.position + hit.normal * 0.001;
+	new_ray.direction = mix(diffuse_dir, specular_dir, objects[hit.obj_index].roughness);
+
+	return (new_ray);
+}
+
+vec3    pathtrace(Ray ray, vec2 uv)
 {
 	vec3	color = vec3(1.0);
 	vec3	light = vec3(0.0);
 
 	float	closest_t = 1e30;
-	for (int i = 0; i < 10; i++)
+
+	for (int i = 0; i < 3; i++)
 	{
-		hitInfo hit = trace_ray(ray);
+		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
 		{
 			light += vec3(0); //ambient color 
@@ -117,40 +112,35 @@ vec3    pathtrace(Ray ray, vec2 random)
 			break;
 		}
 
-		ray.origin = hit.position + hit.normal * 0.001;
-		//cosine weighted importance sampling
-		vec3 unit_sphere = normalize(randomVec3(random, u_time));
-		if (dot(unit_sphere, hit.normal) < 0.0)
-			unit_sphere = -unit_sphere;
-		ray.direction = normalize(hit.normal + unit_sphere);
+		ray = newRay(hit, ray, uv);
 	}
 	return (color * light);
 }
 
-void main() {
-	ivec2 pixelCoords = ivec2(gl_GlobalInvocationID.xy);
-	if (pixelCoords.x >= int(u_resolution.x) || pixelCoords.y >= int(u_resolution.y)) 
+void main()
+{
+	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
+	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 
-	vec2 uv = vec2(pixelCoords) / u_resolution;
-	uv = uv * 2.0 - 1.0;
+	vec2 uv = (vec2(pixel_coords) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	float fov = 90.0;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
-	vec3 viewSpaceRay = normalize(vec3(uv.x, uv.y, -focal_length));
+	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
 
-	vec3 rayDirection = (inverse(u_viewMatrix) * vec4(viewSpaceRay, 0.0)).xyz;
-	rayDirection = normalize(rayDirection);
-	Ray ray = Ray(u_cameraPosition, rayDirection);
+	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
+	Ray ray = Ray(u_cameraPosition, ray_direction);
 
 	vec3 color = pathtrace(ray, uv);
 	
-	vec4 accum = imageLoad(accumulationImage, pixelCoords);
-    accum.rgb = accum.rgb * float(u_frameCount) / float(u_frameCount + 1) + color / float(u_frameCount + 1);
+	float blend = 1.0 / float(u_frameCount + 1);
+    vec4 accum = imageLoad(accumulation_image, pixel_coords);
+    accum.rgb = mix(accum.rgb, color, blend);
     accum.a = 1.0;
     
-    imageStore(accumulationImage, pixelCoords, accum);
-    imageStore(outputImage, pixelCoords, accum);
+    imageStore(accumulation_image, pixel_coords, accum);
+    imageStore(output_image, pixel_coords, accum);
 }
 

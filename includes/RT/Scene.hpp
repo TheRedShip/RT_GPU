@@ -18,12 +18,16 @@
 struct GPUObject
 {
 	alignas(16)	glm::vec3	position;
+
 	alignas(16)	glm::vec3	color;
-	float		emission;
-	float		roughness;
-	float		specular;
-	float		radius;
-	int			type;
+	float					emission;
+	float					roughness;
+	float					specular;
+
+	float					radius; // sphere
+	alignas(16) glm::vec3	normal; // plane
+
+	int						type;
 };
 
 class Sphere;

@@ -14,10 +14,16 @@
 
 SceneParser::SceneParser(Scene *scene) : _scene(scene)
 {
-	object_parsers["sp"] = [](std::stringstream& ss) -> Object*
+	object_parsers["sp"] = [](std::stringstream &ss) -> Object *
 	{
 		try { return (new Sphere(ss)); }
-		catch (const std::exception& e) { throw; }
+		catch (const std::exception &e) { throw; }
+	};
+
+	object_parsers["pl"] = [](std::stringstream &ss) -> Object *
+	{
+		try { return (new Plane(ss)); }
+		catch (const std::exception &e) { throw; }
 	};
 }
 

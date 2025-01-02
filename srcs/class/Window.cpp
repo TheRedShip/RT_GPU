@@ -66,6 +66,7 @@ void Window::process_input()
 
 	if (forward || backward || left || right || up || down)
 		_frameCount = 0;
+
 	_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
 }
 
@@ -89,7 +90,6 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
 	{
 		win->_scene->getCamera()->process_mouse(xoffset, yoffset, true);
-
 		win->_frameCount = 0;
 	}
 
@@ -116,10 +116,11 @@ void Window::display()
 {
 	static double	lastTime = glfwGetTime();
 	double			currentTime = glfwGetTime();
-	double			delta = currentTime - lastTime;
+	
+	_delta = currentTime - lastTime;
 
 	lastTime = currentTime;
-	_fps = 1.0f / delta;
+	_fps = 1.0f / _delta;
 
 	_frameCount++;
 
@@ -128,7 +129,7 @@ void Window::display()
 void Window::pollEvents()
 {
 	this->process_input();
-	_scene->getCamera()->update(1.0f / _fps);
+	_scene->getCamera()->update(_delta);
 	
     glfwPollEvents();
 }

@@ -38,6 +38,7 @@ class Object
 	
 		enum class Type {
         	SPHERE,
+			PLANE,
     	};
 
     	virtual Type	getType() const = 0;

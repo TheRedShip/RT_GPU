@@ -37,6 +37,7 @@ struct Vertex {
 
 # include "Object.hpp"
 # include "objects/Sphere.hpp"
+# include "objects/Plane.hpp"
 
 # include "Camera.hpp"
 # include "Window.hpp"

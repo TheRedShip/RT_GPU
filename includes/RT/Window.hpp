@@ -41,8 +41,9 @@ class Window
 		GLFWwindow	*_window;
 		Scene		*_scene;
 		
-		int			_frameCount;
 		float		_fps;
+		float		_delta;
+		int			_frameCount;
 
 };
 
