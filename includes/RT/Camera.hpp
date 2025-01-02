@@ -45,8 +45,8 @@ class Camera
     	glm::vec3	_acceleration;
 
 		float _maxSpeed = 8.0f;
-		float _acceleration_rate = 40.0f;
-		float _deceleration_rate = 40.0f;
+		float _acceleration_rate = 100.0f;
+		float _deceleration_rate = 50.0f;
 		float _sensitivity = 0.2f;
 };
 
