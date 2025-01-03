@@ -97,7 +97,7 @@ vec3    pathtrace(Ray ray, vec2 uv)
 
 	float	closest_t = 1e30;
 
-	for (int i = 0; i < 4; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
