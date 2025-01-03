@@ -38,14 +38,16 @@ void		Camera::update_camera_vectors()
 
 void		Camera::update(float delta_time)
 {
+	delta_time = std::min(delta_time, 0.1f);
+
 	_velocity += _acceleration * delta_time;
 
     if (glm::length(_acceleration) < 0.1f)
-        _velocity *= (1.0f - _deceleration_rate * delta_time);
+        _velocity *= std::max(0.0f, 1.0f - _deceleration_rate * delta_time);
     
     float speed = glm::length(_velocity);
     if (speed > _maxSpeed)
-        _velocity = (_velocity / speed) * _maxSpeed;
+        _velocity = glm::normalize(_velocity) * _maxSpeed;
     
     _position += _velocity * delta_time;
     _acceleration = glm::vec3(0.0f);

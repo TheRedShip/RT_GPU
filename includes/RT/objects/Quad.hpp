@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Plane.hpp                                         :+:      :+:    :+:   */
+/*   Quad.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -10,45 +10,52 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT_PLANE__HPP
-# define RT_PLANE__HPP
+#ifndef RT_QUAD__HPP
+# define RT_QUAD__HPP
 
 # include "RT.hpp"
 
-class Plane : public Object
+class Quad : public Object
 {
 	public:
-		Plane(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
+		Quad(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
 			try {
 				float	x, y, z;
-				float	nx, ny, nz;
+				float	x1, y1, z1;
+				float	x2, y2, z2;
 				int		mat_index;
 
 				if (!(line >> x >> y >> z))
 					throw std::runtime_error("Missing position");
 
-				if (!(line >> nx >> ny >> nz))
-					throw std::runtime_error("Missing plane's normal");
+				if (!(line >> x1 >> y1 >> z1))
+					throw std::runtime_error("Missing quad's first edge ");
+
+				if (!(line >> x2 >> y2 >> z2))
+					throw std::runtime_error("Missing quad's second edge");
 
 				if (!(line >> mat_index))
 					throw std::runtime_error("Missing material properties");
 
 				_position = glm::vec3(x, y, z);
-				_normal = glm::vec3(nx, ny, nz);
-				
+				_edge1 = glm::vec3(x1, y1, z1);
+				_edge2 = glm::vec3(x2, y2, z2);
+
 				_mat_index = mat_index;
 			}
 			catch (const std::exception &e) { throw; }
 		}
-		Plane(const glm::vec3 &position, const glm::vec3 &normal, const int mat_index)
-			: Object(position, mat_index), _normal(normal) {}
+		Quad(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int mat_index)
+			: Object(position, mat_index), _edge1(edge1), _edge2(edge2) {}
 
-		glm::vec3	getNormal() const { return (_normal); }
-		Type		getType() const override { return Type::PLANE; }
+		glm::vec3	getEdge1() const { return (_edge1); }
+		glm::vec3	getEdge2() const { return (_edge2); }
+		Type		getType() const override { return Type::QUAD; }
 
 	private:
-		glm::vec3	_normal;
+		glm::vec3	_edge1;
+		glm::vec3	_edge2;
 };
 
 #endif

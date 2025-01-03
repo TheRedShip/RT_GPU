@@ -27,6 +27,9 @@ struct GPUObject
 	float					radius; // sphere
 	alignas(16) glm::vec3	normal; // plane
 
+	alignas(16) glm::vec3	edge1;	//quad
+	alignas(16) glm::vec3	edge2;	//quad
+
 	int						type;
 };
 

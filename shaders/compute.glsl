@@ -15,6 +15,9 @@ struct GPUObject {
 	float   radius;         // 4
 	vec3	normal;			// 12 + 4
 
+	vec3	edge1;			// 12 + 4
+	vec3	edge2;			// 12 + 4
+
 	int     type;           // 4
 };
 

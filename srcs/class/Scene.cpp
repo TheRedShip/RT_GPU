@@ -90,6 +90,12 @@ void		Scene::updateGPUData()
 			auto plane = static_cast<const Plane *>(obj);
 			gpu_obj.normal = plane->getNormal();
 		}
+		else if (obj->getType() == Object::Type::QUAD)
+		{
+			auto quad = static_cast<const Quad *>(obj);
+			gpu_obj.edge1 = quad->getEdge1();
+			gpu_obj.edge2 = quad->getEdge2();
+		}
 
 		_gpu_objects.push_back(gpu_obj);
 	}

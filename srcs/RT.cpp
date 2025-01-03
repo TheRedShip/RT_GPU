@@ -30,14 +30,17 @@ int main(int argc, char **argv)
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
 	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
 	shader.setupVertexBuffer(vertices, size);
-	
+
+	GLint max_gpu_size;
+	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
+
+	const std::vector<GPUObject> &gpu_data = scene.getGPUData();
+	std::cout << "Sending " << gpu_data.size() << " objects for "<<  gpu_data.size() * sizeof(GPUObject) << " / " << max_gpu_size << " bytes" << std::endl;
+
 	while (!window.shouldClose())
 	{
 		glUseProgram(shader.getProgramCompute());
-		
-		const std::vector<GPUObject> &gpu_data = scene.getGPUData();
 
-		// Update SSBO with latest object data
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, gpu_data.size() * sizeof(GPUObject), gpu_data.data(), GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
