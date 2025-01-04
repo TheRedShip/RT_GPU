@@ -38,10 +38,10 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	float		r,g,b;
 	float		emission;
 	float		roughness;
-	float		specular;
+	float		metallic;
 	Material	*mat;
 
-	if (!(line >> r >> g >> b >> emission >> roughness >> specular))
+	if (!(line >> r >> g >> b >> emission >> roughness >> metallic))
 		throw std::runtime_error("Material: Missing material properties");
 
 	mat = new Material;
@@ -49,7 +49,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	mat->color = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
 	mat->emission = emission;
 	mat->roughness = roughness;
-	mat->specular = specular;
+	mat->metallic = metallic;
 
 	_scene->addMaterial(mat);
 }

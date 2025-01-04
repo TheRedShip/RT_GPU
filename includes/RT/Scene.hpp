@@ -22,7 +22,7 @@ struct GPUObject
 	alignas(16)	glm::vec3	color;
 	float					emission;
 	float					roughness;
-	float					specular;
+	float					metallic;
 
 	float					radius; // sphere
 	alignas(16) glm::vec3	normal; // plane

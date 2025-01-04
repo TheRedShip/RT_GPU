@@ -20,7 +20,7 @@ typedef struct s_Material
 	glm::vec3	color;
 	float		emission;
 	float		roughness;
-	float		specular;
+	float		metallic;
 }				Material;
 
 class Object

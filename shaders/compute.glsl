@@ -10,7 +10,7 @@ struct GPUObject {
 	vec3    color;          // 12 + 4
 	float   emission;       // 4
 	float   roughness;      // 4
-	float   specular;       // 4
+	float   metallic;       // 4
 	
 	float   radius;         // 4
 	vec3	normal;			// 12 + 4
@@ -73,24 +73,27 @@ hitInfo	traceRay(Ray ray)
 	return (hit);
 }
 
-Ray		newRay(hitInfo hit, Ray ray, vec2 uv)
+Ray		newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
-	Ray		new_ray;
-	vec3	in_unit_sphere;
+	GPUObject	obj;
+	Ray			new_ray;
+	// vec3		in_unit_sphere;
 
-	in_unit_sphere = normalize(randomVec3(uv, u_time));
-	in_unit_sphere *= sign(dot(in_unit_sphere, hit.normal));
+	obj = objects[hit.obj_index];
+
+	// in_unit_sphere = normalize(randomVec3(uv, u_time));
+	// in_unit_sphere *= sign(dot(in_unit_sphere, hit.normal));
 	
-	vec3 diffuse_dir = normalize(hit.normal + in_unit_sphere);
+	vec3 diffuse_dir = normalize(randomHemisphereDirection(hit.normal, rng_state));
 	vec3 specular_dir = reflect(ray.direction, hit.normal);
-	
+
 	new_ray.origin = hit.position + hit.normal * 0.001;
-	new_ray.direction = mix(diffuse_dir, specular_dir, objects[hit.obj_index].roughness);
+	new_ray.direction = mix(diffuse_dir, specular_dir, obj.roughness);
 
 	return (new_ray);
 }
 
-vec3    pathtrace(Ray ray, vec2 uv)
+vec3    pathtrace(Ray ray, inout uint rng_state)
 {
 	vec3	color = vec3(1.0);
 	vec3	light = vec3(0.0);
@@ -109,13 +112,12 @@ vec3    pathtrace(Ray ray, vec2 uv)
 		GPUObject obj = objects[hit.obj_index];
 
 		color *= obj.color;
-		if (obj.emission > 0.0)
-		{
-			light += obj.emission * obj.color;
-			break;
-		}
 
-		ray = newRay(hit, ray, uv);
+		light += obj.emission * obj.color;
+		if (obj.emission > 0.0)
+			break;
+
+		ray = newRay(hit, ray, rng_state);
 	}
 	return (color * light);
 }
@@ -128,6 +130,9 @@ void main()
 
 	vec2 uv = (vec2(pixel_coords) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
+	
+	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
+	rng_state = rng_state + u_frameCount * 719393;
 
 	float fov = 90.0;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
@@ -136,8 +141,8 @@ void main()
 	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
 	Ray ray = Ray(u_cameraPosition, ray_direction);
 
-	vec3 color = pathtrace(ray, uv);
-	color = vec3(sqrt(color.x), sqrt(color.y), sqrt(color.z));
+	vec3 color = pathtrace(ray, rng_state);
+	// color = vec3(sqrt(color.x), sqrt(color.y), sqrt(color.z));
 	
 	float blend = 1.0 / float(u_frameCount + 1);
     vec4 accum = imageLoad(accumulation_image, pixel_coords);

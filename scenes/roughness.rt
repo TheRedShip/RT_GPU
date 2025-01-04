@@ -1,0 +1,21 @@
+
+
+MAT	255 255 255		5.0		0.0 0.0 // white light 0
+
+MAT	255 50 50		0.0		0.0 0.0 // red 1
+MAT	50 50 50		0.0		0.0 0.0 // gray 2 
+MAT	50 255 50		0.0		0.0 0.0 // green 3
+MAT	255 255 255		0.0		0.0 0.0 // white 4
+
+// walls of a long width box
+
+pl	0 0 -3		0 0 1		4 // back wall
+pl	0 0 3		0 0 -1		4 // front wall
+pl	4 0 0		-1 0 0		3 // right wall
+pl	-4 0 0		1 0 0		1 // left wall
+pl	0 3 0		0 -1 0		2 // ceiling
+pl	0 -3 0		0 1 0		4 // floor
+
+// light quad
+qu	-1 2.9 -1	2 0 0		0 0 2		0
+

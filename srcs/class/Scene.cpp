@@ -76,8 +76,8 @@ void		Scene::updateGPUData()
 		gpu_obj.color = mat->color;
 		gpu_obj.emission = mat->emission;
 		gpu_obj.roughness = mat->roughness;
-		gpu_obj.specular = mat->specular;
-		
+		gpu_obj.metallic = mat->metallic;
+				
 		gpu_obj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE)
