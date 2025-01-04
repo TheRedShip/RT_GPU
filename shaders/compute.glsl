@@ -73,22 +73,18 @@ hitInfo	traceRay(Ray ray)
 	return (hit);
 }
 
-Ray		newRay(hitInfo hit, Ray ray, inout uint rng_state)
+Ray		newRay(hitInfo hit, Ray ray, bool is_specular, inout uint rng_state)
 {
 	GPUObject	obj;
 	Ray			new_ray;
-	// vec3		in_unit_sphere;
 
 	obj = objects[hit.obj_index];
-
-	// in_unit_sphere = normalize(randomVec3(uv, u_time));
-	// in_unit_sphere *= sign(dot(in_unit_sphere, hit.normal));
 	
-	vec3 diffuse_dir = normalize(randomHemisphereDirection(hit.normal, rng_state));
+	vec3 diffuse_dir = normalize(hit.normal + randomDirection(rng_state));
 	vec3 specular_dir = reflect(ray.direction, hit.normal);
 
 	new_ray.origin = hit.position + hit.normal * 0.001;
-	new_ray.direction = mix(diffuse_dir, specular_dir, obj.roughness);
+	new_ray.direction = mix(diffuse_dir, specular_dir, obj.roughness * float(is_specular));
 
 	return (new_ray);
 }
@@ -110,14 +106,15 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		}
 
 		GPUObject obj = objects[hit.obj_index];
-
-		color *= obj.color;
+		
+		bool is_specular = (obj.metallic >= randomValue(rng_state));
+		color *= mix(obj.color, vec3(1.0, 1.0, 1.0), is_specular);
 
 		light += obj.emission * obj.color;
 		if (obj.emission > 0.0)
 			break;
 
-		ray = newRay(hit, ray, rng_state);
+		ray = newRay(hit, ray, is_specular, rng_state);
 	}
 	return (color * light);
 }
@@ -142,14 +139,15 @@ void main()
 	Ray ray = Ray(u_cameraPosition, ray_direction);
 
 	vec3 color = pathtrace(ray, rng_state);
-	// color = vec3(sqrt(color.x), sqrt(color.y), sqrt(color.z));
 	
 	float blend = 1.0 / float(u_frameCount + 1);
     vec4 accum = imageLoad(accumulation_image, pixel_coords);
     accum.rgb = mix(accum.rgb, color, blend);
-    accum.a = 1.0;
-    
+	accum.a = 1.0;
+
     imageStore(accumulation_image, pixel_coords, accum);
-    imageStore(output_image, pixel_coords, accum);
+    
+    vec4 final_color = vec4(sqrt(accum.r), sqrt(accum.g), sqrt(accum.b), accum.a);
+	imageStore(output_image, pixel_coords, final_color);
 }
 

@@ -1,20 +1,42 @@
 
 
-MAT	255 255 255		5.0		0.0 0.0 // white light 0
+MAT	255 255 255		7.5		0.0 0.0 // white light 0
 
-MAT	255 50 50		0.0		0.0 0.0 // red 1
-MAT	50 50 50		0.0		0.0 0.0 // gray 2 
-MAT	50 255 50		0.0		0.0 0.0 // green 3
+MAT	255 10 10		0.0		0.0 0.0 // red 1
+MAT	10 10 10		0.0		0.0 0.0 // gray 2 
+MAT	10 255 10		0.0		0.0 0.0 // green 3
 MAT	255 255 255		0.0		0.0 0.0 // white 4
+MAT	50 50 255		0.0		0.0 0.0 // white 5
 
-// walls of a long width box
+MAT	255 255 255		0.0		0.0 1.0 // diffuse.0	6
+
+MAT	255 255 255		0.0		0.4 1.0 // reflective	7
+MAT	255 255 255		0.0		0.6 1.0 // reflective	8
+MAT	255 255 255		0.0		0.8 1.0 // reflective	9
+MAT	255 255 255		0.0		1.0 1.0 // reflective	10
+
+MAT	255 255 255		0.0		1.0 0.02 // tomato		11
+MAT	255 255 255		0.0		1.0 0.15 // tomato		12
+MAT	255 255 255		0.0		1.0 0.4 // tomato		13
+MAT	255 255 255		0.0		1.0 1.0 // tomato		14
 
 pl	0 0 -3		0 0 1		4 // back wall
-pl	0 0 3		0 0 -1		4 // front wall
+pl	0 0 3		0 0 -1		5 // front wall
 pl	4 0 0		-1 0 0		3 // right wall
 pl	-4 0 0		1 0 0		1 // left wall
 pl	0 3 0		0 -1 0		2 // ceiling
 pl	0 -3 0		0 1 0		4 // floor
+
+sp	-2.4 0 -1		1.5			7
+sp	-0.8 0 -1		1.5			8
+sp	0.8 0 -1		1.5			9
+sp	2.4 0 -1		1.5			10
+
+sp	-2.4 1.5 -1		1.5			11
+sp	-0.8 1.5 -1		1.5			12
+sp	0.8 1.5 -1		1.5			13
+sp	2.4 1.5 -1		1.5			14
+
 
 // light quad
 qu	-1 2.9 -1	2 0 0		0 0 2		0

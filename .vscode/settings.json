@@ -71,6 +71,14 @@
 		"iomanip": "cpp",
 		"numbers": "cpp",
 		"cinttypes": "cpp",
-		"fstream": "cpp"
+		"fstream": "cpp",
+		"list": "cpp",
+		"locale": "cpp",
+		"xhash": "cpp",
+		"xlocbuf": "cpp",
+		"xlocmes": "cpp",
+		"xlocmon": "cpp",
+		"xloctime": "cpp",
+		"xtree": "cpp"
 	}
 }
