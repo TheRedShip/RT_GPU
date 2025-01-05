@@ -15,8 +15,8 @@ struct GPUObject {
 	float   radius;         // 4
 	vec3	normal;			// 12 + 4
 
-	vec3	edge1;			// 12 + 4
-	vec3	edge2;			// 12 + 4
+	vec3	vertex1;		// 12 + 4
+	vec3	vertex2;		// 12 + 4
 
 	int     type;           // 4
 };
@@ -109,9 +109,16 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 
 		GPUObject obj = objects[hit.obj_index];
 		
-		color *= obj.color;
+		// RR
+		float p = max(color.r, max(color.g, color.b));
+        if (randomValue(rng_state) > p)
+            break;
+        color /= p;
+		//
 
+		color *= obj.color;
 		light += obj.emission * obj.color;
+		
 		if (obj.emission > 0.0)
 			break;
 

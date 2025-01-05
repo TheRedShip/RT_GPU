@@ -40,6 +40,7 @@ class Object
         	SPHERE,
 			PLANE,
 			QUAD,
+			TRIANGLE,
     	};
 
     	virtual Type	getType() const = 0;

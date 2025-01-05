@@ -1,4 +1,4 @@
-
+CAM 0 1 2
 
 MAT	255 255 255		7.5		0.0 0.0 // white light 0
 
@@ -19,6 +19,7 @@ MAT	255 255 255		0.0		1.0 0.02 // tomato		11
 MAT	255 255 255		0.0		1.0 0.15 // tomato		12
 MAT	255 255 255		0.0		1.0 0.4 // tomato		13
 MAT	255 255 255		0.0		1.0 1.0 // tomato		14
+
 
 pl	0 0 -3		0 0 1		4 // back wall
 pl	0 0 3		0 0 -1		5 // front wall

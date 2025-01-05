@@ -38,7 +38,7 @@ void		Camera::updateCameraVectors()
 
 void		Camera::update(float delta_time)
 {
-	delta_time = std::min(delta_time, 0.1f);
+	delta_time = std::min(delta_time, 0.01f);
 
 	_velocity += _acceleration * delta_time;
 

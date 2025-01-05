@@ -93,8 +93,15 @@ void		Scene::updateGPUData()
 		else if (obj->getType() == Object::Type::QUAD)
 		{
 			auto quad = static_cast<const Quad *>(obj);
-			gpu_obj.edge1 = quad->getEdge1();
-			gpu_obj.edge2 = quad->getEdge2();
+			gpu_obj.vertex1 = quad->getEdge1();
+			gpu_obj.vertex2 = quad->getEdge2();
+		}
+		else if (obj->getType() == Object::Type::TRIANGLE)
+		{
+			auto triangle = static_cast<const Triangle *>(obj);
+			gpu_obj.vertex1 = triangle->getVertex2();
+			gpu_obj.vertex2 = triangle->getVertex3();
+			gpu_obj.normal = triangle->getNormal();
 		}
 
 		_gpu_objects.push_back(gpu_obj);
