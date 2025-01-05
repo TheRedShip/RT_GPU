@@ -54,6 +54,16 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	_scene->addMaterial(mat);
 }
 
+void	SceneParser::parseCamera(std::stringstream &line)
+{
+	float		x,y,z;
+
+	if (!(line >> x >> y >> z))
+		throw std::runtime_error("Camera: Missing camera properties");
+
+	_scene->getCamera()->setPosition(glm::vec3(x, y, z));
+}
+
 bool		SceneParser::parseLine(const std::string &line)
 {
 	if (line.empty() || line[0] == '#')
@@ -77,6 +87,8 @@ bool		SceneParser::parseLine(const std::string &line)
 
 		if (identifier == "MAT")
 			this->parseMaterial(ss);
+		else if (identifier == "CAM")
+			this->parseCamera(ss);
 	}
 	catch (const std::exception& e)
 	{

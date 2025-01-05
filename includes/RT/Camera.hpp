@@ -24,14 +24,16 @@ class Camera
 
 
 		void		update(float deltaTime);
-		void		process_mouse(float xoffset, float yoffset, bool constrainPitch);
-		void		process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
+		void		processMouse(float xoffset, float yoffset, bool constrainPitch);
+		void		processKeyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
 		
-		glm::mat4	get_view_matrix();
-		glm::vec3	get_position();
+		glm::mat4	getViewMatrix();
+		glm::vec3	getPosition();
+
+		void		setPosition(glm::vec3 position);
 
 	private:
-		void		update_camera_vectors();
+		void		updateCameraVectors();
 
 		glm::vec3	_position;
 		glm::vec3	_forward;

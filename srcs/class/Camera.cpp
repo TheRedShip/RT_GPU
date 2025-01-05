@@ -16,14 +16,14 @@ Camera::Camera(glm::vec3 start_pos, glm::vec3 start_up, float start_yaw, float s
 			:  _position(start_pos), _forward(glm::vec3(0.0f, 0.0f, -1.0f)), _up(start_up), _pitch(start_pitch), _yaw(start_yaw),
 				_velocity(0.0f), _acceleration(0.0f)
 {
-	update_camera_vectors();
+	updateCameraVectors();
 }
 
 Camera::~Camera(void)
 {
 }
 
-void		Camera::update_camera_vectors()
+void		Camera::updateCameraVectors()
 {
 	glm::vec3 frontTemp;
 
@@ -54,7 +54,7 @@ void		Camera::update(float delta_time)
 }
 
 
-void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch = true)
+void		Camera::processMouse(float xoffset, float yoffset, bool constraint_pitch = true)
 {
 	_yaw   += xoffset * _sensitivity;
 	_pitch += yoffset * _sensitivity;
@@ -65,10 +65,10 @@ void		Camera::process_mouse(float xoffset, float yoffset, bool constraint_pitch 
 		if (_pitch < -89.0f) _pitch = -89.0f;
 	}
 
-	update_camera_vectors();
+	updateCameraVectors();
 }
 
-void		Camera::process_keyboard(bool forward, bool backward, bool left, bool right, bool up, bool down)
+void		Camera::processKeyboard(bool forward, bool backward, bool left, bool right, bool up, bool down)
 {
 	glm::vec3 acceleration(0.0f);
 
@@ -85,12 +85,17 @@ void		Camera::process_keyboard(bool forward, bool backward, bool left, bool righ
     _acceleration = acceleration;
 }
 
-glm::mat4	Camera::get_view_matrix()
+glm::mat4	Camera::getViewMatrix()
 {
 	return (glm::lookAt(_position, _position + _forward, _up));
 }
 
-glm::vec3	Camera::get_position()
+glm::vec3	Camera::getPosition()
 {
 	return (_position);
+}
+
+void		Camera::setPosition(glm::vec3 position)
+{
+	_position = position;
 }

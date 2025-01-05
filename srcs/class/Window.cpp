@@ -67,7 +67,7 @@ void Window::process_input()
 	if (forward || backward || left || right || up || down)
 		_frameCount = 0;
 
-	_scene->getCamera()->process_keyboard(forward, backward, left, right, up, down);
+	_scene->getCamera()->processKeyboard(forward, backward, left, right, up, down);
 }
 
 void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
@@ -89,7 +89,7 @@ void Window::mouseMoveCallback(GLFWwindow* window, double xpos, double ypos)
 
 	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) 
 	{
-		win->_scene->getCamera()->process_mouse(xoffset, yoffset, true);
+		win->_scene->getCamera()->processMouse(xoffset, yoffset, true);
 		win->_frameCount = 0;
 	}
 
