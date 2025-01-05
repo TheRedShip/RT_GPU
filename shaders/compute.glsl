@@ -73,7 +73,7 @@ hitInfo	traceRay(Ray ray)
 	return (hit);
 }
 
-Ray		newRay(hitInfo hit, Ray ray, bool is_specular, inout uint rng_state)
+Ray		newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
 	GPUObject	obj;
 	Ray			new_ray;
@@ -82,6 +82,8 @@ Ray		newRay(hitInfo hit, Ray ray, bool is_specular, inout uint rng_state)
 	
 	vec3 diffuse_dir = normalize(hit.normal + randomDirection(rng_state));
 	vec3 specular_dir = reflect(ray.direction, hit.normal);
+
+	bool is_specular = (obj.metallic >= randomValue(rng_state));
 
 	new_ray.origin = hit.position + hit.normal * 0.001;
 	new_ray.direction = mix(diffuse_dir, specular_dir, obj.roughness * float(is_specular));
@@ -107,14 +109,13 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 
 		GPUObject obj = objects[hit.obj_index];
 		
-		bool is_specular = (obj.metallic >= randomValue(rng_state));
-		color *= mix(obj.color, vec3(1.0, 1.0, 1.0), is_specular);
+		color *= obj.color;
 
 		light += obj.emission * obj.color;
 		if (obj.emission > 0.0)
 			break;
 
-		ray = newRay(hit, ray, is_specular, rng_state);
+		ray = newRay(hit, ray, rng_state);
 	}
 	return (color * light);
 }
