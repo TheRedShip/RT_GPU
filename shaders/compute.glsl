@@ -7,10 +7,7 @@ layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 struct GPUObject {
 	vec3    position;       // 12 + 4
 	
-	vec3    color;          // 12 + 4
-	float   emission;       // 4
-	float   roughness;      // 4
-	float   metallic;       // 4
+	int		mat_index;		// 4
 	
 	float   radius;         // 4
 	vec3	normal;			// 12 + 4
@@ -21,9 +18,22 @@ struct GPUObject {
 	int     type;           // 4
 };
 
+struct GPUMaterial
+{
+	vec3    color;          // 12 + 4
+	float   emission;       // 4
+	float   roughness;      // 4
+	float   metallic;       // 4
+};
+
 layout(std430, binding = 1) buffer ObjectBuffer
 {
 	GPUObject objects[];
+};
+
+layout(std430, binding = 2) buffer MaterialBuffer
+{
+	GPUMaterial materials[];
 };
 
 uniform int     u_objectsNum;
@@ -91,6 +101,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		}
 
 		GPUObject obj = objects[hit.obj_index];
+		GPUMaterial mat = materials[obj.mat_index];
 		
 		// RR
 		float p = max(color.r, max(color.g, color.b));
@@ -99,10 +110,10 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
         color /= p;
 		//
 
-		color *= obj.color;
-		light += obj.emission * obj.color;
+		color *= mat.color;
+		light += mat.emission * mat.color;
 		
-		if (obj.emission > 0.0)
+		if (mat.emission > 0.0)
 			break;
 
 		ray = newRay(hit, ray, rng_state);

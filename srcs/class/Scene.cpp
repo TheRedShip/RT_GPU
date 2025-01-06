@@ -64,20 +64,15 @@ void		Scene::addMaterial(Material *material)
 void		Scene::updateGPUData()
 {
 	GPUObject	gpu_obj;
-	Material	*mat;
+	GPUMaterial	gpu_mat;
 
 	_gpu_objects.clear();
+	_gpu_materials.clear();
+	
 	for (const auto& obj : _objects)
 	{
-		mat = getMaterial(obj->getMaterialIndex());
-		
+		gpu_obj.mat_index = obj->getMaterialIndex();
 		gpu_obj.position = obj->getPosition();
-
-		gpu_obj.color = mat->color;
-		gpu_obj.emission = mat->emission;
-		gpu_obj.roughness = mat->roughness;
-		gpu_obj.metallic = mat->metallic;
-				
 		gpu_obj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE)
@@ -106,11 +101,25 @@ void		Scene::updateGPUData()
 
 		_gpu_objects.push_back(gpu_obj);
 	}
+	for (const auto &material : _materials)
+	{
+		gpu_mat.color = material->color;
+		gpu_mat.emission = material->emission;
+		gpu_mat.roughness = material->roughness;
+		gpu_mat.metallic = material->metallic;
+
+		_gpu_materials.push_back(gpu_mat);
+	}
 }
 
-const std::vector<GPUObject>&	Scene::getGPUData() const
+const std::vector<GPUObject>&	Scene::getObjectData() const
 {
 	return (_gpu_objects);
+}
+
+const std::vector<GPUMaterial>&	Scene::getMaterialData() const
+{
+	return (_gpu_materials);
 }
 
 Camera		*Scene::getCamera(void) const
