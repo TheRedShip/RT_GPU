@@ -48,13 +48,26 @@ const char *loadFileWithIncludes(const std::string& path)
 }
 
 
+void printWithLineNumbers(const char *str)
+{
+    if (!str)
+        return;
+
+    std::istringstream stream(str);
+    std::string line;
+    int lineNumber = 1;
+
+    while (std::getline(stream, line))
+        std::cout << lineNumber++ << ": " << line << std::endl;
+}
+
 Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath)
 {
 	const char *vertexCode = loadFileWithIncludes(vertexPath);
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
 
-	std::cout << computeCode << std::endl;
+	printWithLineNumbers(computeCode);
 
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	

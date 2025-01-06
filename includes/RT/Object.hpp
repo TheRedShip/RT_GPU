@@ -21,6 +21,7 @@ typedef struct s_Material
 	float		emission;
 	float		roughness;
 	float		metallic;
+	int			type;
 }				Material;
 
 class Object

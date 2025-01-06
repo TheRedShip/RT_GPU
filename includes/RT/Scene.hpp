@@ -37,6 +37,7 @@ struct GPUMaterial
 	float					emission;
 	float					roughness;
 	float					metallic;
+	int						type;
 };
 
 class Sphere;

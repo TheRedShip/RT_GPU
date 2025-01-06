@@ -24,6 +24,7 @@ struct GPUMaterial
 	float   emission;       // 4
 	float   roughness;      // 4
 	float   metallic;       // 4
+	int		type;			// 4
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer

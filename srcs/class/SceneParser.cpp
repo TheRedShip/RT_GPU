@@ -45,10 +45,15 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	float		emission;
 	float		roughness;
 	float		metallic;
+	int			type;
+
 	Material	*mat;
 
 	if (!(line >> r >> g >> b >> emission >> roughness >> metallic))
 		throw std::runtime_error("Material: Missing material properties");
+
+	if (!(line >> type))
+		type = 0;
 
 	mat = new Material;
 
@@ -56,6 +61,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	mat->emission = emission;
 	mat->roughness = roughness;
 	mat->metallic = metallic;
+	mat->type = type;
 
 	_scene->addMaterial(mat);
 }
