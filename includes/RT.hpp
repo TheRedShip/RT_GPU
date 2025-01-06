@@ -13,8 +13,8 @@
 #ifndef RT__HPP
 # define RT__HPP
 
-# define WIDTH 1920
-# define HEIGHT 1080
+# define WIDTH 1000
+# define HEIGHT 1000
 
 # include "glm/glm.hpp"
 # include "glm/gtc/matrix_transform.hpp"
@@ -40,6 +40,7 @@ struct Vertex {
 # include "objects/Plane.hpp"
 # include "objects/Quad.hpp"
 # include "objects/Triangle.hpp"
+# include "objects/Cube.hpp"
 
 # include "Camera.hpp"
 # include "Window.hpp"

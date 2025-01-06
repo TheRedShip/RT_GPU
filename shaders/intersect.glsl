@@ -21,6 +21,8 @@ bool intersectPlane(Ray ray, GPUObject obj, out hitInfo hit)
     float d = dot(obj.normal, ray.direction);
     float t = dot(obj.position - ray.origin, obj.normal) / d;
     bool valid = t >= 0.0 && d != 0.0;
+
+    if (!valid) return (false);
     
     hit.t = t;
     hit.position = ray.origin + ray.direction * t;
@@ -52,7 +54,7 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
     
     hit.t = t;
     hit.position = p + obj.position;
-    hit.normal = d < 0.0 ? normal : -normal;
+    hit.normal = normal * -sign(d);
     
     return (inside);
 }
@@ -110,6 +112,40 @@ bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
         
     return (true);
 }
+bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)
+{
+    vec3 obj_size = obj.vertex1;
+
+    vec3 boxMin = obj.position - obj_size * 0.5;
+    vec3 boxMax = obj.position + obj_size * 0.5;
+
+    vec3 t1 = (boxMin - ray.origin) / ray.direction;
+    vec3 t2 = (boxMax - ray.origin) / ray.direction;
+
+    vec3 tNear = min(t1, t2);
+    vec3 tFar = max(t1, t2);
+
+    float tMin = max(max(tNear.x, tNear.y), tNear.z);
+    float tMax = min(min(tFar.x, tFar.y), tFar.z);
+
+    if (tMax < tMin || tMax < 0.0)
+        return (false);
+
+    hit.t = tMin > 0.0 ? tMin : tMax; // Use the closer valid intersection point
+    hit.position = ray.origin + hit.t * ray.direction; // Calculate hit position
+
+    vec3 hitPointLocal = hit.position - obj.position;
+    vec3 halfSize = obj_size * 0.5;
+
+    if (abs(hitPointLocal.x) > halfSize.x - 1e-4)
+        hit.normal = vec3(sign(hitPointLocal.x), 0.0, 0.0);
+    else if (abs(hitPointLocal.y) > halfSize.y - 1e-4)
+        hit.normal = vec3(0.0, sign(hitPointLocal.y), 0.0);
+    else if (abs(hitPointLocal.z) > halfSize.z - 1e-4)
+        hit.normal = vec3(0.0, 0.0, sign(hitPointLocal.z));
+
+    return (true);
+}
 
 bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
 {
@@ -121,6 +157,7 @@ bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
         return (intersectQuad(ray, obj, hit));
     if (obj.type == 3)
         return (intersectTriangle(ray, obj, hit));
-
+    if (obj.type == 4)
+        return (intersectCube(ray, obj, hit));
     return (false);
 }

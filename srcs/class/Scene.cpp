@@ -99,6 +99,13 @@ void		Scene::updateGPUData()
 			gpu_obj.vertex2 = triangle->getVertex3();
 			gpu_obj.normal = triangle->getNormal();
 		}
+		else if (obj->getType() == Object::Type::CUBE)
+		{
+			auto cube = static_cast<const Cube *>(obj);
+			gpu_obj.position = cube->getPosition();
+			gpu_obj.vertex1 = cube->getSize();
+			gpu_obj.type = static_cast<int>(cube->getType());
+		}
 
 		_gpu_objects.push_back(gpu_obj);
 	}

@@ -37,6 +37,12 @@ SceneParser::SceneParser(Scene *scene) : _scene(scene)
 		try { return (new Triangle(ss)); }
 		catch (const std::exception &e) { throw; }
 	};
+
+	object_parsers["cu"] = [](std::stringstream &ss) -> Object *
+	{
+		try { return (new Cube(ss)); }
+		catch (const std::exception &e) { throw; }
+	};
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)

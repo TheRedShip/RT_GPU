@@ -42,6 +42,7 @@ class Object
 			PLANE,
 			QUAD,
 			TRIANGLE,
+			CUBE
     	};
 
     	virtual Type	getType() const = 0;
