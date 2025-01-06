@@ -33,9 +33,12 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 {
     vec3 normal = normalize(cross(obj.vertex1, obj.vertex2));
     float d = dot(normal, ray.direction);
+
+    if (d == 0.0) return (false);
+
     float t = dot(obj.position - ray.origin, normal) / d;
 
-    if (t <= 0.0 || d == 0.0) return (false);
+    if (t <= 0.0) return (false);
     
     vec3 p = ray.origin + ray.direction * t - obj.position;
     

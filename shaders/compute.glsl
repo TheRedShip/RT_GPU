@@ -130,9 +130,6 @@ void main()
 
 	vec2 uv = (vec2(pixel_coords) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
-	
-	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
-	rng_state = rng_state + u_frameCount * 719393;
 
 	float fov = 90.0;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
@@ -140,6 +137,9 @@ void main()
 
 	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
 	Ray ray = Ray(u_cameraPosition, ray_direction);
+
+	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
+	rng_state = rng_state + u_frameCount * 719393;
 
 	vec3 color = pathtrace(ray, rng_state);
 	
