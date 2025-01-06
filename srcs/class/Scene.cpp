@@ -59,6 +59,7 @@ void		Scene::addObject(Object *object)
 void		Scene::addMaterial(Material *material)
 {
 	_materials.push_back(material);
+	this->updateGPUData();
 }
 
 void		Scene::updateGPUData()

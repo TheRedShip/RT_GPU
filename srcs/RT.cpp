@@ -39,7 +39,10 @@ int main(int argc, char **argv)
 
 	const std::vector<GPUObject> &object_data = scene.getObjectData();
 	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
-	std::cout << "Sending " << object_data.size() << " objects for "<<  object_data.size() * sizeof(GPUObject) << " / " << max_gpu_size << " bytes" << std::endl;
+	std::cout << "Sending " << object_data.size() << " objects for " << \
+				object_data.size() * sizeof(GPUObject) + material_data.size() * sizeof(GPUMaterial) \
+				<< " / " << max_gpu_size << " bytes" << std::endl;
+
 
 	while (!window.shouldClose())
 	{
