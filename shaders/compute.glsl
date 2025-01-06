@@ -7,14 +7,14 @@ layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 struct GPUObject {
 	vec3    position;       // 12 + 4
 	
-	int		mat_index;		// 4
-	
-	float   radius;         // 4
 	vec3	normal;			// 12 + 4
-
+	
 	vec3	vertex1;		// 12 + 4
 	vec3	vertex2;		// 12 + 4
+	
+	float   radius;         // 4
 
+	int		mat_index;		// 4
 	int     type;           // 4
 };
 

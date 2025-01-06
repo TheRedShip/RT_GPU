@@ -19,15 +19,16 @@ struct GPUObject
 {
 	alignas(16)	glm::vec3	position;
 
-	int						mat_index;
-
-	float					radius; // sphere
-	alignas(16) glm::vec3	normal; // plane
+	alignas(16) glm::vec3	normal; // plane triangle
 
 	alignas(16) glm::vec3	vertex1;	//quad triangle
 	alignas(16) glm::vec3	vertex2;	//quad triangle
 
+	float					radius; // sphere
+
+	int						mat_index;
 	int						type;
+
 };
 
 struct GPUMaterial
