@@ -111,6 +111,8 @@ void		Scene::updateGPUData()
 			auto portal = static_cast<const Portal *>(obj);
 			gpu_obj.vertex1 = portal->getEdge1();
 			gpu_obj.vertex2 = portal->getEdge2();
+			gpu_obj.normal = portal->getNormal();
+			gpu_obj.transform = glm::mat4(portal->getTransform());
 			gpu_obj.radius = portal->getLinkedPortalIndex();
 		}
 

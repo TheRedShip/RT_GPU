@@ -46,6 +46,18 @@ class Portal : public Object
 				_edge1 = glm::vec3(x1, y1, z1);
 				_edge2 = glm::vec3(x2, y2, z2);
 
+				glm::vec3 up = glm::normalize(_edge1);
+				glm::vec3 right = glm::normalize(_edge2);
+				glm::vec3 forward = glm::normalize(glm::cross(right, up));
+
+				up = normalize(glm::cross(forward, right));
+
+				_transform = glm::mat3(right, up, forward);
+				_normal = forward;
+
+				std::cout << "Portal Transform Matrix:" << std::endl;
+				std::cout << glm::to_string(_transform) << std::endl;
+
 				_linked_portal = linked_portal;
 
 				_mat_index = mat_index;
@@ -57,12 +69,20 @@ class Portal : public Object
 
 		glm::vec3	getEdge1() const { return (_edge1); }
 		glm::vec3	getEdge2() const { return (_edge2); }
+		glm::vec3	getNormal() const { return (_normal); }
+		
+		glm::mat3	getTransform() const { return (_transform); }
+		
 		int			getLinkedPortalIndex() const { return (_linked_portal); }
+
 		Type		getType() const override { return Type::PORTAL; }
 
 	private:
 		glm::vec3	_edge1;
 		glm::vec3	_edge2;
+		glm::vec3	_normal;
+
+		glm::mat3	_transform;
 
 		int			_linked_portal;
 };

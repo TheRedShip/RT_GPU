@@ -48,7 +48,7 @@ class Camera
 
 		float _maxSpeed = 8.0f;
 		float _acceleration_rate = 40.0f;
-		float _deceleration_rate = 20.0f;
+		float _deceleration_rate = 10000.0f;
 		float _sensitivity = 0.2f;
 };
 

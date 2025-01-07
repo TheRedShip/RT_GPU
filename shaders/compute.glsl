@@ -5,12 +5,15 @@ layout(binding = 0, rgba32f) uniform image2D output_image;
 layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
 struct GPUObject {
+	mat4	transform;
+
 	vec3    position;       // 12 + 4
 	
 	vec3	normal;			// 12 + 4
 	
 	vec3	vertex1;		// 12 + 4
 	vec3	vertex2;		// 12 + 4
+
 
 	float   radius;         // 4
 
@@ -71,13 +74,17 @@ Ray	portalRay(Ray ray, hitInfo hit)
 	portal_1 = objects[hit.obj_index];
 	portal_2 = objects[int(portal_1.radius)]; // saving memory radius = portal_index
 		
-	vec3 portal_2_normal = normalize(cross(portal_2.vertex1, portal_2.vertex2));
-	portal_2_normal *= sign(dot(ray.direction, portal_2_normal));
+	vec3 portal_2_normal = portal_2.normal * sign(dot(ray.direction, portal_2.normal));
 	
-	relative = portal_2.position - portal_1.position;
+	relative = hit.position - portal_1.position;
 	
-	ray.origin = hit.position + relative + portal_2_normal * 0.01;
-	ray.direction = normalize(ray.direction + portal_2_normal * 0.01);
+	ray.origin = portal_2.position + mat3(portal_2.transform) * relative;
+	ray.origin += portal_2_normal * 0.01;
+
+	if (dot(ray.direction, portal_2_normal) < 0.0)
+		ray.direction = reflect(ray.direction, portal_2_normal);
+
+	ray.direction = normalize(mat3(portal_2.transform) * ray.direction);
 
 	return (ray);
 }
