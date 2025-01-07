@@ -70,50 +70,58 @@ void		Scene::updateGPUData()
 	_gpu_objects.clear();
 	_gpu_materials.clear();
 	
-	for (const auto& obj : _objects)
+	for (int i = 0; i < _objects.size(); i++)
 	{
+		Object *obj = _objects[i];
+
 		gpu_obj.mat_index = obj->getMaterialIndex();
 		gpu_obj.position = obj->getPosition();
 		gpu_obj.type = static_cast<int>(obj->getType());
 		
 		if (obj->getType() == Object::Type::SPHERE)
 		{
-			auto sphere = static_cast<const Sphere *>(obj);
+			auto sphere = static_cast<Sphere *>(obj);
 			gpu_obj.radius = sphere->getRadius();
 		}
 		else if (obj->getType() == Object::Type::PLANE)
 		{
-			auto plane = static_cast<const Plane *>(obj);
+			auto plane = static_cast<Plane *>(obj);
 			gpu_obj.normal = plane->getNormal();
 		}
 		else if (obj->getType() == Object::Type::QUAD)
 		{
-			auto quad = static_cast<const Quad *>(obj);
+			auto quad = static_cast<Quad *>(obj);
 			gpu_obj.vertex1 = quad->getEdge1();
 			gpu_obj.vertex2 = quad->getEdge2();
 		}
 		else if (obj->getType() == Object::Type::TRIANGLE)
 		{
-			auto triangle = static_cast<const Triangle *>(obj);
+			auto triangle = static_cast<Triangle *>(obj);
 			gpu_obj.vertex1 = triangle->getVertex2();
 			gpu_obj.vertex2 = triangle->getVertex3();
 			gpu_obj.normal = triangle->getNormal();
 		}
 		else if (obj->getType() == Object::Type::CUBE)
 		{
-			auto cube = static_cast<const Cube *>(obj);
+			auto cube = static_cast<Cube *>(obj);
 			gpu_obj.position = cube->getPosition();
 			gpu_obj.vertex1 = cube->getSize();
 			gpu_obj.type = static_cast<int>(cube->getType());
 		}
 		else if (obj->getType() == Object::Type::PORTAL)
 		{
-			auto portal = static_cast<const Portal *>(obj);
+			auto portal = static_cast<Portal *>(obj);
 			gpu_obj.vertex1 = portal->getEdge1();
 			gpu_obj.vertex2 = portal->getEdge2();
 			gpu_obj.normal = portal->getNormal();
 			gpu_obj.transform = glm::mat4(portal->getTransform());
-			gpu_obj.radius = portal->getLinkedPortalIndex();
+	
+			gpu_obj.radius = i + 2;
+			if (_objects[i - 2]->getType() == Object::Type::PORTAL)
+				gpu_obj.radius = i - 2;
+
+			Quad *quad = portal->createSupportQuad();
+			_objects.push_back(quad);
 		}
 
 		_gpu_objects.push_back(gpu_obj);
