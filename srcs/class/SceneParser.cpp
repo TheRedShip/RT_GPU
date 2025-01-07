@@ -43,6 +43,12 @@ SceneParser::SceneParser(Scene *scene) : _scene(scene)
 		try { return (new Cube(ss)); }
 		catch (const std::exception &e) { throw; }
 	};
+	
+	object_parsers["po"] = [](std::stringstream &ss) -> Object *
+	{
+		try { return (new Portal(ss)); }
+		catch (const std::exception &e) { throw; }
+	};
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)
@@ -51,7 +57,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	float		emission;
 	float		roughness;
 	float		metallic;
-	int			type;
+	std::string	type;
 
 	Material	*mat;
 
@@ -59,15 +65,20 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		throw std::runtime_error("Material: Missing material properties");
 
 	if (!(line >> type))
-		type = 0;
-
+		type = "LAM";
+	
 	mat = new Material;
 
 	mat->color = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
 	mat->emission = emission;
 	mat->roughness = roughness;
 	mat->metallic = metallic;
-	mat->type = type;
+	
+	mat->type = 0;
+	if (type == "LAM")
+		mat->type = 0;
+	else if (type == "DIE")
+		mat->type = 1;
 
 	_scene->addMaterial(mat);
 }

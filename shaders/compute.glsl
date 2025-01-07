@@ -11,7 +11,7 @@ struct GPUObject {
 	
 	vec3	vertex1;		// 12 + 4
 	vec3	vertex2;		// 12 + 4
-	
+
 	float   radius;         // 4
 
 	int		mat_index;		// 4
@@ -62,25 +62,53 @@ struct hitInfo
 #include "shaders/intersect.glsl"
 #include "shaders/scatter.glsl"
 
+Ray	portalRay(Ray ray, hitInfo hit)
+{
+	GPUObject	portal_1;
+	GPUObject	portal_2;
+	vec3		relative;
+
+	portal_1 = objects[hit.obj_index];
+	portal_2 = objects[int(portal_1.radius)]; // saving memory radius = portal_index
+		
+	vec3 portal_2_normal = normalize(cross(portal_2.vertex1, portal_2.vertex2));
+	portal_2_normal *= sign(dot(ray.direction, portal_2_normal));
+	
+	relative = portal_2.position - portal_1.position;
+	
+	ray.origin = hit.position + relative + portal_2_normal * 0.01;
+	ray.direction = normalize(ray.direction + portal_2_normal * 0.01);
+
+	return (ray);
+}
+
 hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
-	hit.t = 1e30;
-	hit.obj_index = -1;
 
-	for (int i = 0; i < u_objectsNum; i++)
+	for (int p = 0; p < 2; p++) //portals
 	{
-		GPUObject obj = objects[i];
-
-		hitInfo temp_hit;
-		if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t)
+		hit.t = 1e30;
+		hit.obj_index = -1;
+		
+		for (int i = 0; i < u_objectsNum; i++)
 		{
-			hit.t = temp_hit.t;
-			hit.obj_index = i;
-			hit.position = temp_hit.position;
-			hit.normal = temp_hit.normal;
+			GPUObject obj = objects[i];
+
+			hitInfo temp_hit;
+			if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t)
+			{
+				hit.t = temp_hit.t;
+				hit.obj_index = i;
+				hit.position = temp_hit.position;
+				hit.normal = temp_hit.normal;
+			}
 		}
+		if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
+			break ;
+		ray = portalRay(ray, hit);
 	}
+
 
 	return (hit);
 }
@@ -105,10 +133,10 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		GPUMaterial mat = materials[obj.mat_index];
 		
 		// RR
-		// float p = max(color.r, max(color.g, color.b));
-        // if (randomValue(rng_state) > p && i > 1)
-        //     break;
-        // color /= p;
+		float p = max(color.r, max(color.g, color.b));
+        if (randomValue(rng_state) > p && i > 1)
+            break;
+        color /= p;
 		//
 
 		color *= mat.color;

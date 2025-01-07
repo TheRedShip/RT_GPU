@@ -41,6 +41,7 @@ struct Vertex {
 # include "objects/Quad.hpp"
 # include "objects/Triangle.hpp"
 # include "objects/Cube.hpp"
+# include "objects/Portal.hpp"
 
 # include "Camera.hpp"
 # include "Window.hpp"

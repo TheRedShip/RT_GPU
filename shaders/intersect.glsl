@@ -153,7 +153,7 @@ bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
         return (intersectSphere(ray, obj, hit));
     if (obj.type == 1)
         return (intersectPlane(ray, obj, hit));
-    if (obj.type == 2)
+    if (obj.type == 2 || obj.type == 5)
         return (intersectQuad(ray, obj, hit));
     if (obj.type == 3)
         return (intersectTriangle(ray, obj, hit));

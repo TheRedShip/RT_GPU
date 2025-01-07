@@ -1,3 +1,5 @@
+#define M_PI 3.14159265359
+
 float randomValue(inout uint rng_state)
 {
 	rng_state = rng_state * 747796405u + 2891336453u;
@@ -8,7 +10,7 @@ float randomValue(inout uint rng_state)
 
 float randomValueNormalDistribution(inout uint rng_state)
 {
-	float theta = 2.0 * 3.14159265359 * randomValue(rng_state);
+	float theta = 2.0 * M_PI * randomValue(rng_state);
 	float rho = sqrt(-2.0 * log(randomValue(rng_state)));
 	return (rho * cos(theta));
 }
@@ -27,7 +29,6 @@ vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
 	return (direction * sign(dot(normal, direction)));
 }
 
-#define M_PI 3.1415926535897932384626433832795
 
 // vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
 // {

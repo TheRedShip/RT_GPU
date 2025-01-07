@@ -106,6 +106,13 @@ void		Scene::updateGPUData()
 			gpu_obj.vertex1 = cube->getSize();
 			gpu_obj.type = static_cast<int>(cube->getType());
 		}
+		else if (obj->getType() == Object::Type::PORTAL)
+		{
+			auto portal = static_cast<const Portal *>(obj);
+			gpu_obj.vertex1 = portal->getEdge1();
+			gpu_obj.vertex2 = portal->getEdge2();
+			gpu_obj.radius = portal->getLinkedPortalIndex();
+		}
 
 		_gpu_objects.push_back(gpu_obj);
 	}
