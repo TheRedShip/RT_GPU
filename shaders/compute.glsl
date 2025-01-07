@@ -90,7 +90,7 @@ hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 2; p++) //portals
+	for (int p = 0; p < 10; p++) //portals
 	{
 		hit.t = 1e30;
 		hit.obj_index = -1;
