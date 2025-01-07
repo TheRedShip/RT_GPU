@@ -105,10 +105,10 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		GPUMaterial mat = materials[obj.mat_index];
 		
 		// RR
-		float p = max(color.r, max(color.g, color.b));
-        if (randomValue(rng_state) > p)
-            break;
-        color /= p;
+		// float p = max(color.r, max(color.g, color.b));
+        // if (randomValue(rng_state) > p && i > 1)
+        //     break;
+        // color /= p;
 		//
 
 		color *= mat.color;

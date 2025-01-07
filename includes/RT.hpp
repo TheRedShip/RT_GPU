@@ -13,8 +13,8 @@
 #ifndef RT__HPP
 # define RT__HPP
 
-# define WIDTH 1000
-# define HEIGHT 1000
+# define WIDTH 1920
+# define HEIGHT 1080
 
 # include "glm/glm.hpp"
 # include "glm/gtc/matrix_transform.hpp"
