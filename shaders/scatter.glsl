@@ -7,30 +7,10 @@ Ray lambertRay(hitInfo hit, Ray ray, GPUMaterial mat, uint rng_state)
 	bool is_specular = (mat.metallic >= randomValue(rng_state));
 
 	ray.origin = hit.position + hit.normal * 0.001;
-	ray.direction = mix(diffuse_dir, specular_dir, mat.roughness * float(is_specular));
+	ray.direction = normalize(mix(diffuse_dir, specular_dir, mat.roughness * float(is_specular)));
 
 	return (ray);
 }
-
-// Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
-// {
-//     float	refraction_ratio;
-// 	vec3	unit_direction;
-
-//     refraction_ratio = 1.0f / mat.roughness;  //mat.roughness = refraction (saving memory)
-
-// 	if (dot(ray.direction, hit.normal) > 0.0f)
-// 	{
-// 		hit.normal = -hit.normal;
-// 		refraction_ratio = mat.roughness;
-// 	}
-
-// 	unit_direction = normalize(ray.direction);
-// 	ray.origin = hit.position + hit.normal * -0.0001f;
-// 	ray.direction = refract(unit_direction, hit.normal, refraction_ratio);
-	
-//     return (ray);
-// }
 
 Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
 {
@@ -39,18 +19,19 @@ Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
 
     refraction_ratio = 1.0f / mat.roughness;  //mat.roughness = refraction (saving memory)
 
-    float d = dot(ray.direction, hit.normal);
-    hit.normal *= sign(d);
-
-	if (d > 0.0f)
+	if (dot(ray.direction, hit.normal) > 0.0f)
+	{
+		hit.normal = -hit.normal;
 		refraction_ratio = mat.roughness;
+	}
 
 	unit_direction = normalize(ray.direction);
-	ray.origin = hit.position + hit.normal * 0.0001f;
-	ray.direction = refract(unit_direction, -hit.normal, refraction_ratio);
+	ray.origin = hit.position + hit.normal * -0.0001f;
+	ray.direction = refract(unit_direction, hit.normal, refraction_ratio);
 	
     return (ray);
 }
+
 
 Ray newRay(hitInfo hit, Ray ray, uint rng_state)
 {

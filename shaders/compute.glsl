@@ -135,7 +135,8 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
 		{
-			light += vec3(0); //ambient color 
+			light += GetEnvironmentLight(ray);
+			// light += vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f); //ambient color 
 			break;
 		}
 

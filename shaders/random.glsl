@@ -29,28 +29,21 @@ vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
 	return (direction * sign(dot(normal, direction)));
 }
 
+vec3 GetEnvironmentLight(Ray ray)
+{
+	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
+	float SunFocus = 1.5;
+	float SunIntensity = 1;
 
-// vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
-// {
-//     float r1 = randomValue(rng_state);
-//     float r2 = randomValue(rng_state);
-    
-//     float phi = 2.0 * M_PI * r1;
-//     float cos_theta = sqrt(1.0 - r2);
-//     float sin_theta = sqrt(r2);
-    
-//     // Create orthonormal basis
-//     vec3 tangent, bitangent;
-//     if (abs(normal.x) > abs(normal.z)) {
-//         tangent = normalize(vec3(-normal.y, normal.x, 0.0));
-//     } else {
-//         tangent = normalize(vec3(0.0, -normal.z, normal.y));
-//     }
-//     bitangent = cross(normal, tangent);
-    
-//     return normalize(
-//         tangent * (cos(phi) * sin_theta) +
-//         bitangent * (sin(phi) * sin_theta) +
-//         normal * cos_theta
-//     );
-// }
+	vec3 GroundColour = vec3(0.5, 0.5, 0.5);
+	vec3 SkyColourHorizon = vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f);
+	vec3 SkyColourZenith = SkyColourHorizon / 2.0;
+
+	float skyGradientT = pow(smoothstep(0, 0.4, ray.direction.y), 0.35);
+	float groundToSkyT = smoothstep(-0.01, 0, ray.direction.y);
+	vec3 skyGradient = mix(SkyColourHorizon, SkyColourZenith, skyGradientT);
+	float sun = pow(max(0, dot(ray.direction, sun_pos.xyz)), SunFocus) * SunIntensity;
+	// Combine ground, sky, and sun
+	vec3 composite = mix(GroundColour, skyGradient, groundToSkyT) + sun * int(groundToSkyT >= 1);
+	return composite;
+}
