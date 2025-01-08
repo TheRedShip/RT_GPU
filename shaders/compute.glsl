@@ -135,7 +135,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
 		{
-			light += GetEnvironmentLight(ray);
+			// light += GetEnvironmentLight(ray);
 			// light += vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f); //ambient color 
 			break;
 		}
@@ -145,7 +145,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		
 		// RR
 		float p = max(color.r, max(color.g, color.b));
-        if (randomValue(rng_state) > p)
+        if (randomValue(rng_state) > p && i > 1)
             break;
         color /= p;
 		//
@@ -159,6 +159,33 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		ray = newRay(hit, ray, rng_state);
 	}
 	return (color * light);
+}
+
+Ray initRay(vec2 uv, inout uint rng_state)
+{
+	float fov = 90.0;
+	float focal_length = 1.0 / tan(radians(fov) / 2.0);
+	
+	vec3 origin = u_cameraPosition;
+	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
+	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
+	
+	float focus_distance = 4.5;
+	float aperture = 0.25;
+	
+	vec3 right = vec3(u_viewMatrix[0][0], u_viewMatrix[1][0], u_viewMatrix[2][0]);
+	vec3 up = vec3(u_viewMatrix[0][1], u_viewMatrix[1][1], u_viewMatrix[2][1]);
+
+	vec3 focal_point = u_cameraPosition + ray_direction * focus_distance;
+
+	float r = sqrt(randomValue(rng_state));
+	float theta = 2.0 * M_PI * randomValue(rng_state);
+	vec2 lens_point = aperture * r * vec2(cos(theta), sin(theta));
+
+	origin += right * lens_point.x + up * lens_point.y;
+	ray_direction = normalize(focal_point - origin);
+
+	return (Ray(origin, ray_direction));
 }
 
 void main()
@@ -175,22 +202,7 @@ void main()
 	vec2 uv = ((vec2(pixel_coords) + jitter) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
 
-	float fov = 90.0;
-	float focal_length = 1.0 / tan(radians(fov) / 2.0);
-	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
-	
-	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
-	
-	float focal_distance = 0.0;
-	float aperture_size = 0.0;
-
-	float theta = randomValue(rng_state) * 2.0 * M_PI;
-	float radius = sqrt(randomValue(rng_state)) * aperture_size;
-	vec2 aperture_point = vec2(cos(theta) * radius, sin(theta) * radius);
-
-	vec3 ray_origin = u_cameraPosition + vec3(aperture_point, 0.0);
-
-	Ray ray = Ray(ray_origin, ray_direction);
+	Ray ray = initRay(uv, rng_state);
 	vec3 color = pathtrace(ray, rng_state);
 	
 	float blend = 1.0 / float(u_frameCount + 1);
