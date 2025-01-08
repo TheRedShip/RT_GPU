@@ -70,7 +70,7 @@ void		Scene::updateGPUData()
 	_gpu_objects.clear();
 	_gpu_materials.clear();
 	
-	for (int i = 0; i < _objects.size(); i++)
+	for (unsigned int i = 0; i < _objects.size(); i++)
 	{
 		Object *obj = _objects[i];
 
@@ -115,13 +115,18 @@ void		Scene::updateGPUData()
 			gpu_obj.vertex2 = portal->getEdge2();
 			gpu_obj.normal = portal->getNormal();
 			gpu_obj.transform = glm::mat4(portal->getTransform());
-	
-			gpu_obj.radius = i + 2;
-			if (_objects[i - 2]->getType() == Object::Type::PORTAL)
-				gpu_obj.radius = i - 2;
+			
+			Portal *linked = static_cast<Portal *>(_objects[i - 2]);
 
-			Quad *quad = portal->createSupportQuad();
-			_objects.push_back(quad);
+			if (portal->getLinkedPortalIndex() == -1)
+			{
+				if (linked->getType() == Object::Type::PORTAL && linked->getLinkedPortalIndex() == static_cast<int>(i))
+					portal->setLinkedPortalIndex(i - 2);
+				else
+					portal->setLinkedPortalIndex(i + 2);
+			}
+
+			gpu_obj.radius = portal->getLinkedPortalIndex();
 		}
 
 		_gpu_objects.push_back(gpu_obj);

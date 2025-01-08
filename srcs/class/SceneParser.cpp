@@ -111,6 +111,9 @@ bool		SceneParser::parseLine(const std::string &line)
 			Object *obj = it->second(ss);
 			(void) _scene->getMaterial(obj->getMaterialIndex()); //verify material
 			
+			if (obj->getType() == Object::Type::PORTAL)
+				_scene->addObject(static_cast<Portal *>(obj)->createSupportQuad());
+			
 			_scene->addObject(obj);
 		}
 

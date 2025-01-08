@@ -78,6 +78,12 @@ Ray	portalRay(Ray ray, hitInfo hit)
 	
 	mat3	rotation = mat3(portal_2.transform) * transpose(mat3(portal_1.transform));
 
+	if (dot(portal_1.normal, portal_2.normal) > 0.0)
+	{
+		mat3 reflection = mat3(1.0) - 2.0 * outerProduct(portal_2.normal, portal_2.normal);
+		rotation *= reflection;
+	}
+
 	ray.origin = portal_2.position + rotation * relative;
 	ray.direction = normalize(rotation * ray.direction);
 
@@ -90,7 +96,7 @@ hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 10; p++) //portals
+	for (int p = 0; p < 5; p++) //portals
 	{
 		hit.t = 1e30;
 		hit.obj_index = -1;
@@ -137,10 +143,10 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		GPUMaterial mat = materials[obj.mat_index];
 		
 		// RR
-		float p = max(color.r, max(color.g, color.b));
-        if (randomValue(rng_state) > p && i > 1)
-            break;
-        color /= p;
+		// float p = max(color.r, max(color.g, color.b));
+        // if (randomValue(rng_state) > p && i > 1)
+        //     break;
+        // color /= p;
 		//
 
 		color *= mat.color;

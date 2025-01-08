@@ -112,40 +112,45 @@ bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
         
     return (true);
 }
+
 bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)
 {
     vec3 obj_size = obj.vertex1;
-
-    vec3 boxMin = obj.position - obj_size * 0.5;
-    vec3 boxMax = obj.position + obj_size * 0.5;
-
-    vec3 t1 = (boxMin - ray.origin) / ray.direction;
-    vec3 t2 = (boxMax - ray.origin) / ray.direction;
-
-    vec3 tNear = min(t1, t2);
-    vec3 tFar = max(t1, t2);
-
-    float tMin = max(max(tNear.x, tNear.y), tNear.z);
-    float tMax = min(min(tFar.x, tFar.y), tFar.z);
-
-    if (tMax < tMin || tMax < 0.0)
-        return (false);
-
-    hit.t = tMin > 0.0 ? tMin : tMax; // Use the closer valid intersection point
-    hit.position = ray.origin + hit.t * ray.direction; // Calculate hit position
-
-    vec3 hitPointLocal = hit.position - obj.position;
     vec3 halfSize = obj_size * 0.5;
-
-    if (abs(hitPointLocal.x) > halfSize.x - 1e-4)
-        hit.normal = vec3(sign(hitPointLocal.x), 0.0, 0.0);
-    else if (abs(hitPointLocal.y) > halfSize.y - 1e-4)
-        hit.normal = vec3(0.0, sign(hitPointLocal.y), 0.0);
-    else if (abs(hitPointLocal.z) > halfSize.z - 1e-4)
-        hit.normal = vec3(0.0, 0.0, sign(hitPointLocal.z));
-
-    return (true);
+    vec3 rayOriginLocal = ray.origin - obj.position;
+    
+    vec3 invDir = 1.0 / ray.direction;
+    vec3 t1 = (-halfSize - rayOriginLocal) * invDir;
+    vec3 t2 = (halfSize - rayOriginLocal) * invDir;
+    
+    vec3 tMinVec = min(t1, t2);
+    vec3 tMaxVec = max(t1, t2);
+    
+    float tMin = max(tMinVec.x, max(tMinVec.y, tMinVec.z));
+    float tMax = min(tMaxVec.x, min(tMaxVec.y, tMaxVec.z));
+    
+    bool hit_success = (tMax >= tMin) && (tMax > 0.0);
+    if (!hit_success) return false;
+    
+    hit.t = tMin > 0.0 ? tMin : tMax;
+    
+    vec3 hitPointLocal = rayOriginLocal + hit.t * ray.direction;
+    hit.position = hitPointLocal + obj.position;
+    
+    vec3 distances = abs(hitPointLocal) - halfSize;
+    
+    const float epsilon = 1e-4;
+    vec3 signs = sign(hitPointLocal);
+    vec3 masks = step(abs(distances), vec3(epsilon));
+    
+    hit.normal = normalize(masks * signs);
+    
+    bool inside = all(lessThan(abs(rayOriginLocal), halfSize + vec3(epsilon)));
+    hit.normal *= (inside ? -1.0 : 1.0);
+    
+    return true;
 }
+
 
 bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
 {
