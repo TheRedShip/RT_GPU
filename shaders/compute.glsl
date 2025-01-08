@@ -96,7 +96,7 @@ hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 5; p++) //portals
+	for (int p = 0; p < 20; p++) //portals
 	{
 		hit.t = 1e30;
 		hit.obj_index = -1;
@@ -145,7 +145,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		
 		// RR
 		float p = max(color.r, max(color.g, color.b));
-        if (randomValue(rng_state) > p && i > 1)
+        if (i > 1 && randomValue(rng_state) > p)
             break;
         color /= p;
 		//
@@ -171,7 +171,7 @@ Ray initRay(vec2 uv, inout uint rng_state)
 	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
 	
 	float focus_distance = 4.5;
-	float aperture = 0.25;
+	float aperture = 0;
 	
 	vec3 right = vec3(u_viewMatrix[0][0], u_viewMatrix[1][0], u_viewMatrix[2][0]);
 	vec3 up = vec3(u_viewMatrix[0][1], u_viewMatrix[1][1], u_viewMatrix[2][1]);

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2024/12/23 18:40:17 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/08 20:08:03 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,7 +106,6 @@ void		Scene::updateGPUData()
 			auto cube = static_cast<Cube *>(obj);
 			gpu_obj.position = cube->getPosition();
 			gpu_obj.vertex1 = cube->getSize();
-			gpu_obj.type = static_cast<int>(cube->getType());
 		}
 		else if (obj->getType() == Object::Type::PORTAL)
 		{

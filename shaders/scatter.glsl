@@ -1,5 +1,5 @@
 
-Ray lambertRay(hitInfo hit, Ray ray, GPUMaterial mat, uint rng_state)
+Ray lambertRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
 {
 	vec3 diffuse_dir = normalize(hit.normal + randomDirection(rng_state));
 	vec3 specular_dir = reflect(ray.direction, hit.normal);
@@ -33,7 +33,7 @@ Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
 }
 
 
-Ray newRay(hitInfo hit, Ray ray, uint rng_state)
+Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
     GPUObject	obj;
 	GPUMaterial	mat;
