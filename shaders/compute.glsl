@@ -19,6 +19,9 @@ struct GPUObject {
 
 	int		mat_index;		// 4
 	int     type;           // 4
+
+	vec3	cube_size() { return (vertex1); }
+	int		portal_index() { return (int(radius)); }
 };
 
 struct GPUMaterial
@@ -28,6 +31,7 @@ struct GPUMaterial
 	float   roughness;      // 4
 	float   metallic;       // 4
 	int		type;			// 4
+	int		texture_index;	// 4
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -72,7 +76,7 @@ Ray	portalRay(Ray ray, hitInfo hit)
 	vec3		relative;
 
 	portal_1 = objects[hit.obj_index];
-	portal_2 = objects[int(portal_1.radius)]; // saving memory radius = portal_index
+	portal_2 = objects[portal_1.portal_index()]; // saving memory radius = portal_index
 		
 	relative = hit.position - portal_1.position;
 	
@@ -171,7 +175,7 @@ Ray initRay(vec2 uv, inout uint rng_state)
 	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
 	
 	float focus_distance = 4.5;
-	float aperture = 0;
+	float aperture = 0.1;
 	
 	vec3 right = vec3(u_viewMatrix[0][0], u_viewMatrix[1][0], u_viewMatrix[2][0]);
 	vec3 up = vec3(u_viewMatrix[0][1], u_viewMatrix[1][1], u_viewMatrix[2][1]);
