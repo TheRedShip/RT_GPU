@@ -23,6 +23,13 @@ vec3 randomDirection(inout uint rng_state)
 	return normalize(vec3(x, y, z));
 }
 
+vec2 randomPointInCircle(inout uint rng_state)
+{
+	float angle = randomValue(rng_state) * 2 * M_PI;
+	vec2 point_in_circle = vec2(cos(angle), sin(angle));
+	return (point_in_circle * sqrt(randomValue(rng_state)));
+}
+
 vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
 {
 	vec3 direction = randomDirection(rng_state);

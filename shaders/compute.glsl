@@ -144,10 +144,10 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		GPUMaterial mat = materials[obj.mat_index];
 		
 		// RR
-		// float p = max(color.r, max(color.g, color.b));
-        // if (randomValue(rng_state) > p && i > 1)
-        //     break;
-        // color /= p;
+		float p = max(color.r, max(color.g, color.b));
+        if (randomValue(rng_state) > p)
+            break;
+        color /= p;
 		//
 
 		color *= mat.color;
@@ -167,19 +167,30 @@ void main()
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 
-	vec2 uv = (vec2(pixel_coords) / u_resolution) * 2.0 - 1.0;;
+	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
+	rng_state = rng_state + u_frameCount * 719393;
+
+	vec2 jitter = randomPointInCircle(rng_state);
+
+	vec2 uv = ((vec2(pixel_coords) + jitter) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	float fov = 90.0;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
 	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
-
+	
 	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
-	Ray ray = Ray(u_cameraPosition, ray_direction);
+	
+	float focal_distance = 0.0;
+	float aperture_size = 0.0;
 
-	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
-	rng_state = rng_state + u_frameCount * 719393;
+	float theta = randomValue(rng_state) * 2.0 * M_PI;
+	float radius = sqrt(randomValue(rng_state)) * aperture_size;
+	vec2 aperture_point = vec2(cos(theta) * radius, sin(theta) * radius);
 
+	vec3 ray_origin = u_cameraPosition + vec3(aperture_point, 0.0);
+
+	Ray ray = Ray(ray_origin, ray_direction);
 	vec3 color = pathtrace(ray, rng_state);
 	
 	float blend = 1.0 / float(u_frameCount + 1);
