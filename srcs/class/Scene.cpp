@@ -91,8 +91,8 @@ void		Scene::updateGPUData()
 		else if (obj->getType() == Object::Type::QUAD)
 		{
 			auto quad = static_cast<Quad *>(obj);
-			gpu_obj.vertex1 = quad->getEdge1();
-			gpu_obj.vertex2 = quad->getEdge2();
+			gpu_obj.vertex1 = quad->getUp();
+			gpu_obj.vertex2 = quad->getRight();
 		}
 		else if (obj->getType() == Object::Type::TRIANGLE)
 		{
@@ -110,8 +110,8 @@ void		Scene::updateGPUData()
 		else if (obj->getType() == Object::Type::PORTAL)
 		{
 			auto portal = static_cast<Portal *>(obj);
-			gpu_obj.vertex1 = portal->getEdge1();
-			gpu_obj.vertex2 = portal->getEdge2();
+			gpu_obj.vertex1 = portal->getUp();
+			gpu_obj.vertex2 = portal->getRight();
 			gpu_obj.normal = portal->getNormal();
 			gpu_obj.transform = glm::mat4(portal->getTransform());
 			

@@ -39,23 +39,23 @@ class Quad : public Object
 					throw std::runtime_error("Missing material properties");
 
 				_position = glm::vec3(x, y, z);
-				_edge1 = glm::vec3(x1, y1, z1);
-				_edge2 = glm::vec3(x2, y2, z2);
+				_up = glm::vec3(x1, y1, z1);
+				_right = glm::vec3(x2, y2, z2);
 
 				_mat_index = mat_index;
 			}
 			catch (const std::exception &e) { throw; }
 		}
 		Quad(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int mat_index)
-			: Object(position, mat_index), _edge1(edge1), _edge2(edge2) {}
+			: Object(position, mat_index), _up(edge1), _right(edge2) {}
 
-		glm::vec3	getEdge1() const { return (_edge1); }
-		glm::vec3	getEdge2() const { return (_edge2); }
+		glm::vec3	getUp() const { return (_up); }
+		glm::vec3	getRight() const { return (_right); }
 		Type		getType() const override { return Type::QUAD; }
 
 	private:
-		glm::vec3	_edge1;
-		glm::vec3	_edge2;
+		glm::vec3	_up;
+		glm::vec3	_right;
 };
 
 #endif

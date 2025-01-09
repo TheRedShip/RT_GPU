@@ -95,7 +95,41 @@ glm::vec3	Camera::getPosition()
 	return (_position);
 }
 
+glm::vec2	Camera::getDirection()
+{
+	return (glm::vec2(_pitch, _yaw));
+}
+
+glm::vec2	Camera::getDOV()
+{
+	return (glm::vec2(_aperture_size, _focus_distance));
+}
+
+GPUCamera	Camera::getGPUData()
+{
+	GPUCamera data;
+
+	data.aperture_size = _aperture_size;
+	data.focus_distance = _focus_distance;
+	data.camera_position = _position;
+	data.view_matrix = getViewMatrix();
+
+	return (data);
+}
+
 void		Camera::setPosition(glm::vec3 position)
 {
 	_position = position;
+}
+
+void		Camera::setDirection(float pitch, float yaw)
+{
+	_pitch = pitch;
+	_yaw = yaw;
+}
+
+void		Camera::setDOV(float aperture, float focus)
+{
+	_aperture_size = aperture;
+	_focus_distance = focus;
 }

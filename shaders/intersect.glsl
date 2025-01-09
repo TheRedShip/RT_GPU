@@ -115,7 +115,7 @@ bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 
 bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)
 {
-    vec3 halfSize = obj.cube_size() * 0.5;
+    vec3 halfSize = obj.vertex1 * 0.5;
     vec3 rayOriginLocal = ray.origin - obj.position;
     
     vec3 invDir = 1.0 / ray.direction;

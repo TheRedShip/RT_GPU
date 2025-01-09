@@ -14,14 +14,10 @@ struct GPUObject {
 	vec3	vertex1;		// 12 + 4
 	vec3	vertex2;		// 12 + 4
 
-
 	float   radius;         // 4
 
 	int		mat_index;		// 4
 	int     type;           // 4
-
-	vec3	cube_size() { return (vertex1); }
-	int		portal_index() { return (int(radius)); }
 };
 
 struct GPUMaterial
@@ -34,6 +30,14 @@ struct GPUMaterial
 	int		texture_index;	// 4
 };
 
+struct GPUCamera
+{
+	mat4 view_matrix;
+    vec3 position;
+    float aperture_size;
+    float focus_distance;
+};
+
 layout(std430, binding = 1) buffer ObjectBuffer
 {
 	GPUObject objects[];
@@ -44,10 +48,13 @@ layout(std430, binding = 2) buffer MaterialBuffer
 	GPUMaterial materials[];
 };
 
+layout(std140) uniform CameraData
+{
+    GPUCamera camera;
+};
+
 uniform int     u_objectsNum;
 uniform vec2    u_resolution;
-uniform vec3    u_cameraPosition;
-uniform mat4    u_viewMatrix;
 uniform int		u_frameCount;
 uniform float	u_time;
 
@@ -76,7 +83,7 @@ Ray	portalRay(Ray ray, hitInfo hit)
 	vec3		relative;
 
 	portal_1 = objects[hit.obj_index];
-	portal_2 = objects[portal_1.portal_index()]; // saving memory radius = portal_index
+	portal_2 = objects[int(portal_1.radius)]; // saving memory radius = portal_index
 		
 	relative = hit.position - portal_1.position;
 	
@@ -100,7 +107,7 @@ hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 20; p++) //portals
+	for (int p = 0; p < 5; p++) //portals
 	{
 		hit.t = 1e30;
 		hit.obj_index = -1;
@@ -139,7 +146,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
 		{
-			// light += GetEnvironmentLight(ray);
+			light += GetEnvironmentLight(ray);
 			// light += vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f); //ambient color 
 			break;
 		}
@@ -170,21 +177,18 @@ Ray initRay(vec2 uv, inout uint rng_state)
 	float fov = 90.0;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
 	
-	vec3 origin = u_cameraPosition;
+	vec3 origin = camera.position;
 	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
-	vec3 ray_direction = normalize((inverse(u_viewMatrix) * vec4(view_space_ray, 0.0)).xyz);
+	vec3 ray_direction = normalize((inverse(camera.view_matrix) * vec4(view_space_ray, 0.0)).xyz);
 	
-	float focus_distance = 4.5;
-	float aperture = 0.1;
-	
-	vec3 right = vec3(u_viewMatrix[0][0], u_viewMatrix[1][0], u_viewMatrix[2][0]);
-	vec3 up = vec3(u_viewMatrix[0][1], u_viewMatrix[1][1], u_viewMatrix[2][1]);
+	vec3 right = vec3(camera.view_matrix[0][0], camera.view_matrix[1][0], camera.view_matrix[2][0]);
+	vec3 up = vec3(camera.view_matrix[0][1], camera.view_matrix[1][1], camera.view_matrix[2][1]);
 
-	vec3 focal_point = u_cameraPosition + ray_direction * focus_distance;
+	vec3 focal_point = origin + ray_direction * camera.focus_distance;
 
 	float r = sqrt(randomValue(rng_state));
 	float theta = 2.0 * M_PI * randomValue(rng_state);
-	vec2 lens_point = aperture * r * vec2(cos(theta), sin(theta));
+	vec2 lens_point = camera.aperture_size * r * vec2(cos(theta), sin(theta));
 
 	origin += right * lens_point.x + up * lens_point.y;
 	ray_direction = normalize(focal_point - origin);

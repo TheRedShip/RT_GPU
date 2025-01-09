@@ -28,6 +28,12 @@ int main(int argc, char **argv)
 	GLuint materialSSBO;
     glGenBuffers(1, &materialSSBO);
 
+	GLuint cameraUBO;
+	glGenBuffers(1, &cameraUBO);
+	glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUCamera), nullptr, GL_DYNAMIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUBO);
+
 	shader.attach();
 
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
@@ -56,12 +62,14 @@ int main(int argc, char **argv)
 		glBufferData(GL_SHADER_STORAGE_BUFFER, material_data.size() * sizeof(GPUMaterial), material_data.data(), GL_DYNAMIC_DRAW);
         glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
 
+		GPUCamera camera_data = scene.getCamera()->getGPUData();
+		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
+
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-		shader.set_vec3("u_cameraPosition", scene.getCamera()->getPosition());
-		shader.set_mat4("u_viewMatrix", scene.getCamera()->getViewMatrix());
 		
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

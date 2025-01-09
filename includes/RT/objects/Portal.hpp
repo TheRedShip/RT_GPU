@@ -45,11 +45,11 @@ class Portal : public Object
 					throw std::runtime_error("Missing material properties");
 
 				_position = glm::vec3(x, y, z);
-				_edge1 = glm::vec3(x1, y1, z1);
-				_edge2 = glm::vec3(x2, y2, z2);
+				_up = glm::vec3(x1, y1, z1);
+				_right = glm::vec3(x2, y2, z2);
 
-				glm::vec3 up = glm::normalize(_edge1);
-				glm::vec3 right = glm::normalize(_edge2);
+				glm::vec3 up = glm::normalize(_up);
+				glm::vec3 right = glm::normalize(_right);
 				glm::vec3 forward = glm::normalize(glm::cross(right, up));
 
 				up = normalize(glm::cross(forward, right));
@@ -64,17 +64,17 @@ class Portal : public Object
 			catch (const std::exception &e) { throw; }
 		}
 		Portal(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int linked_portal, const int mat_index)
-			: Object(position, mat_index), _edge1(edge1), _edge2(edge2), _linked_portal(linked_portal) {}
+			: Object(position, mat_index), _up(edge1), _right(edge2), _linked_portal(linked_portal) {}
 
 		Quad		*createSupportQuad() const
 		{
 			float extension = 0.2f;
 			
-			glm::vec3 right_dir = glm::normalize(_edge1);
-			glm::vec3 up_dir = glm::normalize(_edge2);
+			glm::vec3 right_dir = glm::normalize(_up);
+			glm::vec3 up_dir = glm::normalize(_right);
 
-			float right_length = glm::length(_edge1) + extension;
-			float up_length = glm::length(_edge2) + extension;
+			float right_length = glm::length(_up) + extension;
+			float up_length = glm::length(_right) + extension;
 
 			glm::vec3 center_offset = -(right_dir * (extension / 2.0f) + up_dir * (extension / 2.0f));
 			glm::vec3 position = _position + _normal * -0.001f + center_offset;
@@ -85,8 +85,8 @@ class Portal : public Object
 			return (new Quad(position, right, up, _mat_index));
 		}
 
-		glm::vec3	getEdge1() const { return (_edge1); }
-		glm::vec3	getEdge2() const { return (_edge2); }
+		glm::vec3	getUp() const { return (_up); }
+		glm::vec3	getRight() const { return (_right); }
 		glm::vec3	getNormal() const { return (_normal); }
 		
 		glm::mat3	getTransform() const { return (_transform); }
@@ -97,8 +97,8 @@ class Portal : public Object
 		Type		getType() const override { return Type::PORTAL; }
 
 	private:
-		glm::vec3	_edge1;
-		glm::vec3	_edge2;
+		glm::vec3	_up;
+		glm::vec3	_right;
 		glm::vec3	_normal;
 
 		glm::mat3	_transform;
