@@ -58,60 +58,60 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
     
     return (inside);
 }
+intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
+{
+    vec3 pvec = cross(ray.direction, obj.vertex2);
+    float det = dot(obj.vertex1, pvec);
+    vec3 tvec = ray.origin - obj.position;
+    
+    float invDet = 1.0 / det;
+    float u = dot(tvec, pvec) * invDet;
+    vec3 qvec = cross(tvec, obj.vertex1);
+    float v = dot(ray.direction, qvec) * invDet;
+    float t = dot(obj.vertex2, qvec) * invDet;
+    
+    bool valid = abs(det) > 1e-8 &&
+                u >= 0.0 && u <= 1.0 &&
+                v >= 0.0 && (u + v) <= 1.0 &&
+                t > 0.0;
+    
+    hit.t = t;
+    hit.position = ray.origin + ray.direction * t;
+    hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
+    
+    return (valid);
+}
+bool 
 
 // bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 // {
 //     vec3 pvec = cross(ray.direction, obj.vertex2);
 //     float det = dot(obj.vertex1, pvec);
-//     vec3 tvec = ray.origin - obj.position;
+    
+//     if (abs(det) < 1e-8) return (false); // det < 0.0
     
 //     float invDet = 1.0 / det;
+    
+//     vec3 tvec = ray.origin - obj.position;
+    
 //     float u = dot(tvec, pvec) * invDet;
+//     if (u < 0.0 || u > 1.0) return (false);
+    
 //     vec3 qvec = cross(tvec, obj.vertex1);
 //     float v = dot(ray.direction, qvec) * invDet;
-//     float t = dot(obj.vertex2, qvec) * invDet;
+//     if (v < 0.0 || u + v > 1.0) return (false);
     
-//     bool valid = abs(det) > 1e-8 &&
-//                 u >= 0.0 && u <= 1.0 &&
-//                 v >= 0.0 && (u + v) <= 1.0 &&
-//                 t > 0.0;
+//     float t = dot(obj.vertex2, qvec) * invDet;
+//     if (t <= 0.0) return (false);
     
 //     hit.t = t;
 //     hit.position = ray.origin + ray.direction * t;
-//     hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
     
-//     return (valid);
-// }
-
-bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
-{
-    vec3 pvec = cross(ray.direction, obj.vertex2);
-    float det = dot(obj.vertex1, pvec);
-    
-    if (abs(det) < 1e-8) return (false); // det < 0.0
-    
-    float invDet = 1.0 / det;
-    
-    vec3 tvec = ray.origin - obj.position;
-    
-    float u = dot(tvec, pvec) * invDet;
-    if (u < 0.0 || u > 1.0) return (false);
-    
-    vec3 qvec = cross(tvec, obj.vertex1);
-    float v = dot(ray.direction, qvec) * invDet;
-    if (v < 0.0 || u + v > 1.0) return (false);
-    
-    float t = dot(obj.vertex2, qvec) * invDet;
-    if (t <= 0.0) return (false);
-    
-    hit.t = t;
-    hit.position = ray.origin + ray.direction * t;
-    
-    vec3 normal = obj.normal;
-    hit.normal = dot(ray.direction, normal) < 0.0 ? normal : -normal;
+//     vec3 normal = obj.normal;
+//     hit.normal = dot(ray.direction, normal) < 0.0 ? normal : -normal;
         
-    return (true);
-}
+//     return (true);
+// }
 
 bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)
 {

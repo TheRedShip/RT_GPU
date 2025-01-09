@@ -107,7 +107,7 @@ hitInfo	traceRay(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 5; p++) //portals
+	for (int p = 0; p < 25; p++) //portals
 	{
 		hit.t = 1e30;
 		hit.obj_index = -1;
@@ -117,7 +117,7 @@ hitInfo	traceRay(Ray ray)
 			GPUObject obj = objects[i];
 
 			hitInfo temp_hit;
-			if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t)
+			if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
 			{
 				hit.t = temp_hit.t;
 				hit.obj_index = i;
@@ -205,7 +205,7 @@ void main()
 	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
 	rng_state = rng_state + u_frameCount * 719393;
 
-	vec2 jitter = randomPointInCircle(rng_state);
+	vec2 jitter = randomPointInCircle(rng_state) * 1;
 
 	vec2 uv = ((vec2(pixel_coords) + jitter) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
