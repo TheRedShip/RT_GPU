@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/08 20:09:47 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/09 16:17:29 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 {
 	Scene		scene;
 
-	if (argc > 1 && !scene.parseScene(argv[1]))
+	if (argc <= 1 || !scene.parseScene(argv[1]))
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);

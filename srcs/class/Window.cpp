@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 18:39:37 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/09 16:34:48 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,8 +48,6 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 
 Window::~Window(void)
 {
-	delete _scene;
-
 	glfwTerminate();
 }
 
