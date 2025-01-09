@@ -43,7 +43,8 @@ class Object
 			QUAD,
 			TRIANGLE,
 			CUBE,
-			PORTAL
+			PORTAL,
+			CYLINDER
     	};
 
     	virtual Type	getType() const = 0;

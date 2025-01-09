@@ -54,7 +54,7 @@ class Portal : public Object
 
 				up = normalize(glm::cross(forward, right));
 
-				_transform = glm::mat3(right, up, forward);
+				_rotation = glm::mat3(right, up, forward);
 				_normal = forward * (invert_normal ? -1.0f : 1.0f);
 
 				_linked_portal = -1;
@@ -89,7 +89,7 @@ class Portal : public Object
 		glm::vec3	getRight() const { return (_right); }
 		glm::vec3	getNormal() const { return (_normal); }
 		
-		glm::mat3	getTransform() const { return (_transform); }
+		glm::mat3	getRotation() const { return (_rotation); }
 		
 		int			getLinkedPortalIndex() const { return (_linked_portal); }
 		void		setLinkedPortalIndex(int index) { _linked_portal = index; }
@@ -101,7 +101,7 @@ class Portal : public Object
 		glm::vec3	_right;
 		glm::vec3	_normal;
 
-		glm::mat3	_transform;
+		glm::mat3	_rotation;
 
 		int			_linked_portal;
 };

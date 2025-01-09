@@ -58,7 +58,7 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
     
     return (inside);
 }
-intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
+bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 {
     vec3 pvec = cross(ray.direction, obj.vertex2);
     float det = dot(obj.vertex1, pvec);
@@ -81,7 +81,6 @@ intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
     
     return (valid);
 }
-bool 
 
 // bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 // {
@@ -150,6 +149,62 @@ bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)
     return true;
 }
 
+bool intersectCylinder(Ray ray, GPUObject obj, out hitInfo hit) 
+{
+    float radius = obj.normal.x;
+    float height = obj.normal.y;
+    
+    vec3 p = ray.origin - obj.position;
+
+    vec3 d = ray.direction * mat3(obj.rotation);
+    p = p * mat3(obj.rotation);
+    
+    float half_height = height * 0.5;
+
+    float a = d.x * d.x + d.z * d.z;
+    float b = p.x * d.x + p.z * d.z;
+    float c = p.x * p.x + p.z * p.z - radius * radius;
+    
+    float h = b * b - a * c;
+    if (h < 0.0) return false;
+    
+    float sqrt_h = sqrt(h);
+    float t = (-b - sqrt_h) / a;
+    
+    if (t <= 0.0)
+    {
+        t = (-b + sqrt_h) / a;
+        if (t <= 0.0) return false;
+    }
+
+    float y = p.y + t * d.y;
+    
+    if (abs(y) <= half_height)
+    {
+
+        hit.t = t;
+        hit.position = ray.origin + ray.direction * t;
+        
+        vec3 local_normal = vec3(p.x + t * d.x, 0.0, p.z + t * d.z);
+        hit.normal = normalize(local_normal * inverse(mat3(obj.rotation)));
+        return true;
+    }
+    
+    float cap_t = (sign(y) * half_height - p.y) / d.y;
+    if (cap_t <= 0.0) return false;
+
+    float cap_x = p.x + cap_t * d.x;
+    float cap_z = p.z + cap_t * d.z;
+    if (cap_x * cap_x + cap_z * cap_z > radius * radius) return false;
+
+    hit.t = cap_t;
+    hit.position = ray.origin + ray.direction * cap_t;
+    
+
+    vec3 cap_normal = vec3(0.0, sign(y), 0.0);
+    hit.normal = normalize(cap_normal * inverse(mat3(obj.rotation)));
+    return true;
+}
 
 bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
 {
@@ -163,5 +218,7 @@ bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
         return (intersectTriangle(ray, obj, hit));
     if (obj.type == 4)
         return (intersectCube(ray, obj, hit));
+    if (obj.type == 6) 
+        return (intersectCylinder(ray, obj, hit));
     return (false);
 }

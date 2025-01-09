@@ -22,6 +22,7 @@
 # include "glm/gtx/string_cast.hpp"
 # include "glm/gtc/matrix_transform.hpp"
 # include "glm/gtc/type_ptr.hpp"
+# include "glm/gtx/euler_angles.hpp"
 
 # include "glad/gl.h"
 # include "GLFW/glfw3.h"
@@ -46,6 +47,7 @@ struct Vertex {
 # include "objects/Triangle.hpp"
 # include "objects/Cube.hpp"
 # include "objects/Portal.hpp"
+# include "objects/Cylinder.hpp"
 
 # include "Camera.hpp"
 # include "Window.hpp"

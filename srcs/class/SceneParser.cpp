@@ -49,6 +49,12 @@ SceneParser::SceneParser(Scene *scene) : _scene(scene)
 		try { return (new Portal(ss)); }
 		catch (const std::exception &e) { throw; }
 	};
+
+	object_parsers["cy"] = [](std::stringstream &ss) -> Object *
+	{
+		try { return (new Cylinder(ss)); }
+		catch (const std::exception &e) { throw; }
+	};
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)

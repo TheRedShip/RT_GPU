@@ -107,13 +107,19 @@ void		Scene::updateGPUData()
 			gpu_obj.position = cube->getPosition();
 			gpu_obj.vertex1 = cube->getSize();
 		}
+		else if (obj->getType() == Object::Type::CYLINDER)
+		{
+			auto cylinder = static_cast<Cylinder *>(obj);
+			gpu_obj.normal = glm::vec3(cylinder->getRadius(), cylinder->getHeight(), 0.0f);
+			gpu_obj.transform = glm::mat4(cylinder->getRotation());
+		}
 		else if (obj->getType() == Object::Type::PORTAL)
 		{
 			auto portal = static_cast<Portal *>(obj);
 			gpu_obj.vertex1 = portal->getUp();
 			gpu_obj.vertex2 = portal->getRight();
 			gpu_obj.normal = portal->getNormal();
-			gpu_obj.transform = glm::mat4(portal->getTransform());
+			gpu_obj.transform = glm::mat4(portal->getRotation());
 			
 			Portal *linked = static_cast<Portal *>(_objects[i - 2]);
 

@@ -5,7 +5,7 @@ layout(binding = 0, rgba32f) uniform image2D output_image;
 layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
 struct GPUObject {
-	mat4	transform;
+	mat4	rotation;
 
 	vec3    position;       // 12 + 4
 	
@@ -87,7 +87,7 @@ Ray	portalRay(Ray ray, hitInfo hit)
 		
 	relative = hit.position - portal_1.position;
 	
-	mat3	rotation = mat3(portal_2.transform) * transpose(mat3(portal_1.transform));
+	mat3	rotation = mat3(portal_2.rotation) * transpose(mat3(portal_1.rotation));
 
 	if (dot(portal_1.normal, portal_2.normal) > 0.0)
 	{
@@ -169,6 +169,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 
 		ray = newRay(hit, ray, rng_state);
 	}
+
 	return (color * light);
 }
 
