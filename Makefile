@@ -50,6 +50,12 @@ OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 HEADERS		:=	includes/RT.hpp
 MAKEFLAGS   += --no-print-directory
 
+ifeq ($(OS),Windows_NT)
+all: windows
+else
+all: linux
+endif
+
 windows: $(OBJS) $(HEADERS)
 	@$(CC) $(OBJS) $(IFLAGS) $(LDFLAGS) -o $(NAME)
 	@echo $(WHITE) $(NAME): PROJECT COMPILED !$(RESET)
