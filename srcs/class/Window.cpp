@@ -99,9 +99,9 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
     (void) win; (void) button; (void) mods;
 	
-    if (action == GLFW_PRESS)
+    if (action == GLFW_RELEASE)
 	{
-
+		win->_frameCount = 0;
     }
 }
 void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
@@ -120,6 +120,8 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
 				<< dov.x << " " << dov.y << " " << "\t"
 				<< std::endl;
 	}
+	if (action == GLFW_RELEASE)
+		win->_frameCount = 0;
 }
 
 void Window::display()

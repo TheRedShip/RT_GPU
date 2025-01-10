@@ -205,7 +205,10 @@ void main()
 		return;
 
 	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
+	{
+    	imageStore(accumulation_image, pixel_coords, vec4(0.0));
 		return;
+	}
 
 	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + uint(pixel_coords.x);
 	rng_state = rng_state + u_frameCount * 719393;
