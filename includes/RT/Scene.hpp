@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2024/12/23 18:46:13 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/10 18:58:38 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Scene
 		void							updateGPUData();
 
 		const std::vector<GPUObject>	&getObjectData() const;
-		const std::vector<GPUMaterial>	&getMaterialData() const;
+		std::vector<GPUMaterial>		&getMaterialData();
 
 		Camera							*getCamera(void) const;
 		Material						*getMaterial(int material_index);

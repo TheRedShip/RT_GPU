@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/08 20:08:03 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/10 18:58:57 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,7 +153,7 @@ const std::vector<GPUObject>&	Scene::getObjectData() const
 	return (_gpu_objects);
 }
 
-const std::vector<GPUMaterial>&	Scene::getMaterialData() const
+std::vector<GPUMaterial>&	Scene::getMaterialData()
 {
 	return (_gpu_materials);
 }
