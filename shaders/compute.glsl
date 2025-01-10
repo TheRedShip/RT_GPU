@@ -157,7 +157,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		
 		// RR
 		float p = max(color.r, max(color.g, color.b));
-        if (i > 1 && randomValue(rng_state) > p)
+        if (randomValue(rng_state) > p)
             break;
         color /= p;
 		//
