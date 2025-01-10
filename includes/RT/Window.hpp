@@ -36,6 +36,7 @@ class Window
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
+		int			getPixelisation(void);
 
 	private:
 		GLFWwindow	*_window;

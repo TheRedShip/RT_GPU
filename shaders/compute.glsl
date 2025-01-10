@@ -38,23 +38,24 @@ struct GPUCamera
     float focus_distance;
 };
 
-layout(std430, binding = 0) buffer ObjectBuffer
+layout(std430, binding = 1) buffer ObjectBuffer
 {
 	GPUObject objects[];
 };
 
-layout(std430, binding = 1) buffer MaterialBuffer
+layout(std430, binding = 2) buffer MaterialBuffer
 {
 	GPUMaterial materials[];
 };
 
-layout(std140, binding = 0) uniform CameraData
+layout(std140) uniform CameraData
 {
     GPUCamera camera;
 };
 
 uniform int     u_objectsNum;
 uniform vec2    u_resolution;
+uniform int		u_pixelisation;
 uniform int		u_frameCount;
 uniform float	u_time;
 
@@ -203,7 +204,10 @@ void main()
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 
-	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + pixel_coords.x;
+	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
+		return;
+
+	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + uint(pixel_coords.x);
 	rng_state = rng_state + u_frameCount * 719393;
 
 	vec2 jitter = randomPointInCircle(rng_state) * 1;
@@ -222,6 +226,9 @@ void main()
     imageStore(accumulation_image, pixel_coords, accum);
     
     vec4 final_color = vec4(sqrt(accum.r), sqrt(accum.g), sqrt(accum.b), accum.a);
-	imageStore(output_image, pixel_coords, final_color);
+
+	for (int y = 0; y < u_pixelisation; y++)
+		for (int x = 0; x < u_pixelisation; x++)
+			imageStore(output_image, pixel_coords + ivec2(x, y), final_color);
 }
 

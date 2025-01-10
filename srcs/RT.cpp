@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	if (argc <= 1 || !scene.parseScene(argv[1]))
 		return (1);
 
-	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
+	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 5);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 
 	GLint max_gpu_size;
@@ -72,6 +72,7 @@ int main(int argc, char **argv)
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
+		shader.set_int("u_pixelisation", window.getPixelisation() * 10 + 1);
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		

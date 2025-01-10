@@ -117,6 +117,11 @@ GPUCamera	Camera::getGPUData()
 	return (data);
 }
 
+float		Camera::getVelocity()
+{
+	return (glm::length(_velocity));
+}
+
 void		Camera::setPosition(glm::vec3 position)
 {
 	_position = position;

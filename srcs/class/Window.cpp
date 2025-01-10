@@ -162,3 +162,13 @@ int			Window::getFrameCount(void) const
 {
 	return (_frameCount);
 }
+
+int			Window::getPixelisation(void)
+{
+	bool mouse = glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	bool movement = _scene->getCamera()->getVelocity() > 0.0f;
+
+	if (mouse || movement)
+		return (1);
+	return (0);
+}

@@ -42,6 +42,8 @@ class Camera
 		glm::vec2	getDOV();
 		glm::mat4	getViewMatrix();
 		
+		float		getVelocity();
+		
 		GPUCamera	getGPUData();
 
 		void		setPosition(glm::vec3 position);
