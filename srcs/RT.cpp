@@ -22,11 +22,27 @@ int main(int argc, char **argv)
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 
+	GLint max_gpu_size;
+	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
+
+	const std::vector<GPUObject> &object_data = scene.getObjectData();
+	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
+
+	std::cout << "Sending " << object_data.size() << " objects for " << \
+				object_data.size() * sizeof(GPUObject) + material_data.size() * sizeof(GPUMaterial) \
+				<< " / " << max_gpu_size << " bytes" << std::endl;
+
 	GLuint objectSSBO;
     glGenBuffers(1, &objectSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUObject) * object_data.size(), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
 
 	GLuint materialSSBO;
     glGenBuffers(1, &materialSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
 
 	GLuint cameraUBO;
 	glGenBuffers(1, &cameraUBO);
@@ -40,27 +56,15 @@ int main(int argc, char **argv)
 	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
 	shader.setupVertexBuffer(vertices, size);
 
-	GLint max_gpu_size;
-	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
-
-	const std::vector<GPUObject> &object_data = scene.getObjectData();
-	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
-	std::cout << "Sending " << object_data.size() << " objects for " << \
-				object_data.size() * sizeof(GPUObject) + material_data.size() * sizeof(GPUMaterial) \
-				<< " / " << max_gpu_size << " bytes" << std::endl;
-
-
 	while (!window.shouldClose())
 	{
 		glUseProgram(shader.getProgramCompute());
 
-        glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
-        glBufferData(GL_SHADER_STORAGE_BUFFER, object_data.size() * sizeof(GPUObject), object_data.data(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, object_data.size() * sizeof(GPUObject), object_data.data());
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, material_data.size() * sizeof(GPUMaterial), material_data.data(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, material_data.size() * sizeof(GPUMaterial), material_data.data());
 
 		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
