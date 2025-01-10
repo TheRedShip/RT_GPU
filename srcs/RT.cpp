@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/09 16:17:29 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/10 19:12:40 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int main(int argc, char **argv)
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
 
 	const std::vector<GPUObject> &object_data = scene.getObjectData();
-	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
+	std::vector<GPUMaterial> &material_data = scene.getMaterialData();
 	std::cout << "Sending " << object_data.size() << " objects for " << \
 				object_data.size() * sizeof(GPUObject) + material_data.size() * sizeof(GPUMaterial) \
 				<< " / " << max_gpu_size << " bytes" << std::endl;
@@ -56,11 +56,11 @@ int main(int argc, char **argv)
 
         glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
         glBufferData(GL_SHADER_STORAGE_BUFFER, object_data.size() * sizeof(GPUObject), object_data.data(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, objectSSBO);
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, material_data.size() * sizeof(GPUMaterial), material_data.data(), GL_DYNAMIC_DRAW);
-        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
+        glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, materialSSBO);
 
 		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);

@@ -38,17 +38,17 @@ struct GPUCamera
     float focus_distance;
 };
 
-layout(std430, binding = 1) buffer ObjectBuffer
+layout(std430, binding = 0) buffer ObjectBuffer
 {
 	GPUObject objects[];
 };
 
-layout(std430, binding = 2) buffer MaterialBuffer
+layout(std430, binding = 1) buffer MaterialBuffer
 {
 	GPUMaterial materials[];
 };
 
-layout(std140) uniform CameraData
+layout(std140, binding = 0) uniform CameraData
 {
     GPUCamera camera;
 };
