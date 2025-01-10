@@ -99,7 +99,7 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int
     Window* win = static_cast<Window*>(glfwGetWindowUserPointer(window));
     (void) win; (void) button; (void) mods;
 	
-    if (action == GLFW_RELEASE)
+    if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
 	{
 		win->_frameCount = 0;
     }
@@ -120,8 +120,6 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
 				<< dov.x << " " << dov.y << " " << "\t"
 				<< std::endl;
 	}
-	if (action == GLFW_RELEASE)
-		win->_frameCount = 0;
 }
 
 void Window::display()
@@ -135,6 +133,9 @@ void Window::display()
 	_fps = 1.0f / _delta;
 
 	_frameCount++;
+
+	if (_scene->getCamera()->getVelocity() > 0.0f)
+		_frameCount = 0;
 
     glfwSwapBuffers(_window);
 }

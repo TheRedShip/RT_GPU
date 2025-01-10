@@ -19,7 +19,7 @@ int main(int argc, char **argv)
 	if (argc <= 1 || !scene.parseScene(argv[1]))
 		return (1);
 
-	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 5);
+	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 
 	GLint max_gpu_size;
