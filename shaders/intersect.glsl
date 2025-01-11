@@ -154,56 +154,49 @@ bool intersectCylinder(Ray ray, GPUObject obj, out hitInfo hit)
 	float radius = obj.normal.x;
 	float height = obj.normal.y;
 	
-	vec3 p = ray.origin - obj.position;
-
-	vec3 d = ray.direction * mat3(obj.rotation);
-	p = p * mat3(obj.rotation);
-	
-	float half_height = height * 0.5;
-
-	float a = d.x * d.x + d.z * d.z;
-	float b = p.x * d.x + p.z * d.z;
-	float c = p.x * p.x + p.z * p.z - radius * radius;
-	
-	float h = b * b - a * c;
-	if (h < 0.0) return false;
-	
-	float sqrt_h = sqrt(h);
-	float t = (-b - sqrt_h) / a;
-	
-	if (t <= 0.0)
-	{
-		t = (-b + sqrt_h) / a;
-		if (t <= 0.0) return false;
-	}
-
-	float y = p.y + t * d.y;
-	
-	if (abs(y) <= half_height)
-	{
-
-		hit.t = t;
-		hit.position = ray.origin + ray.direction * t;
-		
-		vec3 local_normal = vec3(p.x + t * d.x, 0.0, p.z + t * d.z);
-		hit.normal = normalize(local_normal * inverse(mat3(obj.rotation)));
-		return true;
-	}
-	
-	float cap_t = (sign(y) * half_height - p.y) / d.y;
-	if (cap_t <= 0.0) return false;
-
-	float cap_x = p.x + cap_t * d.x;
-	float cap_z = p.z + cap_t * d.z;
-	if (cap_x * cap_x + cap_z * cap_z > radius * radius) return false;
-
-	hit.t = cap_t;
-	hit.position = ray.origin + ray.direction * cap_t;
-	
-
-	vec3 cap_normal = vec3(0.0, sign(y), 0.0);
-	hit.normal = normalize(cap_normal * inverse(mat3(obj.rotation)));
-	return true;
+	vec3 rayOrigin = mat3(obj.rotation) * (ray.origin - obj.position);
+    vec3 rayDir = mat3(obj.rotation) * ray.direction;
+    
+    float halfHeight = height * 0.5;
+    float radius2 = radius * radius;
+    
+    vec2 oc_xz = rayOrigin.xz;
+    vec2 rd_xz = rayDir.xz;
+    float a = dot(rd_xz, rd_xz);
+    float b = dot(oc_xz, rd_xz);
+    float c = dot(oc_xz, oc_xz) - radius2;
+    
+    float h = b * b - a * c;
+    if (h < 0.0) return (false);
+    
+    float t_cyl = (-b - sqrt(h)) / a;
+    float y = rayOrigin.y + t_cyl * rayDir.y;
+    
+    t_cyl = mix((-b + sqrt(h)) / a, t_cyl, 
+                float(abs(y) <= halfHeight && t_cyl > 0.0));
+    y = rayOrigin.y + t_cyl * rayDir.y;
+    
+    float invRayDirY = 1.0 / rayDir.y;
+    float t_cap = (-sign(rayDir.y) * halfHeight - rayOrigin.y) * invRayDirY;
+    vec2 cap_xz = rayOrigin.xz + t_cap * rayDir.xz;
+    bool cap_valid = (dot(cap_xz, cap_xz) <= radius2) && (t_cap > 0.0);
+    
+    bool cyl_valid = abs(y) <= halfHeight && t_cyl > 0.0;
+    float t = mix(t_cap, t_cyl, float(cyl_valid && (t_cyl < t_cap || !cap_valid)));
+    
+    if (!cyl_valid && !cap_valid) return (false);
+    
+    vec3 p = rayOrigin + t * rayDir;
+    
+    vec3 n_side = normalize(vec3(p.x, 0.0, p.z));
+    vec3 n_cap = vec3(0.0, -sign(rayDir.y), 0.0);
+    vec3 normal = mix(n_cap, n_side, float(cyl_valid && (t_cyl < t_cap || !cap_valid)));
+    
+    hit.t = t;
+    hit.position = ray.origin + ray.direction * t;
+    hit.normal = normalize(transpose(mat3(obj.rotation)) * normal);
+    
+    return (true);
 }
 
 bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
