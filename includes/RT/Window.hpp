@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 18:35:35 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/11 16:14:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,7 @@ class Window
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
 
-		int			&getPixelisationAmount(void);
-		int			isPixelated(void);
+		int			getPixelisation(void);
 
 		bool		&getAccumulate(void);
 
@@ -49,10 +48,9 @@ class Window
 		float		_fps;
 		float		_delta;
 		int			_frameCount;
+		int			_pixelisation;
 
 		bool		accumulate = true;
-		int			pixelisation_amount = 5;
-
 };
 
 #endif

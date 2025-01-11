@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/09 16:34:48 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/11 16:13:40 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 {
 	_scene = scene;
 	_frameCount = 0;
+	_pixelisation = 0;
 	
 	if (!glfwInit())
 	{
@@ -54,7 +55,6 @@ Window::~Window(void)
 
 void Window::process_input()
 {
-
 	bool forward = glfwGetKey(_window, GLFW_KEY_W) == GLFW_PRESS;
 	bool backward = glfwGetKey(_window, GLFW_KEY_S) == GLFW_PRESS;
 	bool left = glfwGetKey(_window, GLFW_KEY_A) == GLFW_PRESS;
@@ -166,22 +166,24 @@ int			Window::getFrameCount(void) const
 	return (_frameCount);
 }
 
-int			&Window::getPixelisationAmount(void)
-{
-	return (pixelisation_amount);
-}
-
 bool		&Window::getAccumulate(void)
 {
 	return (accumulate);
 }
 
-int			Window::isPixelated(void)
+int			Window::getPixelisation(void)
 {
 	bool mouse = glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 	bool movement = _scene->getCamera()->getVelocity() > 0.0f;
 
 	if (mouse || movement)
-		return (1);
-	return (0);
+	{
+		if(_fps < 60 && _pixelisation < 16)	
+			_pixelisation++;
+		if(_fps > 90 && _pixelisation > 0)
+			_pixelisation--;
+	}
+	else if(_pixelisation)
+		_pixelisation = 0;
+	return (_pixelisation + 1);
 }
