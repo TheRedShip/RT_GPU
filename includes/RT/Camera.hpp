@@ -19,8 +19,11 @@ struct GPUCamera
 {
 	glm::mat4				view_matrix;
     alignas(16) glm::vec3	camera_position;
-    float					aperture_size;
-    float					focus_distance;
+	float					aperture_size;
+	float					focus_distance;
+	float					fov;
+
+	int						bounce;
 };
 
 class Camera
@@ -39,16 +42,22 @@ class Camera
 
 		glm::vec3	getPosition();
 		glm::vec2	getDirection();
-		glm::vec2	getDOV();
+		glm::vec3	getViewSetting();
 		glm::mat4	getViewMatrix();
 		
+		int			getBounce();
+		
+		float		getFov();
 		float		getVelocity();
+
 		
 		GPUCamera	getGPUData();
 
 		void		setPosition(glm::vec3 position);
 		void		setDirection(float pitch, float yaw);
 		void		setDOV(float aperture, float focus);
+		void		setBounce(int b);
+		void		setFov(float fov);
 
 	private:
 
@@ -70,6 +79,9 @@ class Camera
 
 		float _aperture_size = 0.0f;
 		float _focus_distance = 1.0f;
+		float _fov = 90.0f;
+
+		int	_bounce = 5;
 };
 
 #endif

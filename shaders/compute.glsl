@@ -32,10 +32,14 @@ struct GPUMaterial
 
 struct GPUCamera
 {
-	mat4 view_matrix;
-    vec3 position;
-    float aperture_size;
-    float focus_distance;
+	mat4		view_matrix;
+    vec3		position;
+
+	float		aperture_size;
+	float		focus_distance;
+	float		fov;
+
+	int						bounce;
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -142,7 +146,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 
 	float	closest_t = 1e30;
 
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < camera.bounce; i++)
 	{
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
@@ -176,7 +180,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 
 Ray initRay(vec2 uv, inout uint rng_state)
 {
-	float fov = 90.0;
+	float fov = camera.fov;
 	float focal_length = 1.0 / tan(radians(fov) / 2.0);
 	
 	vec3 origin = camera.position;

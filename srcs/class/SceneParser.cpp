@@ -93,7 +93,8 @@ void	SceneParser::parseCamera(std::stringstream &line)
 {
 	float	x,y,z;
 	float	yaw, pitch;
-	float	aperture, focus;
+	float	aperture, focus, fov;
+	int		bounce;
 	
 	if (!(line >> x >> y >> z))
 		throw std::runtime_error("Camera: Missing camera properties");
@@ -104,17 +105,25 @@ void	SceneParser::parseCamera(std::stringstream &line)
 		pitch = -90;
 	}
 
-	if (!(line >> aperture >> focus))
+	if (!(line >> aperture >> focus >> fov))
 	{
 		aperture = 0.0;
 		focus = 1.0;
+		fov = 90.0f;
 	}
+
+	if (!(line >> bounce))
+		bounce = 5;
 
 	_scene->getCamera()->setPosition(glm::vec3(x, y, z));
 	_scene->getCamera()->setDirection(yaw, pitch);
-	_scene->getCamera()->setDOV(aperture, focus);
-
 	_scene->getCamera()->updateCameraVectors();
+	
+	_scene->getCamera()->setDOV(aperture, focus);
+	_scene->getCamera()->setFov(fov);
+	
+	_scene->getCamera()->setBounce(bounce);
+
 }
 
 bool		SceneParser::parseLine(const std::string &line)

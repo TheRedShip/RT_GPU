@@ -113,11 +113,12 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		glm::vec3 pos = win->_scene->getCamera()->getPosition();
 		glm::vec2 dir = win->_scene->getCamera()->getDirection();
-		glm::vec2 dov = win->_scene->getCamera()->getDOV();
+		glm::vec3 settings = win->_scene->getCamera()->getViewSetting();
+		int	bounce = win->_scene->getCamera()->getBounce();
 
 		std::cout << "\nCAM\t" << pos.x << " " << pos.y << " " << pos.z << "\t"
 				<< dir.x << " " << dir.y << " " << "\t"
-				<< dov.x << " " << dov.y << " " << "\t"
+				<< settings.x << " " << settings.y << " " << settings.z << "\t" << bounce
 				<< std::endl;
 	}
 }

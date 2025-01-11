@@ -41,7 +41,7 @@ class Cylinder : public Object
 
 				_position = glm::vec3(x, y, z);
 
-				_radius = radius / 2.0;
+				_radius = radius;
 				_height = height;
 				
 				_rotation = glm::mat3(glm::eulerAngleXYZ(pitch, yaw, roll));
