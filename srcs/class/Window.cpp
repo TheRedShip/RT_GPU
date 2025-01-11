@@ -100,9 +100,7 @@ void Window::mouseButtonCallback(GLFWwindow* window, int button, int action, int
     (void) win; (void) button; (void) mods;
 	
     if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
-	{
 		win->_frameCount = 0;
-    }
 }
 void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
@@ -133,7 +131,8 @@ void Window::display()
 	lastTime = currentTime;
 	_fps = 1.0f / _delta;
 
-	_frameCount++;
+	if (accumulate)
+		_frameCount++;
 
 	if (_scene->getCamera()->getVelocity() > 0.0f)
 		_frameCount = 0;
@@ -167,7 +166,17 @@ int			Window::getFrameCount(void) const
 	return (_frameCount);
 }
 
-int			Window::getPixelisation(void)
+int			&Window::getPixelisationAmount(void)
+{
+	return (pixelisation_amount);
+}
+
+bool		&Window::getAccumulate(void)
+{
+	return (accumulate);
+}
+
+int			Window::isPixelated(void)
 {
 	bool mouse = glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
 	bool movement = _scene->getCamera()->getVelocity() > 0.0f;

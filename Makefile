@@ -12,7 +12,7 @@ ifeq ($(OS),Windows_NT)
 	RM          :=	del /S /Q
 	DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
 	CC          :=	g++
-	IFLAGS	    :=	-I./includes -I./includes/RT
+	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui
 	LDFLAGS     :=  -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 else
 	BLACK		=	\033[30;49;3m
@@ -29,7 +29,7 @@ else
 	DIR_DUP     =	mkdir -p $(@D)
 	CC          :=	clang++
 	CFLAGS      :=	-Wall -Wextra -Werror -g
-	IFLAGS	    :=	-I./includes -I./includes/RT -I/usr/include
+	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui -I/usr/include
 	LDFLAGS		:=  -L/usr/lib/x86_64-linux-gnu -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lstdc++
 	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
 	CMP			=	1
@@ -38,7 +38,16 @@ endif
 NAME        :=	RT
 SRCS_DIR	:=	srcs
 OBJS_DIR	:=	.objs
-ALL_SRCS	:=	RT.cpp	gl.cpp			\
+
+IMGUI_SRCS := imgui/imgui.cpp         \
+              imgui/imgui_draw.cpp    \
+              imgui/imgui_widgets.cpp \
+              imgui/imgui_tables.cpp  \
+              imgui/imgui_impl_glfw.cpp \
+              imgui/imgui_impl_opengl3.cpp
+
+ALL_SRCS	:=	$(IMGUI_SRCS)			\
+				RT.cpp	gl.cpp			\
 				class/Window.cpp		\
 				class/Shader.cpp		\
 				class/Camera.cpp		\

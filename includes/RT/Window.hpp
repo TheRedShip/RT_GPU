@@ -36,7 +36,11 @@ class Window
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
-		int			getPixelisation(void);
+
+		int			&getPixelisationAmount(void);
+		int			isPixelated(void);
+
+		bool		&getAccumulate(void);
 
 	private:
 		GLFWwindow	*_window;
@@ -45,6 +49,9 @@ class Window
 		float		_fps;
 		float		_delta;
 		int			_frameCount;
+
+		bool		accumulate = true;
+		int			pixelisation_amount = 5;
 
 };
 

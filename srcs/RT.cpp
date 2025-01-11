@@ -22,6 +22,13 @@ int main(int argc, char **argv)
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(window.getWindow(), true);
+	ImGui_ImplOpenGL3_Init("#version 430");
+
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
 
@@ -72,7 +79,7 @@ int main(int argc, char **argv)
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
-		shader.set_int("u_pixelisation", window.getPixelisation() * 10 + 1);
+		shader.set_int("u_pixelisation", window.isPixelated() * window.getPixelisationAmount() + 1);
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 		
@@ -81,14 +88,29 @@ int main(int argc, char **argv)
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 
+		ImGui_ImplOpenGL3_NewFrame();
+		ImGui_ImplGlfw_NewFrame();
+		ImGui::NewFrame();
+
 		glUseProgram(shader.getProgram());
 		shader.drawTriangles(size);
 
-		std::cout << "\rFrame: " << window.getFrameCount() << " Fps: " << int(window.getFps()) << "                        " << std::flush;
-		
+		ImGui::Begin("Settings");
+		ImGui::Text("Fps: %d", int(window.getFps()));
+		ImGui::SliderInt("Pixelisation", &window.getPixelisationAmount(), 0, 30);
+		ImGui::Checkbox("Accumulate", &window.getAccumulate());
+		ImGui::End();
+
+		ImGui::Render();
+		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		window.display();
 		window.pollEvents();		
 	}
+
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
 	
 	return (0);
 }
