@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 18:35:35 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/11 15:48:52 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ class Window
 		float		_fps;
 		float		_delta;
 		int			_frameCount;
+		int			_pixelisation;
 
 };
 
