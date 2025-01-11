@@ -80,5 +80,6 @@
 		"xlocmon": "cpp",
 		"xloctime": "cpp",
 		"xtree": "cpp"
-	}
+	},
+	"cmake.ignoreCMakeListsMissing": true
 }

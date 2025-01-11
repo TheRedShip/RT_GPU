@@ -151,7 +151,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		hitInfo hit = traceRay(ray);
 		if (hit.obj_index == -1)
 		{
-			// light += GetEnvironmentLight(ray);
+			light += GetEnvironmentLight(ray);
 			// light += vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f); //ambient color 
 			break;
 		}
@@ -209,10 +209,7 @@ void main()
 		return;
 
 	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
-	{
-    	imageStore(accumulation_image, pixel_coords, vec4(0.0));
 		return;
-	}
 
 	uint rng_state = uint(u_resolution.x) * uint(pixel_coords.y) + uint(pixel_coords.x);
 	rng_state = rng_state + u_frameCount * 719393;
