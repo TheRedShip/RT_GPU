@@ -26,8 +26,8 @@ struct GPUMaterial
 	float   emission;       // 4
 	float   roughness;      // 4
 	float   metallic;       // 4
+	float	refraction;		// 4
 	int		type;			// 4
-	int		texture_index;	// 4
 };
 
 struct GPUCamera

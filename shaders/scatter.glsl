@@ -17,12 +17,12 @@ Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
     float	refraction_ratio;
 	vec3	unit_direction;
 
-    refraction_ratio = 1.0f / mat.roughness;  //mat.roughness = refraction (saving memory)
+    refraction_ratio = 1.0f / mat.refraction;
 
 	if (dot(ray.direction, hit.normal) > 0.0f)
 	{
 		hit.normal = -hit.normal;
-		refraction_ratio = mat.roughness;
+		refraction_ratio = mat.refraction;
 	}
 
 	unit_direction = normalize(ray.direction);

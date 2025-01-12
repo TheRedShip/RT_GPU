@@ -61,13 +61,13 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 {
 	float		r,g,b;
 	float		emission;
-	float		roughness;
+	float		rough_refrac;
 	float		metallic;
 	std::string	type;
 
 	Material	*mat;
 
-	if (!(line >> r >> g >> b >> emission >> roughness >> metallic))
+	if (!(line >> r >> g >> b >> emission >> rough_refrac >> metallic))
 		throw std::runtime_error("Material: Missing material properties");
 
 	if (!(line >> type))
@@ -77,8 +77,9 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 
 	mat->color = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
 	mat->emission = emission;
-	mat->roughness = roughness;
+	mat->roughness = rough_refrac;
 	mat->metallic = metallic;
+	mat->refraction = rough_refrac;
 	
 	mat->type = 0;
 	if (type == "LAM")

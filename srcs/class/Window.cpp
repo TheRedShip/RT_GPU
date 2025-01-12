@@ -200,11 +200,12 @@ void Window::imGuiRender()
 		has_changed |= ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f);
 		
 		if (mat.type == 1)
-			has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 5.0f);
+			has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 5.0f);
 		else
+		{
 			has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 1.0f);
-
-		has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
+			has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
+		}
 		has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 1);
 
 		ImGui::PopID();

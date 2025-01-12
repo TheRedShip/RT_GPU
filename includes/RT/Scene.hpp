@@ -39,6 +39,7 @@ struct GPUMaterial
 	float					emission;
 	float					roughness;
 	float					metallic;
+	float					refraction;
 	int						type;
 };
 

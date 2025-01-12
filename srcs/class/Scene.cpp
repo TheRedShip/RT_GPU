@@ -142,6 +142,7 @@ void		Scene::updateGPUData()
 		gpu_mat.emission = material->emission;
 		gpu_mat.roughness = material->roughness;
 		gpu_mat.metallic = material->metallic;
+		gpu_mat.refraction = material->refraction;
 		gpu_mat.type = material->type;
 
 		_gpu_materials.push_back(gpu_mat);
