@@ -42,14 +42,14 @@ class Camera
 
 		glm::vec3	getPosition();
 		glm::vec2	getDirection();
-		glm::vec3	getViewSetting();
 		glm::mat4	getViewMatrix();
 		
-		int			getBounce();
-		
-		float		getFov();
 		float		getVelocity();
 
+		float		&getFov();
+		float		&getAperture();
+		float		&getFocus();
+		int			&getBounce();
 		
 		GPUCamera	getGPUData();
 

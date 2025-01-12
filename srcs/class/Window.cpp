@@ -45,6 +45,13 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 
 	gladLoadGL(glfwGetProcAddress);
 	glfwSwapInterval(sleep);
+
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO &io = ImGui::GetIO(); (void)io;
+	ImGui::StyleColorsDark();
+	ImGui_ImplGlfw_InitForOpenGL(_window, true);
+	ImGui_ImplOpenGL3_Init("#version 430");
 }
 
 Window::~Window(void)
@@ -111,12 +118,14 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
 	{
 		glm::vec3 pos = win->_scene->getCamera()->getPosition();
 		glm::vec2 dir = win->_scene->getCamera()->getDirection();
-		glm::vec3 settings = win->_scene->getCamera()->getViewSetting();
+		float aperture = win->_scene->getCamera()->getAperture();
+		float focus = win->_scene->getCamera()->getFocus();
+		float fov = win->_scene->getCamera()->getFov();
 		int	bounce = win->_scene->getCamera()->getBounce();
 
 		std::cout << "\nCAM\t" << pos.x << " " << pos.y << " " << pos.z << "\t"
 				<< dir.x << " " << dir.y << " " << "\t"
-				<< settings.x << " " << settings.y << " " << settings.z << "\t" << bounce
+				<< aperture << " " << focus << " " << fov << "\t" << bounce
 				<< std::endl;
 	}
 }
@@ -149,6 +158,42 @@ void Window::pollEvents()
 bool Window::shouldClose()
 {
     return glfwWindowShouldClose(_window);
+}
+
+void Window::imGuiNewFrame()
+{
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+}
+
+void Window::imGuiRender()
+{
+	bool has_changed = false;
+	
+	ImGui::Begin("Settings");
+
+	ImGui::Text("Fps: %d", int(_fps));
+	ImGui::Text("Frame: %d", _frameCount);
+	
+	if (ImGui::CollapsingHeader("Camera"))
+	{
+		if (ImGui::Checkbox("Accumulate", &accumulate))
+			_frameCount = 0;
+
+		has_changed |= ImGui::SliderInt("Bounce", &_scene->getCamera()->getBounce(), 0, 20);
+		has_changed |= ImGui::SliderFloat("FOV", &_scene->getCamera()->getFov(), 1.0f, 180.0f);
+		has_changed |= ImGui::SliderFloat("Aperture", &_scene->getCamera()->getAperture(), 0.0f, 1.0f);
+		has_changed |= ImGui::SliderFloat("Focus", &_scene->getCamera()->getFocus(), 0.0f, 150.0f);
+	}
+	
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+	if (has_changed)
+		_frameCount = -1;
 }
 
 GLFWwindow	*Window::getWindow(void) const

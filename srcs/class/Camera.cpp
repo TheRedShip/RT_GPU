@@ -100,11 +100,6 @@ glm::vec2	Camera::getDirection()
 	return (glm::vec2(_pitch, _yaw));
 }
 
-glm::vec3	Camera::getViewSetting()
-{
-	return (glm::vec3(_aperture_size, _focus_distance, _fov));
-}
-
 GPUCamera	Camera::getGPUData()
 {
 	GPUCamera data;
@@ -126,9 +121,24 @@ float		Camera::getVelocity()
 	return (glm::length(_velocity));
 }
 
-int			Camera::getBounce()
+int			&Camera::getBounce()
 {
 	return (_bounce);
+}
+
+float		&Camera::getFov()
+{
+	return (_fov);
+}
+
+float		&Camera::getAperture()
+{
+	return (_aperture_size);
+}
+
+float		&Camera::getFocus()
+{
+	return (_focus_distance);
 }
 
 void		Camera::setPosition(glm::vec3 position)

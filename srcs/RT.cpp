@@ -22,13 +22,6 @@ int main(int argc, char **argv)
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO(); (void)io;
-	ImGui::StyleColorsDark();
-	ImGui_ImplGlfw_InitForOpenGL(window.getWindow(), true);
-	ImGui_ImplOpenGL3_Init("#version 430");
-
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
 
@@ -88,20 +81,12 @@ int main(int argc, char **argv)
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
+		window.imGuiNewFrame();
 
 		glUseProgram(shader.getProgram());
 		shader.drawTriangles(size);
 
-		ImGui::Begin("Settings");
-		ImGui::Text("Fps: %d", int(window.getFps()));
-		ImGui::Checkbox("Accumulate", &window.getAccumulate());
-		ImGui::End();
-
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		window.imGuiRender();
 
 		window.display();
 		window.pollEvents();		

@@ -33,6 +33,9 @@ class Window
 		static void	mouseMoveCallback(GLFWwindow *window, double xpos, double ypos);
 		static void	mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
+		void		imGuiNewFrame();
+		void		imGuiRender();
+
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
