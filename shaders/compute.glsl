@@ -144,8 +144,6 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 	vec3	color = vec3(1.0);
 	vec3	light = vec3(0.0);
 
-	float	closest_t = 1e30;
-
 	for (int i = 0; i < camera.bounce; i++)
 	{
 		hitInfo hit = traceRay(ray);

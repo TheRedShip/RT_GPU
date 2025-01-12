@@ -38,9 +38,9 @@ vec3 randomHemisphereDirection(vec3 normal, inout uint rng_state)
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
+	vec3 sun_pos = vec3(-1., 1.0, 0.);
 	float SunFocus = 1.5;
-	float SunIntensity = 1;
+	float SunIntensity = 0.5;
 
 	vec3 GroundColour = vec3(0.5, 0.5, 0.5);
 	vec3 SkyColourHorizon = vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f);
