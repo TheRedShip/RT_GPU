@@ -57,21 +57,15 @@ class Scene
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
 
-		void							updateGPUData();
-
 		const std::vector<GPUObject>	&getObjectData() const;
 		std::vector<GPUMaterial>		&getMaterialData();
 
 		Camera							*getCamera(void) const;
-		Material						*getMaterial(int material_index);
+		GPUMaterial						getMaterial(int material_index);
 		
 	private:
-		std::vector<Object *>		_objects;
-		std::vector<Material *>		_materials;
-
 		std::vector<GPUObject>		_gpu_objects;
 		std::vector<GPUMaterial>	_gpu_materials;
-
 
 		Camera						*_camera;
 };
