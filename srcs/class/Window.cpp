@@ -171,20 +171,45 @@ void Window::imGuiRender()
 {
 	bool has_changed = false;
 	
-	ImGui::Begin("Settings");
+	ImGui::Begin("Camera");
 
 	ImGui::Text("Fps: %d", int(_fps));
 	ImGui::Text("Frame: %d", _frameCount);
 	
-	if (ImGui::CollapsingHeader("Camera"))
-	{
-		if (ImGui::Checkbox("Accumulate", &accumulate))
-			_frameCount = 0;
+	ImGui::Separator();
+	if (ImGui::Checkbox("Accumulate", &accumulate))
+		_frameCount = 0;
 
-		has_changed |= ImGui::SliderInt("Bounce", &_scene->getCamera()->getBounce(), 0, 20);
-		has_changed |= ImGui::SliderFloat("FOV", &_scene->getCamera()->getFov(), 1.0f, 180.0f);
-		has_changed |= ImGui::SliderFloat("Aperture", &_scene->getCamera()->getAperture(), 0.0f, 1.0f);
-		has_changed |= ImGui::SliderFloat("Focus", &_scene->getCamera()->getFocus(), 0.0f, 150.0f);
+	has_changed |= ImGui::SliderInt("Bounce", &_scene->getCamera()->getBounce(), 0, 20);
+	has_changed |= ImGui::SliderFloat("FOV", &_scene->getCamera()->getFov(), 1.0f, 180.0f);
+	has_changed |= ImGui::SliderFloat("Aperture", &_scene->getCamera()->getAperture(), 0.0f, 1.0f);
+	has_changed |= ImGui::SliderFloat("Focus", &_scene->getCamera()->getFocus(), 0.0f, 150.0f);
+
+	ImGui::End();
+
+	ImGui::Begin("Material");
+
+	for (unsigned int i = 0; i < _scene->getMaterialData().size(); i++)
+	{
+		GPUMaterial &mat = _scene->getMaterialData()[i];
+
+		ImGui::PushID(i);
+		
+		ImGui::Text("Material %d", i);
+		has_changed |= ImGui::ColorEdit3("Color", &mat.color[0]);
+		has_changed |= ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f);
+		
+		if (mat.type == 1)
+			has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 5.0f);
+		else
+			has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 1.0f);
+
+		has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
+		has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 1);
+
+		ImGui::PopID();
+
+		ImGui::Separator();
 	}
 	
 	ImGui::End();
