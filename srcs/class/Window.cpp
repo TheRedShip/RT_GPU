@@ -219,7 +219,7 @@ void Window::imGuiRender()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	if (has_changed)
-		_frameCount = -1;
+		_frameCount = (accumulate == 0) + 1;
 }
 
 GLFWwindow	*Window::getWindow(void) const
@@ -251,7 +251,7 @@ int			Window::getPixelisation(void)
 	{
 		if(_fps < 60 && _pixelisation < 16)	
 			_pixelisation++;
-		if(_fps > 90 && _pixelisation > 0)
+		if(_fps > 120 && _pixelisation > 0)
 			_pixelisation--;
 	}
 	else if(_pixelisation)
