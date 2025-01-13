@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Triangle.hpp                                         :+:      :+:    :+:   */
+/*   Triangle.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:12:51 by ycontre           #+#    #+#             */
-/*   Updated: 2024/12/23 19:47:09 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/13 17:59:21 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,12 @@ class Triangle : public Object
 			catch (const std::exception &e) { throw; }
 		}
 		Triangle(const glm::vec3& position, const glm::vec3& vertex2, const glm::vec3& vertex3, const int mat_index)
-			: Object(position, mat_index), _vertex2(vertex2), _vertex3(vertex3) {}
+			: Object(position, mat_index), _vertex2(vertex2), _vertex3(vertex3) {
+				_vertex2 -= _position; //optimization
+				_vertex3 -= _position; //optimization
+
+				_normal = glm::normalize(glm::cross(_vertex2, _vertex3)); //optimization
+			}
 
 		const glm::vec3		&getVertex2() const { return (_vertex2); }
 		const glm::vec3		&getVertex3() const { return (_vertex3); }

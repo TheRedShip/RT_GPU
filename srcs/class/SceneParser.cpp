@@ -6,7 +6,7 @@
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/26 21:43:51 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/01/13 17:59:30 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,68 @@ void	SceneParser::parseCamera(std::stringstream &line)
 
 }
 
+glm::vec3	SceneParser::getVertex(std::stringstream &line)
+{
+	glm::vec3 res;
+
+	std::cout << line.str() << std::endl;
+	if(!(line >> res.x >> res.y >> res.z))
+		throw std::runtime_error("syntax error in obj file while parsing vertex");
+	res.z *= -1;
+	return(res);
+}
+
+long int	SceneParser::getVertexIndex(std::stringstream &line, size_t size)
+{
+	long int index;
+
+	if(!(line >> index))
+		throw std::runtime_error("syntax error in obj file while parsing face");
+	if((size_t)index > size || index == 0 || (index < 0 && (size_t)(-index) > size))
+		throw std::runtime_error("obj file error, invalid vertex index");	
+	if(index < 0)
+		index = size - index;
+	return(index - 1);
+}
+
+Triangle	*SceneParser::getFace(std::stringstream &line, std::vector<glm::vec3> &vertices)
+{
+	glm::vec3 triangle[3];
+
+	triangle[0] = vertices[getVertexIndex(line, vertices.size())];
+	triangle[1] = vertices[getVertexIndex(line, vertices.size())];
+	triangle[2] = vertices[getVertexIndex(line, vertices.size())];
+	std::cout << triangle[0].x << " " << triangle[0].y << " " << triangle[0].z << std::endl;
+	std::cout << triangle[1].x << " " << triangle[1].y << " " << triangle[1].z << std::endl;
+	std::cout << triangle[2].x << " " << triangle[2].y << " " << triangle[2].z << std::endl;
+	return(new Triangle(triangle[0], triangle[1], triangle[2], 0));		
+}
+
+void		SceneParser::parseObj(std::stringstream &objInfo)
+{
+	std::vector<glm::vec3>	vertices;
+	std::string				filename;
+	std::string				line;
+	std::string				identifier;
+	std::ifstream			file;
+
+	objInfo >> filename;
+	file.open(filename);
+	if (!file.is_open())
+		throw std::runtime_error("OBJ : could not open object file");
+	while (getline(file, line))
+	{
+		if(line[0] == '#' || line.empty())
+			continue;
+		std::stringstream		lineStream(line);
+		lineStream >> identifier;
+		if(identifier == "v")
+			vertices.push_back(getVertex(lineStream));
+		else if (identifier == "f")
+			_scene->addObject(getFace(lineStream, vertices));
+	}
+}
+
 bool		SceneParser::parseLine(const std::string &line)
 {
 	if (line.empty() || line[0] == '#')
@@ -155,6 +217,8 @@ bool		SceneParser::parseLine(const std::string &line)
 			this->parseMaterial(ss);
 		else if (identifier == "CAM")
 			this->parseCamera(ss);
+		else if (identifier == "OBJ")
+			parseObj(ss);
 	}
 	catch (const std::exception& e)
 	{
