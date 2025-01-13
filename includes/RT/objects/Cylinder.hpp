@@ -20,35 +20,32 @@ class Cylinder : public Object
 	public:
 		Cylinder(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
-			try {
-				float	x, y, z;
-				float	radius, height;
-				float	pitch, yaw, roll;
+			float	x, y, z;
+			float	radius, height;
+			float	pitch, yaw, roll;
 
-				int		mat_index;
+			int		mat_index;
 
-				if (!(line >> x >> y >> z))
-					throw std::runtime_error("Missing position");
+			if (!(line >> x >> y >> z))
+				throw std::runtime_error("Missing position");
 
-				if (!(line >> radius >> height))
-					throw std::runtime_error("Missing radius or height values");
+			if (!(line >> radius >> height))
+				throw std::runtime_error("Missing radius or height values");
 
-				if (!(line >> pitch >> yaw >> roll))
-					throw std::runtime_error("Missing rotation values");
+			if (!(line >> pitch >> yaw >> roll))
+				throw std::runtime_error("Missing rotation values");
 
-				if (!(line >> mat_index))
-					throw std::runtime_error("Missing material properties");
+			if (!(line >> mat_index))
+				throw std::runtime_error("Missing material properties");
 
-				_position = glm::vec3(x, y, z);
+			_position = glm::vec3(x, y, z);
 
-				_radius = radius;
-				_height = height;
-				
-				_rotation = glm::mat3(glm::eulerAngleXYZ(pitch, yaw, roll));
+			_radius = radius;
+			_height = height;
+			
+			_rotation = glm::mat3(glm::eulerAngleXYZ(pitch, yaw, roll));
 
-				_mat_index = mat_index;
-			}
-			catch (const std::exception& e) { throw; }
+			_mat_index = mat_index;
 		}
 		Cylinder(const glm::vec3& position, float radius, const int mat_index)
 			: Object(position, mat_index), _radius(radius) {}

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:12:51 by ycontre           #+#    #+#             */
-/*   Updated: 2024/12/23 19:47:09 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:44:40 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,48 +20,45 @@ class Portal : public Object
 	public:
 		Portal(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
-			try {
-				float	x, y, z;
-				float	x1, y1, z1;
-				float	x2, y2, z2;
-				
-				bool	invert_normal;
+			float	x, y, z;
+			float	x1, y1, z1;
+			float	x2, y2, z2;
+			
+			bool	invert_normal;
 
-				int		mat_index;
+			int		mat_index;
 
-				if (!(line >> x >> y >> z))
-					throw std::runtime_error("Missing position");
+			if (!(line >> x >> y >> z))
+				throw std::runtime_error("Missing position");
 
-				if (!(line >> x1 >> y1 >> z1))
-					throw std::runtime_error("Missing Portal's first edge ");
+			if (!(line >> x1 >> y1 >> z1))
+				throw std::runtime_error("Missing Portal's first edge ");
 
-				if (!(line >> x2 >> y2 >> z2))
-					throw std::runtime_error("Missing Portal's second edge");
-				
-				if (!(line >> invert_normal))
-					throw std::runtime_error("Missing invert_normal");
+			if (!(line >> x2 >> y2 >> z2))
+				throw std::runtime_error("Missing Portal's second edge");
+			
+			if (!(line >> invert_normal))
+				throw std::runtime_error("Missing invert_normal");
 
-				if (!(line >> mat_index))
-					throw std::runtime_error("Missing material properties");
+			if (!(line >> mat_index))
+				throw std::runtime_error("Missing material properties");
 
-				_position = glm::vec3(x, y, z);
-				_up = glm::vec3(x1, y1, z1);
-				_right = glm::vec3(x2, y2, z2);
+			_position = glm::vec3(x, y, z);
+			_up = glm::vec3(x1, y1, z1);
+			_right = glm::vec3(x2, y2, z2);
 
-				glm::vec3 up = glm::normalize(_up);
-				glm::vec3 right = glm::normalize(_right);
-				glm::vec3 forward = glm::normalize(glm::cross(right, up));
+			glm::vec3 up = glm::normalize(_up);
+			glm::vec3 right = glm::normalize(_right);
+			glm::vec3 forward = glm::normalize(glm::cross(right, up));
 
-				up = normalize(glm::cross(forward, right));
+			up = normalize(glm::cross(forward, right));
 
-				_rotation = glm::mat3(right, up, forward);
-				_normal = forward * (invert_normal ? -1.0f : 1.0f);
+			_rotation = glm::mat3(right, up, forward);
+			_normal = forward * (invert_normal ? -1.0f : 1.0f);
 
-				_linked_portal = -1;
+			_linked_portal = -1;
 
-				_mat_index = mat_index;
-			}
-			catch (const std::exception &e) { throw; }
+			_mat_index = mat_index;
 		}
 		Portal(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int linked_portal, const int mat_index)
 			: Object(position, mat_index), _up(edge1), _right(edge2), _linked_portal(linked_portal) {}

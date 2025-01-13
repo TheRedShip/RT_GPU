@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:12:51 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/08 20:20:34 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:46:58 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,22 @@ class Sphere : public Object
 	public:
 		Sphere(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
-			try {
-				float	x, y, z, radius;
-				int		mat_index;
+			float	x, y, z, radius;
+			int		mat_index;
 
-				if (!(line >> x >> y >> z >> radius))
-					throw std::runtime_error("Missing position or radius values");
+			if (!(line >> x >> y >> z >> radius))
+				throw std::runtime_error("Missing position or radius values");
 
-				if (radius <= 0.0f)
-					throw std::runtime_error("Radius must be positive");
+			if (radius <= 0.0f)
+				throw std::runtime_error("Radius must be positive");
 
-				if (!(line >> mat_index))
-					throw std::runtime_error("Missing material properties");
+			if (!(line >> mat_index))
+				throw std::runtime_error("Missing material properties");
 
-				_position = glm::vec3(x, y, z);
-				_radius = radius / 2.0;
-				
-				_mat_index = mat_index;
-			}
-			catch (const std::exception& e) { throw; }
+			_position = glm::vec3(x, y, z);
+			_radius = radius / 2.0;
+			
+			_mat_index = mat_index;
 		}
 		Sphere(const glm::vec3& position, float radius, const int mat_index)
 			: Object(position, mat_index), _radius(radius) {}

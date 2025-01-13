@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   SceneParser.cpp                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/13 17:59:30 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/13 18:49:10 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,47 +14,13 @@
 
 SceneParser::SceneParser(Scene *scene) : _scene(scene)
 {
-	object_parsers["sp"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Sphere(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-
-	object_parsers["pl"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Plane(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-
-	object_parsers["qu"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Quad(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-
-	object_parsers["tr"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Triangle(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-
-	object_parsers["cu"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Cube(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-	
-	object_parsers["po"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Portal(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
-
-	object_parsers["cy"] = [](std::stringstream &ss) -> Object *
-	{
-		try { return (new Cylinder(ss)); }
-		catch (const std::exception &e) { throw; }
-	};
+	object_parsers["sp"] = [](std::stringstream &ss) -> Object * { return (new Sphere(ss)); };
+	object_parsers["pl"] = [](std::stringstream &ss) -> Object * { return (new Plane(ss)); };
+	object_parsers["qu"] = [](std::stringstream &ss) -> Object * { return (new Quad(ss)); };
+	object_parsers["tr"] = [](std::stringstream &ss) -> Object * { return (new Triangle(ss)); };
+	object_parsers["cu"] = [](std::stringstream &ss) -> Object * { return (new Cube(ss)); };
+	object_parsers["po"] = [](std::stringstream &ss) -> Object * { return (new Portal(ss)); };
+	object_parsers["cy"] = [](std::stringstream &ss) -> Object * { return (new Cylinder(ss)); };
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)

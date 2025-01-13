@@ -20,26 +20,23 @@ class Plane : public Object
 	public:
 		Plane(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
-			try {
-				float	x, y, z;
-				float	nx, ny, nz;
-				int		mat_index;
+			float	x, y, z;
+			float	nx, ny, nz;
+			int		mat_index;
 
-				if (!(line >> x >> y >> z))
-					throw std::runtime_error("Missing position");
+			if (!(line >> x >> y >> z))
+				throw std::runtime_error("Missing position");
 
-				if (!(line >> nx >> ny >> nz))
-					throw std::runtime_error("Missing plane's normal");
+			if (!(line >> nx >> ny >> nz))
+				throw std::runtime_error("Missing plane's normal");
 
-				if (!(line >> mat_index))
-					throw std::runtime_error("Missing material properties");
+			if (!(line >> mat_index))
+				throw std::runtime_error("Missing material properties");
 
-				_position = glm::vec3(x, y, z);
-				_normal = glm::vec3(nx, ny, nz);
-				
-				_mat_index = mat_index;
-			}
-			catch (const std::exception &e) { throw; }
+			_position = glm::vec3(x, y, z);
+			_normal = glm::vec3(nx, ny, nz);
+			
+			_mat_index = mat_index;
 		}
 		Plane(const glm::vec3 &position, const glm::vec3 &normal, const int mat_index)
 			: Object(position, mat_index), _normal(normal) {}

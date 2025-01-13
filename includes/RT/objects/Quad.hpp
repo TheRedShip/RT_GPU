@@ -20,31 +20,28 @@ class Quad : public Object
 	public:
 		Quad(std::stringstream &line) : Object(glm::vec3(0.0f), -1)
 		{
-			try {
-				float	x, y, z;
-				float	x1, y1, z1;
-				float	x2, y2, z2;
-				int		mat_index;
+			float	x, y, z;
+			float	x1, y1, z1;
+			float	x2, y2, z2;
+			int		mat_index;
 
-				if (!(line >> x >> y >> z))
-					throw std::runtime_error("Missing position");
+			if (!(line >> x >> y >> z))
+				throw std::runtime_error("Missing position");
 
-				if (!(line >> x1 >> y1 >> z1))
-					throw std::runtime_error("Missing quad's first edge ");
+			if (!(line >> x1 >> y1 >> z1))
+				throw std::runtime_error("Missing quad's first edge ");
 
-				if (!(line >> x2 >> y2 >> z2))
-					throw std::runtime_error("Missing quad's second edge");
+			if (!(line >> x2 >> y2 >> z2))
+				throw std::runtime_error("Missing quad's second edge");
 
-				if (!(line >> mat_index))
-					throw std::runtime_error("Missing material properties");
+			if (!(line >> mat_index))
+				throw std::runtime_error("Missing material properties");
 
-				_position = glm::vec3(x, y, z);
-				_up = glm::vec3(x1, y1, z1);
-				_right = glm::vec3(x2, y2, z2);
+			_position = glm::vec3(x, y, z);
+			_up = glm::vec3(x1, y1, z1);
+			_right = glm::vec3(x2, y2, z2);
 
-				_mat_index = mat_index;
-			}
-			catch (const std::exception &e) { throw; }
+			_mat_index = mat_index;
 		}
 		Quad(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int mat_index)
 			: Object(position, mat_index), _up(edge1), _right(edge2) {}
