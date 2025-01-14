@@ -1,9 +1,9 @@
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-	vec3 sun_pos = vec3(-1., 1.0, 0.);
+	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
-	float SunIntensity = 0.5;
+	float SunIntensity = 1.;
 
 	vec3 GroundColour = vec3(0.5, 0.5, 0.5);
 	vec3 SkyColourHorizon = vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f);
@@ -29,7 +29,7 @@ vec3	sampleLights(vec3 position)
 		GPUObject obj = objects[i];
 		GPUMaterial mat = materials[obj.mat_index];
 
-		if (obj.type == 0 && mat.emission > 0.0)
+		if (mat.emission > 0.0)
 		{
 			vec3 light_dir = normalize(obj.position - position);
 			float light_dist = length(obj.position - position);

@@ -215,6 +215,29 @@ void Window::imGuiRender()
 	
 	ImGui::End();
 
+	ImGui::Begin("Fog settings");
+	
+	has_changed |= ImGui::Checkbox("Enable", &_scene->getVolume().enabled);
+	ImGui::Separator();
+	
+	if (ImGui::SliderFloat("Absorption", &_scene->getVolume().sigma_a.x, 0., 0.1))
+	{
+		_scene->getVolume().sigma_a = glm::vec3(_scene->getVolume().sigma_a.x);
+		_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
+		has_changed = true;
+	}
+	if (ImGui::SliderFloat("Scattering", &_scene->getVolume().sigma_s.x, 0., 0.5))
+	{
+		_scene->getVolume().sigma_s = glm::vec3(_scene->getVolume().sigma_s.x);
+		_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
+		has_changed = true;
+	}
+	if (ImGui::SliderFloat("G", &_scene->getVolume().g, 0., 1.))
+		has_changed = true;
+
+	ImGui::End();
+
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 

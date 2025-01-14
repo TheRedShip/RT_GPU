@@ -50,6 +50,12 @@ int main(int argc, char **argv)
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUCamera), nullptr, GL_DYNAMIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUBO);
 
+	GLuint volumeUBO;
+	glGenBuffers(1, &volumeUBO);
+	glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUVolume), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 1, volumeUBO);
+
 	shader.attach();
 
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
@@ -69,6 +75,9 @@ int main(int argc, char **argv)
 		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
+
+		glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUVolume), &scene.getVolume());
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());

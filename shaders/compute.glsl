@@ -32,14 +32,23 @@ struct GPUMaterial
 
 struct GPUCamera
 {
-	mat4		view_matrix;
-    vec3		position;
+	mat4	view_matrix;
+    vec3	position;
+	
+	float	aperture_size;
+	float	focus_distance;
+	float	fov;
 
-	float		aperture_size;
-	float		focus_distance;
-	float		fov;
+	int		bounce;
+};
 
-	int						bounce;
+struct GPUVolume
+{
+	vec3	sigma_a;    // absorption coefficient
+	vec3	sigma_s;    // scattering coefficient
+	vec3	sigma_t;    // extinction coefficient
+	float	g;         // phase function parameter
+	bool	enabled;
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -52,9 +61,14 @@ layout(std430, binding = 2) buffer MaterialBuffer
 	GPUMaterial materials[];
 };
 
-layout(std140) uniform CameraData
+layout(std140, binding = 0) uniform CameraData
 {
     GPUCamera camera;
+};
+
+layout(std140, binding = 1) uniform VolumeData
+{
+    GPUVolume volume;
 };
 
 uniform int     u_objectsNum;
@@ -148,31 +162,25 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 	
 	vec3 transmittance = vec3(1.0);
 
-	VolumeProperties volume;
-    volume.sigma_a = vec3(0.0001);
-    volume.sigma_s = vec3(0.0800);
-    volume.sigma_t = volume.sigma_a + volume.sigma_s;
-    volume.g = 1.;
-
 	for (int i = 0; i < camera.bounce; i++)
 	{
 		hitInfo hit = traceRay(ray);
 
 		float t_scatter = 0.0;
-		if (atmosScatter(volume, hit, t_scatter, rng_state))
+		if (volume.enabled && atmosScatter(hit, t_scatter, rng_state))
         {
-			calculateVolumetricLight(t_scatter, volume, ray, color, light, transmittance, rng_state);
+			calculateVolumetricLight(t_scatter, ray, color, light, transmittance, rng_state);
             continue;
         }
 
 		if (hit.obj_index == -1)
 		{
 			light += transmittance * GetEnvironmentLight(ray);
-			// light += vec3(135 / 255.0f, 206 / 255.0f, 235 / 255.0f); //ambient color 
 			break;
 		}
 
-		transmittance *= exp(-volume.sigma_t * hit.t);
+		if (volume.enabled)
+			transmittance *= exp(-volume.sigma_t * hit.t);
 
 		GPUObject obj = objects[hit.obj_index];
 		GPUMaterial mat = materials[obj.mat_index];

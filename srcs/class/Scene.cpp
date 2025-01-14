@@ -15,6 +15,12 @@
 Scene::Scene()
 {
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+	
+	_gpu_volume.enabled = false;
+	_gpu_volume.sigma_a = glm::vec3(0.0001f);
+	_gpu_volume.sigma_s = glm::vec3(0.0800f);
+	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
+	_gpu_volume.g = 0.9f;
 }
 
 Scene::~Scene()
@@ -141,6 +147,11 @@ const std::vector<GPUObject>&	Scene::getObjectData() const
 std::vector<GPUMaterial>&	Scene::getMaterialData()
 {
 	return (_gpu_materials);
+}
+
+GPUVolume	&Scene::getVolume()
+{
+	return (_gpu_volume);
 }
 
 Camera		*Scene::getCamera(void) const

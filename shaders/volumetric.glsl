@@ -1,11 +1,4 @@
 
-struct VolumeProperties {
-    vec3 sigma_a;    // absorption coefficient
-    vec3 sigma_s;    // scattering coefficient
-    vec3 sigma_t;    // extinction coefficient
-    float g;         // phase function parameter
-};
-
 float sampleHG(float g, inout uint rng_state)
 {
     if (abs(g) < 0.001)
@@ -36,17 +29,18 @@ vec3 sampleDirection(vec3 forward, float cos_theta, inout uint rng_state)
     );
 }
 
-bool atmosScatter(VolumeProperties volume, hitInfo hit, inout float t_scatter, inout uint rng_state)
+bool atmosScatter(hitInfo hit, inout float t_scatter, inout uint rng_state)
 {
-    t_scatter = -log(randomValue(rng_state)) / volume.sigma_t.x;
+    float density = volume.sigma_t.x;
+    t_scatter = -log(randomValue(rng_state)) / density;
 
-    return (t_scatter < hit.t && volume.sigma_t.x > 0.0);
+    return (t_scatter < hit.t && density > 0.0);
 }
 
-void calculateVolumetricLight(float t_scatter, VolumeProperties volume, inout Ray ray, inout vec3 color, inout vec3 light, inout vec3 transmittance, inout uint rng_state)
+void calculateVolumetricLight(float t_scatter, inout Ray ray, inout vec3 color, inout vec3 light, inout vec3 transmittance, inout uint rng_state)
 {
     vec3 scatter_pos = ray.origin + ray.direction * t_scatter;
-            
+    
     transmittance *= exp(-volume.sigma_t * t_scatter);
     color *= volume.sigma_s / volume.sigma_t;
     

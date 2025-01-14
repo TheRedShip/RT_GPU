@@ -23,8 +23,8 @@ struct GPUObject
 
 	alignas(16) glm::vec3	normal; // plane triangle
 
-	alignas(16) glm::vec3	vertex1;	//quad triangle
-	alignas(16) glm::vec3	vertex2;	//quad triangle
+	alignas(16) glm::vec3	vertex1;//quad triangle
+	alignas(16) glm::vec3	vertex2;//quad triangle
 
 	float					radius; // sphere
 
@@ -43,6 +43,17 @@ struct GPUMaterial
 	int						type;
 };
 
+struct GPUVolume
+{
+	alignas(16) glm::vec3	sigma_a;
+	alignas(16) glm::vec3	sigma_s;
+	alignas(16) glm::vec3	sigma_t;
+
+	float					g;
+
+	bool					enabled;
+};
+
 class Sphere;
 class Camera;
 
@@ -59,6 +70,7 @@ class Scene
 
 		const std::vector<GPUObject>	&getObjectData() const;
 		std::vector<GPUMaterial>		&getMaterialData();
+		GPUVolume						&getVolume();
 
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
@@ -66,6 +78,8 @@ class Scene
 	private:
 		std::vector<GPUObject>		_gpu_objects;
 		std::vector<GPUMaterial>	_gpu_materials;
+
+		GPUVolume					_gpu_volume;
 
 		Camera						*_camera;
 };
