@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 17:42:20 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/15 19:32:41 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void		Camera::updateCameraVectors()
 
 void		Camera::update(float delta_time)
 {
-	delta_time = std::min(delta_time, 0.01f);
+	// delta_time = std::min(delta_time, 0.01f);
 
 	_velocity += _acceleration * delta_time;
 

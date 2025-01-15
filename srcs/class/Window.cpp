@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/15 18:58:49 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/15 19:34:25 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -242,7 +242,7 @@ void Window::imGuiRender()
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 	if (has_changed)
-		_frameCount = (accumulate == 0) + 1;
+		_frameCount = (accumulate == 0) - 1;
 }
 
 GLFWwindow	*Window::getWindow(void) const

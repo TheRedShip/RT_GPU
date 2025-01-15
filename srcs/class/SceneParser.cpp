@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/15 19:08:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/15 19:52:51 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, 
 		throw std::runtime_error("OBJ : could not open material file");
 	while(getline(file, line))
 	{
-		if(line[0] == '#' || !line[0])
+		if (line.empty() || line[0] == '#')
 			continue;
 		std::stringstream lineStream(line);
 		lineStream >> identifier;
