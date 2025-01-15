@@ -48,7 +48,7 @@ struct GPUVolume
 	vec3	sigma_s;    // scattering coefficient
 	vec3	sigma_t;    // extinction coefficient
 	float	g;         // phase function parameter
-	bool	enabled;
+	int		enabled;
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -167,7 +167,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		hitInfo hit = traceRay(ray);
 
 		float t_scatter = 0.0;
-		if (volume.enabled && atmosScatter(hit, t_scatter, rng_state))
+		if (volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state))
         {
 			calculateVolumetricLight(t_scatter, ray, color, light, transmittance, rng_state);
             continue;
@@ -179,7 +179,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 			break;
 		}
 
-		if (volume.enabled)
+		if (volume.enabled != 0)
 			transmittance *= exp(-volume.sigma_t * hit.t);
 
 		GPUObject obj = objects[hit.obj_index];

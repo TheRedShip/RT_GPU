@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/11 16:13:40 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/15 18:58:49 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ void Window::imGuiRender()
 
 	ImGui::Begin("Fog settings");
 	
-	has_changed |= ImGui::Checkbox("Enable", &_scene->getVolume().enabled);
+	has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled));
 	ImGui::Separator();
 	
 	if (ImGui::SliderFloat("Absorption", &_scene->getVolume().sigma_a.x, 0., 0.1))

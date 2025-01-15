@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/10 18:58:38 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/15 18:58:12 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ struct GPUVolume
 
 	float					g;
 
-	bool					enabled;
+	int						enabled;
 };
 
 class Sphere;

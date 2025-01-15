@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/10 18:58:57 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/15 18:58:34 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ Scene::Scene()
 {
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 	
-	_gpu_volume.enabled = false;
+	_gpu_volume.enabled = 0;
 	_gpu_volume.sigma_a = glm::vec3(0.0001f);
 	_gpu_volume.sigma_s = glm::vec3(0.0800f);
 	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
