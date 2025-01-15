@@ -7,9 +7,17 @@ bool intersectSphere(Ray ray, GPUObject obj, out hitInfo hit)
 	float h = b * b - c;
 	
 	float t = -b - sqrt(h);
-	t = mix(t, -b + sqrt(h), step(t, 0.0));
-	
+	float last_t = -b + sqrt(h);
+
+	if (t > last_t)
+	{
+		float temp = t;
+		t = last_t;
+		last_t = temp;
+	}
+
 	hit.t = t;
+	hit.last_t = last_t;
 	hit.position = ray.origin + ray.direction * t;
 	hit.normal = normalize(hit.position - obj.position);
 	

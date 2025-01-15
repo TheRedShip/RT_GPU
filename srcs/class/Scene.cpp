@@ -17,7 +17,7 @@ Scene::Scene()
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 	
 	_gpu_volume.enabled = 0;
-	_gpu_volume.sigma_a = glm::vec3(0.0f);
+	_gpu_volume.sigma_a = glm::vec3(0.0001f);
 	_gpu_volume.sigma_s = glm::vec3(0.0800f);
 	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
 	_gpu_volume.g = 0.9f;

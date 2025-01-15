@@ -10,7 +10,10 @@ MAT 30 30 30           0.0     0.0 0.0 //black
 
 MAT 255 255 255     5.0     0.0 0.0 //light
 
-sp  -100 30 50      50              6          
+MAT	255 255 255		0.0		0.0 0.0 TRN // glass 
+
+sp  -5 2 0      2              6
+# qu	-5 0 0			0 2 0	0 0 2		6        
 
 sp  0 -25 0         50              4
 
@@ -20,6 +23,8 @@ sp  -2.2 0.4 0.25         1            2
 sp  -3 0.2 0.50         0.75           3
 sp  -3.8 -0.1 0.60         0.5           5
 
+sp	0 1 5				1				7
+
 cy	0 1 2		0.5 2		-1.5 0 0.75		1
 
-OBJ obj/10517_Motorcycle_Helmet_v01_L3.obj
+OBJ obj/Lowpoly_tree_sample.obj

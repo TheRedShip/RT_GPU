@@ -52,6 +52,8 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		mat->type = 0;
 	else if (type == "DIE")
 		mat->type = 1;
+	else if (type == "TRN")
+		mat->type = 2;
 
 	_scene->addMaterial(mat);
 }
@@ -156,7 +158,7 @@ void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, 
 			if(matName.empty())
 				throw std::runtime_error("OBJ: syntax error in material file, missing material name");
 			mat = new Material;
-			bzero(mat, sizeof(Material));
+			memset(mat, 0, sizeof(Material));
 			mat->metallic = 1.0f;
 			continue;
 		}

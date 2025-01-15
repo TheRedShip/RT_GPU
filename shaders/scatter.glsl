@@ -32,6 +32,72 @@ Ray dieletricRay(hitInfo hit, Ray ray, GPUMaterial mat)
     return (ray);
 }
 
+void swap(inout float a, inout float b)
+{
+	float temp = a;
+	a = b;
+	b = temp;
+}
+
+float fresnel(vec3 incident, vec3 normal, float eta)
+{
+    float cosi = clamp(dot(incident, normal), -1.0, 1.0);
+    float etai = 1.0, etat = eta;
+    if (cosi > 0.0) swap(etai, etat);
+    float sint = etai / etat * sqrt(max(0.0, 1.0 - cosi * cosi));
+    if (sint >= 1.0) {
+        return 1.0; // Total internal reflection
+    }
+    float cost = sqrt(max(0.0, 1.0 - sint * sint));
+    cosi = abs(cosi);
+    float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
+    float Rp = ((etai * cosi) - (etat * cost)) / ((etai * cosi) + (etat * cost));
+    return (Rs * Rs + Rp * Rp) * 0.5;
+}
+
+Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
+{
+    Ray newRay;
+    
+    float eta = mat.refraction;
+    vec3 refractedDir = refract(ray.direction, hit.normal, 1.0 / eta);
+
+    float kr = fresnel(ray.direction, hit.normal, eta);
+
+    float randVal = randomValue(rng_state);
+    if (randVal < mat.metallic || length(refractedDir) == 0.0)
+	{
+        newRay.origin = hit.position + hit.normal * 1e-4;
+        newRay.direction = reflect(ray.direction, hit.normal);
+    }
+	else
+	{
+        newRay.origin = hit.position - hit.normal * 1e-4;
+        newRay.direction = refractedDir;
+    }
+
+    return newRay;
+}
+
+
+// Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
+// {
+// 	vec3 specular_origin = hit.position + hit.normal * 0.001;
+// 	vec3 specular_dir = mix(normalize(reflect(ray.direction, hit.normal)), lambertRay(hit, ray, mat, rng_state).direction, mat.roughness);
+
+// 	vec3 transparency_origin = ray.origin + ray.direction * hit.last_t + ray.direction * 0.001;
+// 	vec3 transparency_dir = ray.direction;
+
+// 	Ray specular_ray = Ray(specular_origin, specular_dir);
+// 	Ray transparency_ray = Ray(transparency_origin, transparency_dir);
+
+// 	bool is_transparent = (mat.metallic >= randomValue(rng_state));
+
+// 	if (is_transparent)
+// 		return (transparency_ray);
+// 	return (specular_ray);
+// }
+
 
 Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
@@ -45,5 +111,7 @@ Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
         return (lambertRay(hit, ray, mat, rng_state));
     else if (mat.type == 1)
         return (dieletricRay(hit, ray, mat));
+	else if (mat.type == 2)
+		return (transparencyRay(hit, ray, mat, rng_state));
     return (ray);
 }

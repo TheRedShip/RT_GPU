@@ -86,6 +86,7 @@ struct Ray
 struct hitInfo
 {
 	float	t;
+	float	last_t;
 	vec3	normal;
 	vec3	position;
 	int		obj_index;
@@ -141,6 +142,7 @@ hitInfo	traceRay(Ray ray)
 			if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
 			{
 				hit.t = temp_hit.t;
+				hit.last_t = temp_hit.last_t;
 				hit.obj_index = i;
 				hit.position = temp_hit.position;
 				hit.normal = temp_hit.normal;

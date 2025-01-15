@@ -64,32 +64,29 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint r
 
     vec3 normal = normalize(crossQuad);
     float cos_theta = max(0.0, dot(normal, -light_dir));
-    return mat.emission * mat.color * cos_theta / (pdf * light_dist * light_dist);
+    return mat.emission * mat.color / (light_dist);
 }
 
 vec3	sampleLights(vec3 position, inout uint rng_state)
 {
 	vec3 light = vec3(0.0);
     
-	int emissive_count = 0;
-    
     for (int i = 0; i < u_objectsNum; i++)
-        if (materials[objects[i].mat_index].emission > 0.0)
-            emissive_count++;
+    {
+        GPUObject obj = objects[i];
+        GPUMaterial mat = materials[obj.mat_index];
+        if (mat.emission > 0.0)
+        {
+            vec3 light_dir = normalize(obj.position - position);
+            float light_dist = length(obj.position - position);
 
-	int target_light = int(floor(randomValue(rng_state) * float(emissive_count)));
+            Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
+            hitInfo shadow_hit = traceRay(shadow_ray);
 
-    GPUObject obj = objects[target_light];
-    GPUMaterial mat = materials[obj.mat_index];
-
-    vec3 light_dir = normalize(obj.position - position);
-    float light_dist = length(obj.position - position);
-
-    Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
-    hitInfo shadow_hit = traceRay(shadow_ray);
-
-    if (shadow_hit.obj_index == target_light)
-        light += mat.emission * mat.color / (light_dist);
+            if (shadow_hit.obj_index == i)
+                light += mat.emission * mat.color / (light_dist);
+        }
+    }
 
 	return (light);
 }
@@ -98,25 +95,21 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
 // {
 // 	vec3 light = vec3(0.0);
     
-// 	int emissive_count = 0;
-    
 //     for (int i = 0; i < u_objectsNum; i++)
-//         if (materials[objects[i].mat_index].emission > 0.0)
-//             emissive_count++;
+//     {
+	
+//         GPUObject obj = objects[i];
+//         GPUMaterial mat = materials[obj.mat_index];
 
-// 	if (emissive_count == 0)
-// 		return (vec3(0.));
-	
-// 	int target_light = int(floor(randomValue(rng_state) * float(emissive_count)));
-	
-// 	GPUObject obj = objects[target_light];
-// 	GPUMaterial mat = materials[obj.mat_index];
+//         if (mat.emission == 0.0)
+//             continue ;
 
-// 	if (obj.type == 0)
-// 		light = sampleSphereLight(position, obj, mat, rng_state);
-// 	else if (obj.type == 2)
-// 		light = sampleQuadLight(position, obj, mat, rng_state);
-	
+//         if (obj.type == 0)
+//             light = sampleSphereLight(position, obj, mat, rng_state);
+//         else if (obj.type == 2)
+//             light = sampleQuadLight(position, obj, mat, rng_state);
+//     }
+
 // 	return (light);
 // }
 
