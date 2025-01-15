@@ -1,6 +1,9 @@
+hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
+	return vec3(0.);
+
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -18,9 +21,55 @@ vec3 GetEnvironmentLight(Ray ray)
 	return composite;
 }
 
-hitInfo	traceRay(Ray ray);
+vec3 sampleSphereLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint rng_state)
+{
+    float theta = 2.0 * M_PI * randomValue(rng_state);
+    float phi = acos(2.0 * randomValue(rng_state) - 1.0);
+    
+    vec3 sample_point = obj.position + obj.radius * vec3(
+        sin(phi) * cos(theta),
+        sin(phi) * sin(theta),
+        cos(phi)
+    );
+    
+    vec3 light_dir = normalize(sample_point - position);
+    float light_dist = length(sample_point - position);
+    
+    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
+    hitInfo shadow_hit = traceRay(shadow_ray);
+    
+    if (shadow_hit.obj_index != -1 && shadow_hit.t < light_dist)
+        return vec3(0.0);
 
-vec3	sampleLights(vec3 position)
+    float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
+    return mat.emission * mat.color / (light_dist);
+}
+
+vec3 sampleQuadLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint rng_state)
+{
+    float u = randomValue(rng_state);
+    float v = randomValue(rng_state);
+    
+    vec3 sample_point = obj.position + u * obj.vertex1 + v * obj.vertex2;
+    vec3 light_dir = normalize(sample_point - position);
+    float light_dist = length(sample_point - position);
+    
+    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
+    hitInfo shadow_hit = traceRay(shadow_ray);
+    
+    if (shadow_hit.obj_index != -1 && shadow_hit.t < light_dist)
+        return vec3(0.0);
+
+	vec3 crossQuad = cross(obj.vertex1, obj.vertex2);
+    float area = length(crossQuad);
+    float pdf = 1.0 / area;
+
+    vec3 normal = normalize(crossQuad);
+    float cos_theta = max(0.0, dot(normal, -light_dir));
+    return mat.emission * mat.color * cos_theta / (pdf * light_dist * light_dist);
+}
+
+vec3	sampleLights(vec3 position, inout uint rng_state)
 {
 	vec3 light = vec3(0.0);
 
@@ -45,9 +94,35 @@ vec3	sampleLights(vec3 position)
 	return (light);
 }
 
-void    calculateLightColor(inout vec3 color, inout vec3 light, GPUMaterial mat, hitInfo hit)
+// vec3 sampleLights(vec3 position, inout uint rng_state)
+// {
+// 	vec3 light = vec3(0.0);
+    
+// 	int emissive_count = 0;
+    
+//     for (int i = 0; i < u_objectsNum; i++)
+//         if (materials[objects[i].mat_index].emission > 0.0)
+//             emissive_count++;
+
+// 	if (emissive_count == 0)
+// 		return (vec3(0.));
+	
+// 	int target_light = int(floor(randomValue(rng_state) * float(emissive_count)));
+	
+// 	GPUObject obj = objects[target_light];
+// 	GPUMaterial mat = materials[obj.mat_index];
+
+// 	if (obj.type == 0)
+// 		light = sampleSphereLight(position, obj, mat, rng_state);
+// 	else if (obj.type == 2)
+// 		light = sampleQuadLight(position, obj, mat, rng_state);
+	
+// 	return (light);
+// }
+
+void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
     color *= mat.color;
     light += mat.emission * mat.color;
-    // light += sampleLights(hit.position);
+    // light += sampleLights(hit.position, rng_state);
 }

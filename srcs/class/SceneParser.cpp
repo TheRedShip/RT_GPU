@@ -124,10 +124,7 @@ Triangle	*SceneParser::getFace(std::stringstream &line, std::vector<glm::vec3> &
 	triangle[0] = vertices[getVertexIndex(line, vertices.size())];
 	triangle[1] = vertices[getVertexIndex(line, vertices.size())];
 	triangle[2] = vertices[getVertexIndex(line, vertices.size())];
-	std::cout << triangle[0].x << " " << triangle[0].y << " " << triangle[0].z << std::endl;
-	std::cout << triangle[1].x << " " << triangle[1].y << " " << triangle[1].z << std::endl;
-	std::cout << triangle[2].x << " " << triangle[2].y << " " << triangle[2].z << std::endl;
-	return(new Triangle(triangle[0], triangle[1], triangle[2], 0));		
+	return (new Triangle(triangle[0], triangle[1], triangle[2], 0));	
 }
 
 void		SceneParser::parseObj(std::stringstream &objInfo)

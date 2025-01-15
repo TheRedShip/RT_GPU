@@ -192,7 +192,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
         color /= p;
 		//
 
-		calculateLightColor(color, light, mat, hit);
+		calculateLightColor(mat, hit, color, light, rng_state);
 		
 		if (mat.emission > 0.0)
 			break;
