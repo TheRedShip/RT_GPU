@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/15 13:27:43 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/15 19:08:42 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,7 +132,6 @@ void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, 
 	std::string matName;
 	std::string identifier;
 	std::string line;
-	float tmp;
 	Material *mat;
 
 	input_line >> filename;
@@ -158,11 +157,12 @@ void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, 
 				throw std::runtime_error("OBJ: syntax error in material file, missing material name");
 			mat = new Material;
 			bzero(mat, sizeof(Material));
+			mat->metallic = 1.0f;
 			continue;
 		}
 		if(!mat)
 			throw std::runtime_error("OBJ: error in material file, material name not defined");
-		if(/*identifier == "Ka" || */identifier == "Kd")
+		if(identifier == "Kd")
 		{
 			if(!(lineStream >> mat->color.x >> mat->color.y >> mat->color.z))
 				throw std::runtime_error("OBJ: syntax error while getting material color");
@@ -175,16 +175,10 @@ void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, 
 		}
 		else if(identifier == "Ke")
 		{
-			if(!(lineStream >> tmp))
+			float x, y, z;
+			if(!(lineStream >> x >> y >> z))
 				throw std::runtime_error("OBJ: syntax error while getting material emission");
-			mat->emission += tmp;
-			if(!(lineStream >> tmp))
-				throw std::runtime_error("OBJ: syntax error while getting material emission");
-			mat->emission += tmp;
-			if(!(lineStream >> tmp))
-				throw std::runtime_error("OBJ: syntax error while getting material emission");
-			mat->emission += tmp;
-			mat->emission /= 3;
+			mat->emission = (x + y + z) / 3;
 		}
 		else if(identifier == "Ni")
 		{
