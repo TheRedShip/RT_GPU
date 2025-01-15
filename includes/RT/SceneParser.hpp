@@ -6,7 +6,7 @@
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:37:37 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/13 17:39:22 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/15 12:34:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ class SceneParser
 		void		parseCamera(std::stringstream &line);
 		void		parseObj(std::stringstream &line);
 		glm::vec3	getVertex(std::stringstream &line);
-		Triangle	*getFace(std::stringstream &line, std::vector<glm::vec3> &vertices);
+		Triangle	*getFace(std::stringstream &line, std::vector<glm::vec3> &vertices, int mat);
 		long int	getVertexIndex(std::stringstream &line, size_t size);
+		void		parseMtl(std::stringstream &line, std::map<std::string, int> &materials);
 
 		Scene		*_scene;
 

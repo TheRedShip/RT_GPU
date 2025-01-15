@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/13 18:49:10 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/15 13:27:43 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,10 +97,8 @@ glm::vec3	SceneParser::getVertex(std::stringstream &line)
 {
 	glm::vec3 res;
 
-	std::cout << line.str() << std::endl;
 	if(!(line >> res.x >> res.y >> res.z))
 		throw std::runtime_error("syntax error in obj file while parsing vertex");
-	res.z *= -1;
 	return(res);
 }
 
@@ -117,38 +115,133 @@ long int	SceneParser::getVertexIndex(std::stringstream &line, size_t size)
 	return(index - 1);
 }
 
-Triangle	*SceneParser::getFace(std::stringstream &line, std::vector<glm::vec3> &vertices)
+Triangle	*SceneParser::getFace(std::stringstream &line, std::vector<glm::vec3> &vertices, int mat)
 {
 	glm::vec3 triangle[3];
 
 	triangle[0] = vertices[getVertexIndex(line, vertices.size())];
 	triangle[1] = vertices[getVertexIndex(line, vertices.size())];
 	triangle[2] = vertices[getVertexIndex(line, vertices.size())];
-	return (new Triangle(triangle[0], triangle[1], triangle[2], 0));	
+	return (new Triangle(triangle[0], triangle[1], triangle[2], mat));		
 }
 
-void		SceneParser::parseObj(std::stringstream &objInfo)
+void	SceneParser::parseMtl(std::stringstream &input_line, std::map<std::string, int> &materials)
+{	
+	std::string filename;
+	std::ifstream file;
+	std::string matName;
+	std::string identifier;
+	std::string line;
+	float tmp;
+	Material *mat;
+
+	input_line >> filename;
+	file.open(filename);
+	mat = 0;
+	if(!file.is_open())
+		throw std::runtime_error("OBJ : could not open material file");
+	while(getline(file, line))
+	{
+		if(line[0] == '#' || !line[0])
+			continue;
+		std::stringstream lineStream(line);
+		lineStream >> identifier;
+		if(identifier == "newmtl")
+		{
+			if(mat)
+			{
+				_scene->addMaterial(mat);
+				materials[matName] = _scene->getMaterialData().size() - 1;
+			}
+			lineStream >> matName;
+			if(matName.empty())
+				throw std::runtime_error("OBJ: syntax error in material file, missing material name");
+			mat = new Material;
+			bzero(mat, sizeof(Material));
+			continue;
+		}
+		if(!mat)
+			throw std::runtime_error("OBJ: error in material file, material name not defined");
+		if(/*identifier == "Ka" || */identifier == "Kd")
+		{
+			if(!(lineStream >> mat->color.x >> mat->color.y >> mat->color.z))
+				throw std::runtime_error("OBJ: syntax error while getting material color");
+		}
+		else if(identifier == "Ns")
+		{
+			if(!(lineStream >> mat->roughness) || mat->roughness > 1000 || mat->roughness < 0)
+				throw std::runtime_error("OBJ: syntax error while getting material softness");
+			mat->roughness /= 1000;
+		}
+		else if(identifier == "Ke")
+		{
+			if(!(lineStream >> tmp))
+				throw std::runtime_error("OBJ: syntax error while getting material emission");
+			mat->emission += tmp;
+			if(!(lineStream >> tmp))
+				throw std::runtime_error("OBJ: syntax error while getting material emission");
+			mat->emission += tmp;
+			if(!(lineStream >> tmp))
+				throw std::runtime_error("OBJ: syntax error while getting material emission");
+			mat->emission += tmp;
+			mat->emission /= 3;
+		}
+		else if(identifier == "Ni")
+		{
+			if(!(lineStream >> mat->refraction))
+				throw std::runtime_error("OBJ: syntax error while getting material refraction");
+		}
+		else
+			std::cerr << "unsupported material setting : " << identifier << std::endl;
+	}
+	if(mat)
+	{
+		_scene->addMaterial(mat);
+		materials[matName] = _scene->getMaterialData().size() - 1;
+	}
+}
+
+void	SceneParser::parseObj(std::stringstream &objInfo)
 {
 	std::vector<glm::vec3>	vertices;
 	std::string				filename;
+	std::map<std::string, int> matNames;
 	std::string				line;
 	std::string				identifier;
 	std::ifstream			file;
+	int						curMat;
 
 	objInfo >> filename;
 	file.open(filename);
+	curMat = 0;
 	if (!file.is_open())
 		throw std::runtime_error("OBJ : could not open object file");
 	while (getline(file, line))
 	{
-		if(line[0] == '#' || line.empty())
-			continue;
-		std::stringstream		lineStream(line);
-		lineStream >> identifier;
-		if(identifier == "v")
-			vertices.push_back(getVertex(lineStream));
-		else if (identifier == "f")
-			_scene->addObject(getFace(lineStream, vertices));
+		try{
+			if(line[0] == '#' || line.empty())
+				continue;
+			std::stringstream		lineStream(line);
+			identifier = "";
+			lineStream >> identifier;
+			if(identifier == "v")
+				vertices.push_back(getVertex(lineStream));
+			else if (identifier == "f")
+				_scene->addObject(getFace(lineStream, vertices, curMat));
+			else if (identifier == "mtllib")
+				parseMtl(lineStream, matNames);
+			else if (identifier == "usemtl")
+			{
+				lineStream >> identifier;
+				if(matNames.find(identifier) == matNames.end())
+					throw std::runtime_error("OBJ: invalid material name");
+				curMat = matNames[identifier];
+			}
+		}catch (std::exception &e)
+		{
+			std::cerr << line << std::endl;
+			throw;
+		}
 	}
 }
 
