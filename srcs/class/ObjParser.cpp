@@ -61,20 +61,20 @@ void ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 		v4 = vertices[(i + 2) % vertices.size()];
 
 		normal = glm::normalize(glm::cross(v2 - v1, v3 - v1));
-		std::cout << glm::to_string(normal) << std::endl;
+		// std::cout << glm::to_string(normal) << std::endl;
 
-		float dot = glm::dot(normal, v4 - v1);
-		std::cout << dot << std::endl;
+		// float dot = glm::dot(normal, v4 - v1);
+		// std::cout << dot << std::endl;
 		//if(isEar(v1, v2 ,v3, vertices))
 		//{
 		//	vertices.erase(vertices.begin() + i);
 		//	scene.addObject(new Triangle(v1, v2 ,v3));
 		//}
 	}
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
-	std::cout << std::endl;
+	// std::cout << std::endl;
+	// std::cout << std::endl;
+	// std::cout << std::endl;
+	// std::cout << std::endl;
 }
 
 void ObjParser::addFace(std::stringstream &line, std::vector<glm::vec3> &vertices, int mat,  Scene &scene)
@@ -89,9 +89,9 @@ void ObjParser::addFace(std::stringstream &line, std::vector<glm::vec3> &vertice
 	if(face_vertices.size() < 3)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
-	for(size_t i = 0; i < face_vertices.size(); i++)
-		std::cout << face_vertices[i].x << " " << face_vertices[i].y << " " << face_vertices[i].z << " | ";
-	std::cout << std::endl;
+	// for(size_t i = 0; i < face_vertices.size(); i++)
+	// 	std::cout << face_vertices[i].x << " " << face_vertices[i].y << " " << face_vertices[i].z << " | ";
+	// std::cout << std::endl;
 
 //	while(face_vertices.size() > 3)
 //		addTriangleFromPolygon(face_vertices, scene);

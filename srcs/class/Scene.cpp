@@ -52,6 +52,13 @@ bool		Scene::parseScene(char *name)
 		}
 	}
 	file.close();
+
+	//bvh
+	BVH		*bvh = new BVH(_gpu_objects, 0, _gpu_objects.size());
+	bvh->showAABB(this);
+	// addObject(new Cube((bvh->getAABB().max + bvh->getAABB().min) / 2.0f, bvh->getAABB().max - bvh->getAABB().min, 7));
+	//
+
 	return (true);
 }
 

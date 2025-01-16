@@ -61,6 +61,7 @@ struct Vertex {
 # include "Scene.hpp"
 # include "SceneParser.hpp"
 # include "ObjParser.hpp"
+# include "BVH.hpp"
 
 
 
