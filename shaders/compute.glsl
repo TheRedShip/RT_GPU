@@ -61,6 +61,12 @@ layout(std430, binding = 2) buffer MaterialBuffer
 	GPUMaterial materials[];
 };
 
+layout(std430, binding = 3) buffer LightsBuffer
+{
+    int lightsIndex[];
+};
+
+
 layout(std140, binding = 0) uniform CameraData
 {
     GPUCamera camera;
@@ -71,7 +77,9 @@ layout(std140, binding = 1) uniform VolumeData
     GPUVolume volume;
 };
 
+
 uniform int     u_objectsNum;
+uniform int     u_lightsNum;
 uniform vec2    u_resolution;
 uniform int		u_pixelisation;
 uniform int		u_frameCount;

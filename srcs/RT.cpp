@@ -44,6 +44,14 @@ int main(int argc, char **argv)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
 
+	
+	GLuint lightSSBO;
+	glGenBuffers(1, &lightSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, lightSSBO);
+
+
 	GLuint cameraUBO;
 	glGenBuffers(1, &cameraUBO);
 	glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
@@ -55,6 +63,7 @@ int main(int argc, char **argv)
 	glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUVolume), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 1, volumeUBO);
+
 
 	shader.attach();
 
@@ -72,6 +81,11 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, material_data.size() * sizeof(GPUMaterial), material_data.data());
 
+		std::set<int> gpu_lights = scene.getGPULights();
+		std::vector<int> gpu_lights_array(gpu_lights.begin(), gpu_lights.end());
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
+		
 		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
@@ -79,12 +93,14 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUVolume), &scene.getVolume());
 
+
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
+		shader.set_int("u_lightsNum", gpu_lights.size());
 		shader.set_int("u_pixelisation", window.getPixelisation());
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-		
+
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		

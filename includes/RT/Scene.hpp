@@ -67,6 +67,9 @@ class Scene
 
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
+		
+		void							updateLightAndObjects(int mat_id);
+		std::set<int>					getGPULights();
 
 		const std::vector<GPUObject>	&getObjectData() const;
 		std::vector<GPUMaterial>		&getMaterialData();
@@ -78,6 +81,8 @@ class Scene
 	private:
 		std::vector<GPUObject>		_gpu_objects;
 		std::vector<GPUMaterial>	_gpu_materials;
+
+		std::set<int>				_gpu_lights;
 
 		GPUVolume					_gpu_volume;
 

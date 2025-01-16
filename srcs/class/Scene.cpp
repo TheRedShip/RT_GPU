@@ -139,6 +139,27 @@ void		Scene::addMaterial(Material *material)
 	_gpu_materials.push_back(gpu_mat);
 }
 
+void		Scene::updateLightAndObjects(int mat_id)
+{
+	for (unsigned int i = 0; i < _gpu_objects.size(); i++)
+	{
+		if (_gpu_objects[i].mat_index == mat_id)
+			_gpu_lights.insert(i);
+	}
+	for (auto it = _gpu_lights.begin(); it != _gpu_lights.end(); )
+	{
+        if (_gpu_materials[_gpu_objects[*it].mat_index].emission <= 0.0) 
+            it = _gpu_lights.erase(it);
+		else
+            ++it;
+    }
+}
+
+std::set<int>				Scene::getGPULights()
+{
+	return (_gpu_lights);
+}
+
 const std::vector<GPUObject>&	Scene::getObjectData() const
 {
 	return (_gpu_objects);

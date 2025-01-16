@@ -257,12 +257,16 @@ bool		SceneParser::parseLine(const std::string &line)
 		if (it != object_parsers.end())
 		{
 			Object *obj = it->second(ss);
-			(void) _scene->getMaterial(obj->getMaterialIndex()); //verify material
+			
+			GPUMaterial mat = _scene->getMaterial(obj->getMaterialIndex()); //verify material
 			
 			if (obj->getType() == Object::Type::PORTAL)
 				_scene->addObject(static_cast<Portal *>(obj)->createSupportQuad());
 			
 			_scene->addObject(obj);
+
+			if (mat.emission > 0.0)
+				_scene->updateLightAndObjects(obj->getMaterialIndex());
 		}
 
 		if (identifier == "MAT")

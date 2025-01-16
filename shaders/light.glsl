@@ -71,9 +71,10 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
 {
 	vec3 light = vec3(0.0);
     
-    for (int i = 0; i < u_objectsNum; i++)
+    for (int i = 0; i < u_lightsNum; i++)
     {
-        GPUObject obj = objects[i];
+        int light_index = lightsIndex[i];
+        GPUObject obj = objects[light_index];
         GPUMaterial mat = materials[obj.mat_index];
         if (mat.emission > 0.0)
         {
@@ -83,7 +84,7 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
             Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
             hitInfo shadow_hit = traceRay(shadow_ray);
 
-            if (shadow_hit.obj_index == i)
+            if (shadow_hit.obj_index == light_index)
                 light += mat.emission * mat.color / (light_dist);
         }
     }
@@ -116,6 +117,6 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
     color *= mat.color;
-    light += mat.emission * mat.color;
-    // light += sampleLights(hit.position, rng_state);
+    // light += mat.emission * mat.color;
+    light += sampleLights(hit.position, rng_state);
 }
