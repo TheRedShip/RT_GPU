@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/08 17:44:56 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/16 15:02:34 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ struct Vertex {
 # include "Shader.hpp"
 # include "Scene.hpp"
 # include "SceneParser.hpp"
+# include "ObjParser.hpp"
 
 
 
