@@ -19,7 +19,7 @@ vec3 GetEnvironmentLight(Ray ray)
 	return composite;
 }
 
-vec3 sampleSphereLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint rng_state)
+vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMaterial mat, inout uint rng_state)
 {
     float theta = 2.0 * M_PI * randomValue(rng_state);
     float phi = acos(2.0 * randomValue(rng_state) - 1.0);
@@ -36,14 +36,14 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint
     Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
     hitInfo shadow_hit = traceRay(shadow_ray);
     
-    if (shadow_hit.obj_index != -1 && shadow_hit.t < light_dist)
+    if (shadow_hit.obj_index != light_index)
         return vec3(0.0);
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
     return mat.emission * mat.color / (light_dist);
 }
 
-vec3 sampleQuadLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint rng_state)
+vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial mat, inout uint rng_state)
 {
     float u = randomValue(rng_state);
     float v = randomValue(rng_state);
@@ -55,7 +55,7 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, GPUMaterial mat, inout uint r
     Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
     hitInfo shadow_hit = traceRay(shadow_ray);
     
-    if (shadow_hit.obj_index != -1 && shadow_hit.t < light_dist)
+    if (shadow_hit.obj_index != light_index)
         return vec3(0.0);
 
 	vec3 crossQuad = cross(obj.vertex1, obj.vertex2);
@@ -74,19 +74,18 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
     for (int i = 0; i < u_lightsNum; i++)
     {
         int light_index = lightsIndex[i];
+        
         GPUObject obj = objects[light_index];
         GPUMaterial mat = materials[obj.mat_index];
-        if (mat.emission > 0.0)
-        {
-            vec3 light_dir = normalize(obj.position - position);
-            float light_dist = length(obj.position - position);
 
-            Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
-            hitInfo shadow_hit = traceRay(shadow_ray);
+        vec3 light_dir = normalize(obj.position - position);
+        float light_dist = length(obj.position - position);
 
-            if (shadow_hit.obj_index == light_index)
-                light += mat.emission * mat.color / (light_dist);
-        }
+        Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
+        hitInfo shadow_hit = traceRay(shadow_ray);
+
+        if (shadow_hit.obj_index == light_index)
+            light += mat.emission * mat.color / (light_dist);
     }
 
 	return (light);
@@ -96,19 +95,18 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
 // {
 // 	vec3 light = vec3(0.0);
     
-//     for (int i = 0; i < u_objectsNum; i++)
+//     for (int i = 0; i < u_lightsNum; i++)
 //     {
-	
-//         GPUObject obj = objects[i];
+//         int light_index = lightsIndex[i];
+
+//         GPUObject obj = objects[light_index];
 //         GPUMaterial mat = materials[obj.mat_index];
 
-//         if (mat.emission == 0.0)
-//             continue ;
-
 //         if (obj.type == 0)
-//             light = sampleSphereLight(position, obj, mat, rng_state);
+//             light += sampleSphereLight(position, obj, light_index, mat, rng_state);
 //         else if (obj.type == 2)
-//             light = sampleQuadLight(position, obj, mat, rng_state);
+//             light += sampleQuadLight(position, obj, light_index, mat, rng_state);
+        
 //     }
 
 // 	return (light);
@@ -117,6 +115,6 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
     color *= mat.color;
-    // light += mat.emission * mat.color;
-    light += sampleLights(hit.position, rng_state);
+    light += mat.emission * mat.color;
+    // light += sampleLights(hit.position, rng_state);
 }
