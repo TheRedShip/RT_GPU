@@ -20,7 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -50,6 +51,12 @@ int main(int argc, char **argv)
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, lightSSBO);
+
+	GLuint bvhSSBO;
+	glGenBuffers(1, &bvhSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getBVH().size() * sizeof(GPUBvh), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvhSSBO);
 
 
 	GLuint cameraUBO;
@@ -86,6 +93,11 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
 		
+		std::vector<GPUBvh> gpu_bvh = scene.getBVH();
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_bvh.size() * sizeof(GPUBvh), gpu_bvh.data());
+		
+
 		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
@@ -96,6 +108,7 @@ int main(int argc, char **argv)
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
+		shader.set_int("u_bvhNum", gpu_bvh.size());
 		shader.set_int("u_lightsNum", gpu_lights.size());
 		shader.set_int("u_pixelisation", window.getPixelisation());
 		shader.set_float("u_time", (float)(glfwGetTime()));

@@ -161,7 +161,6 @@ hitInfo	traceRay(Ray ray)
 		ray = portalRay(ray, hit);
 	}
 
-
 	return (hit);
 }
 

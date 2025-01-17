@@ -34,12 +34,6 @@ void	BVH::updateBounds(std::vector <GPUObject> primitives)
 		
 		if (leaf_triangle.type != (int)Object::Type::TRIANGLE)
 			continue ;
-
-		if (leaf_triangle.type == (int)Object::Type::TRIANGLE)
-		{
-			leaf_triangle.vertex1 += leaf_triangle.position;
-			leaf_triangle.vertex2 += leaf_triangle.position;
-		}
 		
 		_aabb.min = glm::min(_aabb.min, leaf_triangle.position);
         _aabb.min = glm::min(_aabb.min, leaf_triangle.vertex1);
@@ -63,7 +57,7 @@ void	BVH::subdivide(std::vector<GPUObject> primitives)
 	if (extent.y > extent.x) axis = 1;
 	if (extent.z > extent[axis]) axis = 2;
 
-	glm::vec3 split_pos = _aabb.min + extent[axis] * 0.5f;
+	float split_pos = _aabb.min[axis] + extent[axis] * 0.5f;
 
 	int i = _first_primitive;
 	int j = _first_primitive + _primitive_count - 1;
@@ -73,7 +67,7 @@ void	BVH::subdivide(std::vector<GPUObject> primitives)
 		glm::vec3 centroid = primitives[i].position + primitives[i].vertex1 + primitives[i].vertex2;
 		centroid /= 3.0f;
 
-		if (centroid[axis] < split_pos[axis])
+		if (centroid[axis] < split_pos)
 			i++;
 		else
 		{
@@ -103,7 +97,6 @@ void	BVH::showAABB(Scene *scene)
 {
 	if (_is_leaf)
 	{
-
 		scene->addObject(new Sphere(_aabb.min, 0.5f, 6));
 		scene->addObject(new Sphere(_aabb.max, 0.5f, 6));
 		scene->addObject(new Sphere(glm::vec3(_aabb.min.x, _aabb.min.y, _aabb.max.z), 0.5f, 6));
@@ -112,7 +105,6 @@ void	BVH::showAABB(Scene *scene)
 		scene->addObject(new Sphere(glm::vec3(_aabb.min.x, _aabb.max.y, _aabb.max.z), 0.5f, 6));
 		scene->addObject(new Sphere(glm::vec3(_aabb.max.x, _aabb.min.y, _aabb.max.z), 0.5f, 6));
 		scene->addObject(new Sphere(glm::vec3(_aabb.max.x, _aabb.max.y, _aabb.min.z), 0.5f, 6));
-
 	}
 	else
 	{
@@ -124,4 +116,60 @@ void	BVH::showAABB(Scene *scene)
 const AABB &BVH::getAABB() const
 {
 	return (_aabb);
+}
+
+GPUBvh	BVH::toGPUBvh()
+{
+	GPUBvh bvh;
+
+	bvh.is_leaf = _is_leaf;
+	bvh.first_primitive = _first_primitive;
+	bvh.primitive_count = _primitive_count;
+	bvh.max = _aabb.max;
+	bvh.min = _aabb.min;
+
+	return (bvh); 
+}
+
+void BVH::flatten(std::vector<GPUBvh> &bvhs, int &currentIndex)
+{
+    GPUBvh self_bvh = toGPUBvh();
+    int self_index = currentIndex++;
+
+    self_bvh.left_index = -1;
+    self_bvh.right_index = -1;
+
+    if (!_is_leaf)
+    {
+        self_bvh.left_index = currentIndex;
+        _left->flatten(bvhs, currentIndex);
+
+        self_bvh.right_index = currentIndex;
+        _right->flatten(bvhs, currentIndex);
+    }
+
+    bvhs[self_index] = self_bvh;
+}
+
+int	BVH::size()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (0);
+	
+	count += 1 + _left->size();
+	count += 1 + _right->size();
+
+	return (count);
+}
+
+std::vector<GPUBvh>	BVH::getGPUBvhs()
+{
+	std::vector<GPUBvh> bvhs(size() + 1);
+    
+    int currentIndex = 0;
+    flatten(bvhs, currentIndex);
+
+    return (bvhs);
 }

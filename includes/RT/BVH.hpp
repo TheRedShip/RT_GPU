@@ -15,6 +15,9 @@
 
 # include "RT.hpp"
 
+struct GPUObject;
+struct GPUBvh;
+
 struct AABB
 {
 	glm::vec3				min;
@@ -23,7 +26,6 @@ struct AABB
 	AABB(glm::vec3 min, glm::vec3 max) : min(min), max(max) {}
 };
 
-struct GPUObject;
 
 class BVH
 {
@@ -36,7 +38,13 @@ class BVH
 		void	updateBounds(std::vector<GPUObject> primitives);
 		void	subdivide(std::vector<GPUObject> primitives);
 
-		const AABB &getAABB() const;
+		int							size();
+
+		void						flatten(std::vector<GPUBvh> &bvhs, int &currentIndex);
+		GPUBvh						toGPUBvh();
+
+		const AABB					&getAABB() const;
+		std::vector<GPUBvh>			getGPUBvhs();
 		
 
 	private:

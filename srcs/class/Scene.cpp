@@ -53,11 +53,11 @@ bool		Scene::parseScene(char *name)
 	}
 	file.close();
 
-	//bvh
-	BVH		*bvh = new BVH(_gpu_objects, 0, _gpu_objects.size());
-	bvh->showAABB(this);
-	// addObject(new Cube((bvh->getAABB().max + bvh->getAABB().min) / 2.0f, bvh->getAABB().max - bvh->getAABB().min, 7));
-	//
+	BVH *bvh = new BVH(_gpu_objects, 0, _gpu_objects.size());
+	_gpu_bvh = bvh->getGPUBvhs();
+	
+	// bvh->showAABB(this);
+
 
 	return (true);
 }
@@ -162,27 +162,32 @@ void		Scene::updateLightAndObjects(int mat_id)
     }
 }
 
-std::set<int>				Scene::getGPULights()
+std::set<int>					Scene::getGPULights()
 {
 	return (_gpu_lights);
 }
 
-const std::vector<GPUObject>&	Scene::getObjectData() const
+const std::vector<GPUObject>	&Scene::getObjectData() const
 {
 	return (_gpu_objects);
 }
 
-std::vector<GPUMaterial>&	Scene::getMaterialData()
+std::vector<GPUMaterial>		&Scene::getMaterialData()
 {
 	return (_gpu_materials);
 }
 
-GPUVolume	&Scene::getVolume()
+GPUVolume						&Scene::getVolume()
 {
 	return (_gpu_volume);
 }
 
-Camera		*Scene::getCamera(void) const
+std::vector<GPUBvh>				&Scene::getBVH()
+{
+	return (_gpu_bvh);
+}
+
+Camera							*Scene::getCamera(void) const
 {
 	return (_camera);
 }

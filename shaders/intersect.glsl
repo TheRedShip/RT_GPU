@@ -68,15 +68,18 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 }
 bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 {
-	vec3 pvec = cross(ray.direction, obj.vertex2);
-	float det = dot(obj.vertex1, pvec);
+	vec3 vertex1 = obj.vertex1 - obj.position;
+	vec3 vertex2 = obj.vertex2 - obj.position;
+
+	vec3 pvec = cross(ray.direction, vertex2);
+	float det = dot(vertex1, pvec);
 	vec3 tvec = ray.origin - obj.position;
 	
 	float invDet = 1.0 / det;
 	float u = dot(tvec, pvec) * invDet;
-	vec3 qvec = cross(tvec, obj.vertex1);
+	vec3 qvec = cross(tvec, vertex1);
 	float v = dot(ray.direction, qvec) * invDet;
-	float t = dot(obj.vertex2, qvec) * invDet;
+	float t = dot(vertex2, qvec) * invDet;
 	
 	bool valid = abs(det) > 1e-8 &&
 				u >= 0.0 && u <= 1.0 &&

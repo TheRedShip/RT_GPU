@@ -54,6 +54,20 @@ struct GPUVolume
 	int						enabled;
 };
 
+struct GPUBvh
+{
+	alignas(16) glm::vec3	min;
+	alignas(16) glm::vec3	max;
+
+	int						left_index;	
+	int						right_index;
+
+	int						is_leaf;
+	
+	int						first_primitive;
+	int						primitive_count;
+};
+
 class Sphere;
 class Camera;
 
@@ -74,11 +88,14 @@ class Scene
 		const std::vector<GPUObject>	&getObjectData() const;
 		std::vector<GPUMaterial>		&getMaterialData();
 		GPUVolume						&getVolume();
+		std::vector<GPUBvh>				&getBVH();
 
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
 		
 	private:
+		std::vector<GPUBvh>			_gpu_bvh;
+
 		std::vector<GPUObject>		_gpu_objects;
 		std::vector<GPUMaterial>	_gpu_materials;
 
