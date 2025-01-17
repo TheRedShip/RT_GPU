@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/17 14:54:36 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/17 19:31:52 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 
 ObjParser::ObjParser(std::string &filename)
 {
+	_mat = 0;
 	_file.open(filename);
 	if(!_file.is_open())
 		throw std::runtime_error("OBJ : could not open object file");
@@ -30,6 +31,15 @@ glm::vec3	ObjParser::getVertex(std::stringstream &line)
 
 	if(!(line >> res.x >> res.y >> res.z))
 		throw std::runtime_error("syntax error in obj file while parsing vertex");
+	return(res);
+}
+
+glm::vec2	ObjParser::getUV(std::stringstream &line)
+{
+	glm::vec2 res;
+
+	if(!(line >> res.x) || (!(line >> res.y) && !line.eof()))
+		throw std::runtime_error("syntax error in obj file while parsing texture vertex");
 	return(res);
 }
 
@@ -72,15 +82,13 @@ int ObjParser::pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices
 	return(0);
 }
 
-bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &scene, int mat, int inv)
+bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &scene, int inv)
 {
 	glm::vec3 v1, v2 ,v3;
 	float dot;
 
-	(void)scene;
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
-		std::cout << (char)('A' + i) << std::endl;
 		if(!i)
 			v1 = vertices.back();
 		else
@@ -91,66 +99,47 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 		std::cout << glm::to_string(v1) << std::endl;
 		std::cout << glm::to_string(v2) << std::endl;
 		std::cout << glm::to_string(v3) << std::endl;
-// not gud		dot = glm::dot(v2 - v1, v2 - v3) / (glm::length(v2 - v1) * glm::length(v2 - v3));
-// with the one above		dot = std::acos(dot) * (180.0/3.141592653589793238463); // if dot > 180
 		if (inv)
-			dot = glm::cross(v2 - v1, v2 - v3).z; //maybe gud
+			dot = glm::cross(v2 - v1, v2 - v3).z;
 		else
-			dot = glm::cross(v2 - v3, v2 - v1).z; //maybe gud
-// almost works		dot = glm::dot(glm::normalize(v1 - v2), glm::normalize(v3 - v2)); 
-		std::cout << "dot : " << dot << std::endl;
+			dot = glm::cross(v2 - v3, v2 - v1).z;
 		if(dot <= 0)
-		{
-			std::cout << "concave" << std::endl;
 			continue;
-		}
-//		std::cout << "convex" << std::endl;
-//		std::cout << std::endl;
-//		continue;
 		if(pointInTriangle((glm::vec3 [3]){v1, v2, v3}, vertices, i))
-		{
-			std::cout << "vert in triangle" << std::endl;
 			continue;
-		}
 		vertices.erase(vertices.begin() + i);
-		addTriangle(v1, v2 ,v3 ,mat, scene);
+		addTriangle(v1, v2 ,v3 , scene);
 		return(1);
 	}
 	return(0);
-	std::cout << "____________________" << std::endl;
 }
 
-void ObjParser::addFace(std::stringstream &line, std::vector<glm::vec3> &vertices, int mat,  Scene &scene)
+void ObjParser::addFace(std::stringstream &line, Scene &scene)
 {
 	int vert_index;
 	std::vector<glm::vec3> face_vertices;
+	std::string el;
 
-	(void)mat;
-	(void)scene;
 	while((line >> vert_index))
-		face_vertices.push_back(vertices[checkVertexIndex(vert_index, vertices.size())]);
+		face_vertices.push_back(_vertices[checkVertexIndex(vert_index, _vertices.size())]);
 	if(face_vertices.size() < 3)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
-	// for(size_t i = 0; i < face_vertices.size(); i++)
-	// 	std::cout << face_vertices[i].x << " " << face_vertices[i].y << " " << face_vertices[i].z << " | ";
-	// std::cout << std::endl;
-
 	while(face_vertices.size() > 3)
-		if (!addTriangleFromPolygon(face_vertices, scene, mat, 0))
-			addTriangleFromPolygon(face_vertices, scene, mat, 1);
+		if (!addTriangleFromPolygon(face_vertices, scene, 0))
+			addTriangleFromPolygon(face_vertices, scene, 1);
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(face_vertices[0], face_vertices[1], face_vertices[2],mat, scene);
+	addTriangle(face_vertices[0], face_vertices[1], face_vertices[2], scene);
 }
 
-void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, int mat, Scene &scene)
+void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Scene &scene)
 {
-	scene.addObject(new Triangle(v1, v2, v3, mat));
+	scene.addObject(new Triangle(v1, v2, v3, _mat));
 }
 
-void	ObjParser::parseMtl(std::stringstream &input_line, std::map<std::string, int> &materials, Scene &scene)
+void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 {	
 	std::string filename;
 	std::ifstream file;
@@ -175,7 +164,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, std::map<std::string, in
 			if(mat)
 			{
 				scene.addMaterial(mat);
-				materials[matName] = scene.getMaterialData().size() - 1;
+				_matNames[matName] = scene.getMaterialData().size() - 1;
 			}
 			lineStream >> matName;
 			if(matName.empty())
@@ -216,22 +205,16 @@ void	ObjParser::parseMtl(std::stringstream &input_line, std::map<std::string, in
 	if(mat)
 	{
 		scene.addMaterial(mat);
-		materials[matName] = scene.getMaterialData().size() - 1;
+		_matNames[matName] = scene.getMaterialData().size() - 1;
 	}
 	file.close();
 }
 
 void	ObjParser::parse(Scene &scene)
 {
-	std::vector<glm::vec3>	vertices;
-	std::string				filename;
-	std::map<std::string, int> matNames;
 	std::string				line;
 	std::string				identifier;
-	std::ifstream			file;
-	int						curMat;
 
-	curMat = 0;
 	while (getline(_file, line))
 	{
 		try{
@@ -241,17 +224,19 @@ void	ObjParser::parse(Scene &scene)
 			identifier = "";
 			lineStream >> identifier;
 			if(identifier == "v")
-				vertices.push_back(getVertex(lineStream));
+				_vertices.push_back(getVertex(lineStream));
+			else if (identifier == "vt")
+				_textureVertices.push_back(getUV(lineStream));
 			else if (identifier == "f")
-				addFace(lineStream, vertices, curMat, scene);
+				addFace(lineStream, scene);
 			else if (identifier == "mtllib")
-				parseMtl(lineStream, matNames, scene);
+				parseMtl(lineStream, scene);
 			else if (identifier == "usemtl")
 			{
 				lineStream >> identifier;
-				if(matNames.find(identifier) == matNames.end())
+				if(_matNames.find(identifier) == _matNames.end())
 					throw std::runtime_error("OBJ: invalid material name");
-				curMat = matNames[identifier];
+				_mat = _matNames[identifier];
 			}
 		} catch (std::exception &e)
 		{
