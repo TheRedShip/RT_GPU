@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   BVH.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:36:19 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/16 21:36:19 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/01/17 18:59:28 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@ struct AABB
 class BVH
 {
 	public:
-		BVH(std::vector<GPUObject> primitives, int first_primitive, int primitive_count);
+		BVH(std::vector<GPUObject> &primitives, int first_primitive, int primitive_count);
 
 
 		void	showAABB(Scene *scene);
 		
-		void	updateBounds(std::vector<GPUObject> primitives);
-		void	subdivide(std::vector<GPUObject> primitives);
+		void	updateBounds(std::vector <GPUObject> &primitives);
+		void	subdivide(std::vector<GPUObject> &primitives);
 
 		int							size();
 

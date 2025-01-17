@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   BVH.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/16 21:48:48 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/01/17 19:25:08 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "BVH.hpp"
 
-BVH::BVH(std::vector<GPUObject> primitives, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
+BVH::BVH(std::vector<GPUObject> &primitives, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
 {
 	_left = nullptr;
 	_right = nullptr;
@@ -26,7 +26,7 @@ BVH::BVH(std::vector<GPUObject> primitives, int first_primitive, int primitive_c
 	subdivide(primitives);
 }
 
-void	BVH::updateBounds(std::vector <GPUObject> primitives)
+void	BVH::updateBounds(std::vector<GPUObject> &primitives)
 {
 	for (int i = 0; i < _primitive_count; i++)
 	{
@@ -44,12 +44,10 @@ void	BVH::updateBounds(std::vector <GPUObject> primitives)
 	}
 }
 
-void	BVH::subdivide(std::vector<GPUObject> primitives)
+void	BVH::subdivide(std::vector<GPUObject> &primitives)
 {
-	if (_primitive_count <= 2)
+	if (_primitive_count <= 100)
 		return ;
-
-	std::cout << "subdivide" << std::endl;
 
 	glm::vec3 extent = _aabb.max - _aabb.min;
 	
@@ -78,9 +76,6 @@ void	BVH::subdivide(std::vector<GPUObject> primitives)
 
 	int left_count = i - _first_primitive;
 	
-	std::cout << "left bvh starts from " << _first_primitive << " and has " << left_count << " primitives" << std::endl;
-	std::cout << "right bvh starts from " << i << " and has " << _primitive_count - left_count << " primitives" << std::endl;
-	
 	if (left_count == 0 || left_count == _primitive_count)
 		return ;
 
@@ -88,14 +83,14 @@ void	BVH::subdivide(std::vector<GPUObject> primitives)
 	_is_leaf = false;
 
 	_left = new BVH(primitives, _first_primitive, left_count);
-	_right = new BVH(primitives, i, _primitive_count - left_count);
+	_right = new BVH(primitives, i , _primitive_count - left_count);
 
 	_primitive_count = 0;
 }
 
 void	BVH::showAABB(Scene *scene)
 {
-	if (_is_leaf)
+	if (!_is_leaf)
 	{
 		scene->addObject(new Sphere(_aabb.min, 0.5f, 6));
 		scene->addObject(new Sphere(_aabb.max, 0.5f, 6));
@@ -108,8 +103,8 @@ void	BVH::showAABB(Scene *scene)
 	}
 	else
 	{
-		_left->showAABB(scene);
-		_right->showAABB(scene);
+		// _left->showAABB(scene);
+		// _right->showAABB(scene);
 	}
 }
 
@@ -170,6 +165,8 @@ std::vector<GPUBvh>	BVH::getGPUBvhs()
     
     int currentIndex = 0;
     flatten(bvhs, currentIndex);
+
+	std::cout << "BVH Done: " << bvhs.size() << std::endl;
 
     return (bvhs);
 }

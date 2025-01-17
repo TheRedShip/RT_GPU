@@ -100,33 +100,6 @@ int traceRay(Ray ray)
 	return (num_hit);
 }
 
-
-int traceBVHBad(Ray ray)
-{
-    int num_hit;
-
-    num_hit = 0;
-    for (int i = 0; i < u_bvhNum; i++)
-    {
-        GPUBvh node = bvh[i];
-
-        if (intersectRayBVH(ray, node))
-        {
-            // num_hit++;
-            for (int i = 0; i < node.primitive_count; i++)
-            {
-                GPUObject obj = objects[node.first_primitive + i];
-                
-                hitInfo tmp;
-                if (intersect(ray, obj, tmp))
-                    num_hit++;
-            }
-        }
-    }
-
-	return (num_hit);
-}
-
 int traceBVH(Ray ray)
 {
     int num_hit = 0;
@@ -157,7 +130,7 @@ int traceBVH(Ray ray)
                     
                     hitInfo tmp;
                     if (intersect(ray, obj, tmp))
-                        num_hit++;
+                        num_hit;
                 }
             }
             
@@ -199,6 +172,6 @@ void main()
 	Ray ray = initRay(uv);
     int hits = traceBVH(ray);
 
-    vec3 color = vec3(float(hits) / float(10));
+    vec3 color = vec3(float(hits) / float(u_bvhNum / 4));
     imageStore(output_image, pixel_coords, vec4(color, 1.));
 }

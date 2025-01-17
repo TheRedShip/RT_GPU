@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/15 19:34:49 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/17 19:05:53 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,9 +56,6 @@ bool		Scene::parseScene(char *name)
 	BVH *bvh = new BVH(_gpu_objects, 0, _gpu_objects.size());
 	_gpu_bvh = bvh->getGPUBvhs();
 	
-	// bvh->showAABB(this);
-
-
 	return (true);
 }
 
