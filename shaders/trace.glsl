@@ -66,10 +66,8 @@ hitInfo	traceBVH(Ray ray)
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-    const int MAX_STACK_SIZE = 64;
-    int stack[MAX_STACK_SIZE];
+    int stack[64];
     int stack_ptr = 0;
-    
     stack[0] = 0;
     
     while (stack_ptr >= 0)
@@ -78,7 +76,8 @@ hitInfo	traceBVH(Ray ray)
 
         GPUBvh node = bvh[current_index];
         
-        if (intersectRayBVH(ray, node))
+		hitInfo temp_hit;
+        if (intersectRayBVH(ray, node, temp_hit) && temp_hit.t < hit.t)
         {
             if (node.is_leaf != 0)
             {
@@ -98,13 +97,10 @@ hitInfo	traceBVH(Ray ray)
 					}
                 }
             }
-            
-            if (node.is_leaf == 0 && stack_ptr < MAX_STACK_SIZE - 2)
+            else
             {
-                stack_ptr++;
-                stack[stack_ptr] = node.left_index;
-                stack_ptr++;
-                stack[stack_ptr] = node.right_index;
+                stack[++stack_ptr] = node.left_index;
+                stack[++stack_ptr] = node.right_index;
             }
         }
     }

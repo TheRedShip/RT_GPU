@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -122,13 +122,22 @@ int main(int argc, char **argv)
 		Camera *camera = scene.getCamera();
 
 		// performance profiling
-		if (true && window.getFps() < 2000)
+		if (false)
 		{
 			float time = (float)(glfwGetTime()) ;
 
 			recorded_fps.push_back((int)window.getFps());
 
-			camera->setPosition(glm::vec3(cos((time + 6.28) * 0.5), 0., sin((time + 6.28) * 0.5)));
+			float y_offset = 30;
+			float dist_to_obj = 60;
+			float speed = 0.5;
+
+			camera->setPosition(glm::vec3(
+								cos((time + 6.28) * speed) * dist_to_obj,
+								y_offset,
+								sin((time + 6.28) * speed) * dist_to_obj
+								));
+
 			glm::vec3 direction = glm::normalize(camera->getPosition());
 			float yaw = glm::degrees(atan2(direction.z, direction.x));
 			

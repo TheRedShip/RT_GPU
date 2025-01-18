@@ -67,7 +67,7 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string com
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
 
-	// printWithLineNumbers(computeCode);
+	printWithLineNumbers(computeCode);
 
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	

@@ -225,7 +225,7 @@ bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
 }
 
 
-bool intersectRayBVH(Ray ray, GPUBvh node)
+bool intersectRayBVH(Ray ray, GPUBvh node, inout hitInfo hit)
 {
     vec3 invDir = 1.0 / ray.direction;
     
@@ -235,10 +235,10 @@ bool intersectRayBVH(Ray ray, GPUBvh node)
     vec3 tMin = min(t1, t2);
     vec3 tMax = max(t1, t2);
     
-    float tEnter = max(max(tMin.x, tMin.y), tMin.z);
-    float tExit = min(min(tMax.x, tMax.y), tMax.z);
+    hit.t = max(max(tMin.x, tMin.y), tMin.z);
+    hit.last_t = min(min(tMax.x, tMax.y), tMax.z);
     
-    return tEnter <= tExit && tExit >= 0.0;
+    return hit.t <= hit.last_t && hit.last_t >= 0.0;
 }
 
 

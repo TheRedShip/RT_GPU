@@ -1,6 +1,6 @@
-CAM    -1 0 0      	0 0    0 1 90  5
+CAM    -1 40 40      	0 -90    0 1 90  5
 
-MAT	255 255 255		0.0		1. 0.5 // white 0
+MAT	255 255 255		0.0		1. 1. // white 0
 
 MAT	255 10 10		0.0		0.0 0.0 // red 1
 MAT	30 30 30		0.0		0.0 0.0 // gray 2 
@@ -13,13 +13,13 @@ MAT	255 255 255		5.0		0.0 0.0 // white light 6
 
 MAT	255 255 255		0.0		0.0 0.0 TRN // glass 7
 
-# pl	0 0 -40		0 0 1		1 // back wall
-# pl	0 0 40		0 0 -1		5 // front wall
-# pl	40 0 0		-1 0 0		3 // right wall
-# pl	-40 0 0		1 0 0		2 // left wall
-# pl	0 60 0		0 -1 0		4 // ceiling
-# pl	0 -10 0		0 1 0		2 // floor
+pl	0 0 -40		0 0 1		1 // back wall
+pl	0 0 40		0 0 -1		5 // front wall
+pl	40 0 0		-1 0 0		3 // right wall
+pl	-40 0 0		1 0 0		2 // left wall
+pl	0 60 0		0 -1 0		4 // ceiling
+pl	0 -10 0		0 1 0		2 // floor
 
-# qu	-20 59 -20	40 0 0		0 0 40		6
+qu	-20 59 -20	40 0 0		0 0 40		6
 
-OBJ obj/Dragon_80K.obj
+OBJ obj/Model.obj
