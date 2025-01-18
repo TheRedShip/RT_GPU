@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/15 19:34:25 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/18 14:22:38 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void Window::imGuiRender()
 
 	ImGui::Text("Fps: %d", int(_fps));
 	ImGui::Text("Frame: %d", _frameCount);
-	ImGui::Text("Objects: %d", _scene->getObjectData().size() + _scene->getTriangleData().size());
+	ImGui::Text("Objects: %zu", _scene->getObjectData().size() + _scene->getTriangleData().size());
 	
 	ImGui::Separator();
 	if (ImGui::Checkbox("Accumulate", &accumulate))

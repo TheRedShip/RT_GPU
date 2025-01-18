@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/17 19:31:52 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/18 18:57:31 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,9 +96,6 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 		v2 = vertices[i];
 		v3 = vertices[(i + 1) % vertices.size()];
 
-		std::cout << glm::to_string(v1) << std::endl;
-		std::cout << glm::to_string(v2) << std::endl;
-		std::cout << glm::to_string(v3) << std::endl;
 		if (inv)
 			dot = glm::cross(v2 - v1, v2 - v3).z;
 		else
@@ -115,24 +112,53 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 	return(0);
 }
 
+std::vector<std::string> ObjParser::objSplit(std::string str, std::string delim)
+{
+	
+	std::vector<std::string> res;
+	
+	while(str.find(delim) != std::string::npos)
+	{
+		res.push_back(str.substr(0, str.find(delim)));
+		str.erase(0, str.find(delim) + 1);
+	}
+	res.push_back(str);
+	return(res);
+}
+
+void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::stringstream &line)
+{
+	std::string el;
+	std::vector<std::string> sp;
+
+	while(line >> el)
+	{
+		sp = objSplit(el, "/");
+		if(sp.size() > 3)
+			std::runtime_error("OBJ : too many values in an element of a face");
+		if(sp.size() == 0)
+			std::runtime_error("OBJ : wtf ?");
+		faceVertices.push_back(_vertices[checkVertexIndex(std::stoi(sp[0]), _vertices.size())]);
+	}
+}
+
 void ObjParser::addFace(std::stringstream &line, Scene &scene)
 {
-	int vert_index;
-	std::vector<glm::vec3> face_vertices;
-	std::string el;
+	std::vector<glm::vec3> faceVertices;
 
-	while((line >> vert_index))
-		face_vertices.push_back(_vertices[checkVertexIndex(vert_index, _vertices.size())]);
-	if(face_vertices.size() < 3)
+	getFaceVertices(faceVertices, line);
+	if(!line.eof())
+		throw std::runtime_error("OBJ : an error occured while paring face");
+	if(faceVertices.size() < 3)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
-	while(face_vertices.size() > 3)
-		if (!addTriangleFromPolygon(face_vertices, scene, 0))
-			addTriangleFromPolygon(face_vertices, scene, 1);
+	while(faceVertices.size() > 3)
+		if (!addTriangleFromPolygon(faceVertices, scene, 0))
+			addTriangleFromPolygon(faceVertices, scene, 1);
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(face_vertices[0], face_vertices[1], face_vertices[2], scene);
+	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], scene);
 }
 
 void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Scene &scene)
