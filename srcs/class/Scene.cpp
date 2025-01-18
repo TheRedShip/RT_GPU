@@ -64,8 +64,15 @@ bool		Scene::parseScene(char *name)
 	BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
 	_gpu_bvh = bvh->getGPUBvhs();
 	
-	std::cout << "BVH Done: " << bvh->size() << std::endl;
+	std::cout << "BVH Done: " << std::endl;
 
+	std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
+	std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
+
+	BVHStats stats = bvh->analyzeBVHLeaves(bvh);
+	std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
+	std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
+	std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
 
 	return (true);
 }

@@ -140,24 +140,23 @@ hitInfo traceBVH(Ray ray, inout Stats stats)
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-    int stack[64];
+    int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
     
     while (stack_ptr >= 0)
     {
         int current_index = stack[stack_ptr--];
-
         GPUBvh node = bvh[current_index];
 
 		if (node.is_leaf != 0)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
-			{					
+			{
 				GPUTriangle obj = triangles[node.first_primitive + i];
 				
 				hitInfo temp_hit;
-				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
 					hit.normal = temp_hit.normal;

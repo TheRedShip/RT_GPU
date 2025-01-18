@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
 			recorded_fps.push_back((int)window.getFps());
 
-			float y_offset = 0.;
+			float y_offset = 0;
 			float dist_to_obj = 2;
 			float speed = 0.5;
 

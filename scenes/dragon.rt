@@ -23,7 +23,7 @@ pl	0 -2 0		0 1 0		2 // floor
 
 
 qu	-1 1.999 -1	2 0 0		0 0 2		6
-# sp	1 1 0			0.5				6
+# sp	1 1 0			0.1				6
 
 OBJ obj/Dragon_80K.obj
 

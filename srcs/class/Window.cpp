@@ -248,7 +248,7 @@ void Window::imGuiRender()
 
 	ImGui::End();
 
-	ImGui::Begin("Debug");
+	ImGui::Begin("Debug BVH");
 
 	has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
 	ImGui::Separator();

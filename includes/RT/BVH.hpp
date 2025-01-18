@@ -27,6 +27,11 @@ struct AABB
 	AABB(glm::vec3 min, glm::vec3 max) : min(min), max(max) {}
 };
 
+struct BVHStats {
+    int min_triangles;
+    int max_triangles;
+    float average_triangles;
+};
 
 class BVH
 {
@@ -39,7 +44,9 @@ class BVH
 		void	updateBounds(std::vector <GPUTriangle> &primitives);
 		void	subdivide(std::vector<GPUTriangle> &primitives);
 
-		int							size();
+		int							getSize();
+		int							getLeaves();
+		BVHStats					analyzeBVHLeaves(BVH* root);
 
 		void						flatten(std::vector<GPUBvh> &bvhs, int &currentIndex);
 		GPUBvh						toGPUBvh();

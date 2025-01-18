@@ -145,26 +145,74 @@ void BVH::flatten(std::vector<GPUBvh> &bvhs, int &currentIndex)
     bvhs[self_index] = self_bvh;
 }
 
-int	BVH::size()
-{
-	int count = 0;
-
-	if (_is_leaf)
-		return (0);
-	
-	count += 1 + _left->size();
-	count += 1 + _right->size();
-
-	return (count);
-}
-
 std::vector<GPUBvh>	BVH::getGPUBvhs()
 {
-	std::vector<GPUBvh> bvhs(size() + 1);
+	std::vector<GPUBvh> bvhs(getSize() + 1);
     
     int currentIndex = 0;
     flatten(bvhs, currentIndex);
 
 
     return (bvhs);
+}
+
+int	BVH::getSize()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (0);
+	
+	count += 1 + _left->getSize();
+	count += 1 + _right->getSize();
+
+	return (count);
+}
+
+int	BVH::getLeaves()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (1);
+	
+	count += _left->getLeaves();
+	count += _right->getLeaves();
+
+	return (count);
+}
+
+//get tri per leaf min max and average
+BVHStats	BVH::analyzeBVHLeaves(BVH *root)
+{
+    if (!root)
+        return {0, 0, 0.0f};
+    // If this is a leaf node, return its stats
+
+    if (root->_is_leaf)
+        return {
+            root->_primitive_count,  // min
+            root->_primitive_count,  // max
+            (float)root->_primitive_count  // average
+        };
+
+    // Get stats from left and right subtrees
+    BVHStats left = analyzeBVHLeaves(root->_left);
+    BVHStats right = analyzeBVHLeaves(root->_right);
+
+    // Combine the results
+    int min_count = std::min(left.min_triangles, right.min_triangles);
+    int max_count = std::max(left.max_triangles, right.max_triangles);
+    
+    // Calculate weighted average based on number of leaves in each subtree
+    float left_leaf_count = (left.average_triangles > 0) ? 1.0f : 0.0f;
+    float right_leaf_count = (right.average_triangles > 0) ? 1.0f : 0.0f;
+    float total_leaf_count = left_leaf_count + right_leaf_count;
+    
+    float avg_count = 0.0f;
+    if (total_leaf_count > 0)
+        avg_count = (left.average_triangles * left_leaf_count + 
+                    right.average_triangles * right_leaf_count) / total_leaf_count;
+
+    return {min_count, max_count, avg_count};
 }

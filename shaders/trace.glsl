@@ -66,7 +66,7 @@ hitInfo	traceBVH(Ray ray)
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-    int stack[64];
+    int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
     
@@ -84,7 +84,7 @@ hitInfo	traceBVH(Ray ray)
 				GPUTriangle obj = triangles[node.first_primitive + i];
 				
 				hitInfo temp_hit;
-				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
 					hit.last_t = temp_hit.last_t;
