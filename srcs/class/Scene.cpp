@@ -17,10 +17,15 @@ Scene::Scene()
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 	
 	_gpu_volume.enabled = 0;
-	_gpu_volume.sigma_a = glm::vec3(0.0001f);
+	_gpu_volume.sigma_a = glm::vec3(0.0000f);
 	_gpu_volume.sigma_s = glm::vec3(0.0800f);
 	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
-	_gpu_volume.g = 0.9f;
+	_gpu_volume.g = 1.0f;
+
+	_gpu_debug.enabled = 0;
+	_gpu_debug.mode = 0;	
+	_gpu_debug.triangle_treshold = 1;
+	_gpu_debug.box_treshold = 1;
 }
 
 Scene::~Scene()
@@ -191,6 +196,11 @@ std::vector<GPUMaterial>		&Scene::getMaterialData()
 GPUVolume						&Scene::getVolume()
 {
 	return (_gpu_volume);
+}
+
+GPUDebug						&Scene::getDebug()
+{
+	return (_gpu_debug);
 }
 
 std::vector<GPUBvh>				&Scene::getBVH()

@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -80,6 +80,12 @@ int main(int argc, char **argv)
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUVolume), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 1, volumeUBO);
 
+	GLuint debugUBO;
+	glGenBuffers(1, &debugUBO);
+	glBindBuffer(GL_UNIFORM_BUFFER, debugUBO);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUDebug), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 2, debugUBO);
+
 
 	shader.attach();
 
@@ -87,8 +93,11 @@ int main(int argc, char **argv)
 	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
 	shader.setupVertexBuffer(vertices, size);
 
+	std::vector<int>	recorded_fps;
+
 	while (!window.shouldClose())
 	{
+
 		glUseProgram(shader.getProgramCompute());
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
@@ -110,13 +119,36 @@ int main(int argc, char **argv)
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_bvh.size() * sizeof(GPUBvh), gpu_bvh.data());
 		
 
-		GPUCamera camera_data = scene.getCamera()->getGPUData();
+		Camera *camera = scene.getCamera();
+
+		// performance profiling
+		if (true && window.getFps() < 2000)
+		{
+			float time = (float)(glfwGetTime()) ;
+
+			recorded_fps.push_back((int)window.getFps());
+
+			camera->setPosition(glm::vec3(cos((time + 6.28) * 0.5), 0., sin((time + 6.28) * 0.5)));
+			glm::vec3 direction = glm::normalize(camera->getPosition());
+			float yaw = glm::degrees(atan2(direction.z, direction.x));
+			
+			if ((int)yaw == 179)
+				break;
+
+			camera->setDirection(0, yaw - 180);
+			camera->updateCameraVectors();
+		}
+		//
+
+		GPUCamera camera_data = camera->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
 
 		glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUVolume), &scene.getVolume());
 
+		glBindBuffer(GL_UNIFORM_BUFFER, debugUBO);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUDebug), &scene.getDebug());
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
@@ -146,5 +178,12 @@ int main(int argc, char **argv)
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
 	
+	// performance profiling
+	std::ofstream file("fps.txt");
+	for (int i = 0; i < recorded_fps.size(); i++)
+		file << i << " " << recorded_fps[i] << std::endl;
+	file.close();
+	//
+
 	return (0);
 }

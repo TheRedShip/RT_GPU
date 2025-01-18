@@ -20,6 +20,18 @@ layout(std140, binding = 0) uniform CameraData
     GPUCamera camera;
 };
 
+struct GPUDebug
+{
+	int	enabled;
+	int	mode;
+	int	triangle_treshold;
+	int	box_treshold;
+};
+layout(std140, binding = 2) uniform DebugData
+{
+    GPUDebug debug;
+};
+
 struct GPUObject {
 	mat4	rotation;
 
@@ -95,6 +107,12 @@ struct hitInfo
 	int		mat_index;
 };
 
+struct Stats
+{
+	int		triangle_count;
+	int		box_count;
+};
+
 #include "shaders/intersect.glsl"
 
 int traceRay(Ray ray)
@@ -114,7 +132,7 @@ int traceRay(Ray ray)
 	return (num_hit);
 }
 
-hitInfo traceBVH(Ray ray, inout int num_hit)
+hitInfo traceBVH(Ray ray, inout Stats stats)
 {
 	hitInfo hit;
 
@@ -137,12 +155,12 @@ hitInfo traceBVH(Ray ray, inout int num_hit)
         
         if (intersectRayBVH(ray, node))
         {
-            num_hit++;
+            stats.box_count++;
 
             if (node.is_leaf != 0)
             {
                 for (int i = 0; i < node.primitive_count; i++)
-                {
+                {					
                     GPUTriangle obj = triangles[node.first_primitive + i];
                     
                     hitInfo temp_hit;
@@ -152,6 +170,7 @@ hitInfo traceBVH(Ray ray, inout int num_hit)
 						hit.normal = temp_hit.normal;
 						hit.obj_index = node.first_primitive + i;
 					}
+					stats.triangle_count++;
                 }
             }
             
@@ -181,6 +200,29 @@ Ray initRay(vec2 uv)
 	return (Ray(origin, ray_direction));
 }
 
+vec3 debugColor(vec2 uv)
+{
+	Ray ray = initRay(uv);
+	Stats stats = Stats(0, 0);
+
+	hitInfo hit = traceBVH(ray, stats);
+	
+	float box_display = float(stats.box_count) / float(debug.box_treshold);
+	float triangle_display = float(stats.triangle_count) / float(debug.triangle_treshold);
+
+	switch (debug.mode)
+	{
+		case 0:
+			return (hit.normal * 0.5 + 0.5) * int(hit.obj_index != -1);
+		case 1:
+			return (box_display < 1. ? vec3(box_display) : vec3(1., 0., 0.));
+		case 2:
+			return (triangle_display < 1. ? vec3(triangle_display) : vec3(1., 0., 0.));
+	}
+
+	return (vec3(0.));
+}
+
 void main()
 {
 	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
@@ -190,19 +232,7 @@ void main()
     vec2 uv = ((vec2(pixel_coords)) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
 	
-
-	Ray ray = initRay(uv);
-
-	int hits = 0;
-    hitInfo hit = traceBVH(ray, hits);
-    
-	vec3 color = vec3(0.);
-	// if (hit.obj_index != -1)
-		// color = vec3(hit.normal);
-	if (hits > 150)
-		color = vec3(1., 0., 0.);
-	else
-		color = vec3(float(hits) / float(100));
+	vec3 color = debugColor(uv);
 
 	imageStore(output_image, pixel_coords, vec4(color, 1.));
 }

@@ -64,6 +64,14 @@ struct GPUVolume
 	int						enabled;
 };
 
+struct GPUDebug
+{
+	int	enabled;
+	int	mode;
+	int	triangle_treshold;
+	int	box_treshold;
+};
+
 struct GPUBvh
 {
 	alignas(16) glm::vec3	min;
@@ -99,8 +107,10 @@ class Scene
 		const std::vector<GPUTriangle>	&getTriangleData() const;
 		
 		std::vector<GPUMaterial>		&getMaterialData();
-		GPUVolume						&getVolume();
 		std::vector<GPUBvh>				&getBVH();
+
+		GPUVolume						&getVolume();
+		GPUDebug						&getDebug();
 
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
@@ -116,6 +126,7 @@ class Scene
 		std::set<int>				_gpu_lights;
 
 		GPUVolume					_gpu_volume;
+		GPUDebug					_gpu_debug;
 
 		Camera						*_camera;
 };
