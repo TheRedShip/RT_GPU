@@ -18,10 +18,12 @@ pl	0 0 -2		0 0 1		1 // back wall
 pl	0 0 2		0 0 -1		5 // front wall
 pl	2 0 0		-1 0 0		3 // right wall
 pl	-2 0 0		1 0 0		2 // left wall
-# pl	0 2 0		0 -1 0		0 // ceiling
+pl	0 2 0		0 -1 0		0 // ceiling
 pl	0 -2 0		0 1 0		2 // floor
 
+
 qu	-1 1.999 -1	2 0 0		0 0 2		6
+# sp	1 1 0			0.5				6
 
 OBJ obj/Dragon_80K.obj
 
