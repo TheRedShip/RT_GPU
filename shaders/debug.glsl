@@ -150,56 +150,49 @@ hitInfo traceBVH(Ray ray, inout Stats stats)
 
         GPUBvh node = bvh[current_index];
 
-		stats.box_count++;
-        if (intersectRayBVH(ray, node, hit_bvh) && hit_bvh.t < hit.t)
-        {
-            if (node.is_leaf != 0)
-            {
-                for (int i = 0; i < node.primitive_count; i++)
-                {					
-                    GPUTriangle obj = triangles[node.first_primitive + i];
-                    
-                    hitInfo temp_hit;
-					if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
-					{
-						hit.t = temp_hit.t;
-						hit.normal = temp_hit.normal;
-						hit.obj_index = node.first_primitive + i;
-					}
-					stats.triangle_count++;
-                }
-            }
+		if (node.is_leaf != 0)
+		{
+			for (int i = 0; i < node.primitive_count; i++)
+			{					
+				GPUTriangle obj = triangles[node.first_primitive + i];
+				
+				hitInfo temp_hit;
+				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+				{
+					hit.t = temp_hit.t;
+					hit.normal = temp_hit.normal;
+					hit.obj_index = node.first_primitive + i;
+				}
+				stats.triangle_count++;
+			}
+		}
+		else
+		{
+			GPUBvh left_node = bvh[node.left_index];
+			GPUBvh right_node = bvh[node.right_index];
+
+			hitInfo left_hit;
+			hitInfo right_hit;
+
+			left_hit.t = 1e30;
+			right_hit.t = 1e30;
+
+			stats.box_count += 2;
+
+			bool left_bool = intersectRayBVH(ray, left_node, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node, right_hit);
+
+			if (left_hit.t > right_hit.t)
+			{
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+			}
 			else
-            {
-				// GPUBvh left_node = bvh[node.left_index];
-				// GPUBvh right_node = bvh[node.right_index];
-
-				// hitInfo left_hit;
-				// hitInfo right_hit;
-
-				// left_hit.t = 1e30;
-				// right_hit.t = 1e30;
-
-				// stats.box_count += 2;
-
-				// intersectRayBVH(ray, left_node, left_hit);
-				// intersectRayBVH(ray, right_node, right_hit);
-
-				// if (left_hit.t > right_hit.t)
-				// {
-				// 	if (left_hit.t < hit.t) stack[++stack_ptr] = node.left_index;
-				// 	if (right_hit.t < hit.t) stack[++stack_ptr] = node.right_index;
-				// }
-				// else
-				// {
-				// 	if (right_hit.t < hit.t) stack[++stack_ptr] = node.right_index;
-				// 	if (left_hit.t < hit.t) stack[++stack_ptr] = node.left_index;
-				// }
-
-				stack[++stack_ptr] = node.left_index;
-				stack[++stack_ptr] = node.right_index;
-            }
-        }
+			{
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+			}
+		}
     }
     
 	return (hit);

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/17 19:25:14 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/18 19:21:00 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -128,8 +128,8 @@ int main(int argc, char **argv)
 
 			recorded_fps.push_back((int)window.getFps());
 
-			float y_offset = 30;
-			float dist_to_obj = 60;
+			float y_offset = 0.;
+			float dist_to_obj = 2;
 			float speed = 0.5;
 
 			camera->setPosition(glm::vec3(
@@ -189,8 +189,8 @@ int main(int argc, char **argv)
 	
 	// performance profiling
 	std::ofstream file("fps.txt");
-	for (int i = 0; i < recorded_fps.size(); i++)
-		file << i << " " << recorded_fps[i] << std::endl;
+	for (int i = 0; i < (int) recorded_fps.size(); i++)
+		file << recorded_fps[i] << std::endl;
 	file.close();
 	//
 
