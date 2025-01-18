@@ -27,10 +27,14 @@ int main(int argc, char **argv)
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
 
 	const std::vector<GPUObject> &object_data = scene.getObjectData();
+	const std::vector<GPUTriangle> &triangle_data = scene.getTriangleData();
+
 	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
 
 	std::cout << "Sending " << object_data.size() << " objects for " << \
-				object_data.size() * sizeof(GPUObject) + material_data.size() * sizeof(GPUMaterial) \
+				object_data.size() * sizeof(GPUObject) + \
+				triangle_data.size() * sizeof(GPUTriangle) + \
+				material_data.size() * sizeof(GPUMaterial) \
 				<< " / " << max_gpu_size << " bytes" << std::endl;
 
 	GLuint objectSSBO;
@@ -39,24 +43,29 @@ int main(int argc, char **argv)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUObject) * object_data.size(), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
 
+	GLuint trianglesSSBO;
+    glGenBuffers(1, &trianglesSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, trianglesSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUTriangle) * triangle_data.size(), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, trianglesSSBO);
+
 	GLuint materialSSBO;
     glGenBuffers(1, &materialSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, materialSSBO);
-
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, materialSSBO);
 	
 	GLuint lightSSBO;
 	glGenBuffers(1, &lightSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, lightSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, lightSSBO);
 
 	GLuint bvhSSBO;
 	glGenBuffers(1, &bvhSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getBVH().size() * sizeof(GPUBvh), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvhSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bvhSSBO);
 
 
 	GLuint cameraUBO;
@@ -84,6 +93,9 @@ int main(int argc, char **argv)
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, object_data.size() * sizeof(GPUObject), object_data.data());
+
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, trianglesSSBO);
+		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, triangle_data.size() * sizeof(GPUTriangle), triangle_data.data());
 
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, material_data.size() * sizeof(GPUMaterial), material_data.data());

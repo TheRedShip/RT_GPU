@@ -46,6 +46,7 @@ hitInfo	traceScene(Ray ray)
 				hit.t = temp_hit.t;
 				hit.last_t = temp_hit.last_t;
 				hit.obj_index = i;
+				hit.mat_index = obj.mat_index;
 				hit.position = temp_hit.position;
 				hit.normal = temp_hit.normal;
 			}
@@ -83,14 +84,15 @@ hitInfo	traceBVH(Ray ray)
             {
                 for (int i = 0; i < node.primitive_count; i++)
                 {
-                    GPUObject obj = objects[node.first_primitive + i];
+                    GPUTriangle obj = triangles[node.first_primitive + i];
                     
                     hitInfo temp_hit;
-					if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+					if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
 					{
 						hit.t = temp_hit.t;
 						hit.last_t = temp_hit.last_t;
 						hit.obj_index = node.first_primitive + i;
+						hit.mat_index = obj.mat_index;
 						hit.position = temp_hit.position;
 						hit.normal = temp_hit.normal;
 					}
@@ -112,7 +114,10 @@ hitInfo	traceBVH(Ray ray)
 
 hitInfo traceRay(Ray ray)
 {
-	if (true)
-		return (traceBVH(ray));
-	return (traceScene(ray));
+	hitInfo hitBVH = traceBVH(ray);
+	hitInfo hitScene = traceScene(ray);
+
+	if (hitBVH.t < hitScene.t)
+		return (hitBVH);
+	return (hitScene);
 }

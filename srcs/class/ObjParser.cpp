@@ -105,7 +105,8 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 			dot = glm::cross(v2 - v3, v2 - v1).z;
 		if(dot <= 0)
 			continue;
-		if(pointInTriangle((glm::vec3 [3]){v1, v2, v3}, vertices, i))
+		glm::vec3 triangleVertices[3] = {v1, v2, v3};
+		if(pointInTriangle(triangleVertices, vertices, i))
 			continue;
 		vertices.erase(vertices.begin() + i);
 		addTriangle(v1, v2 ,v3 , scene);

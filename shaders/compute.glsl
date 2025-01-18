@@ -20,6 +20,16 @@ struct GPUObject {
 	int     type;           // 4
 };
 
+struct GPUTriangle
+{
+	vec3	position;
+	vec3	vertex1;
+	vec3	vertex2;
+	vec3	normal;
+
+	int		mat_index;
+};
+
 struct GPUMaterial
 {
 	vec3    color;          // 12 + 4
@@ -51,21 +61,6 @@ struct GPUVolume
 	int		enabled;
 };
 
-layout(std430, binding = 1) buffer ObjectBuffer
-{
-	GPUObject objects[];
-};
-
-layout(std430, binding = 2) buffer MaterialBuffer
-{
-	GPUMaterial materials[];
-};
-
-layout(std430, binding = 3) buffer LightsBuffer
-{
-    int lightsIndex[];
-};
-
 struct GPUBvh
 {
 	vec3	min;
@@ -79,7 +74,28 @@ struct GPUBvh
 	int		first_primitive;
 	int		primitive_count;
 };
-layout(std430, binding = 4) buffer BvhBuffer
+
+layout(std430, binding = 1) buffer ObjectBuffer
+{
+	GPUObject objects[];
+};
+
+layout(std430, binding = 2) buffer TriangleBuffer
+{
+	GPUTriangle triangles[];
+};
+
+layout(std430, binding = 3) buffer MaterialBuffer
+{
+	GPUMaterial materials[];
+};
+
+layout(std430, binding = 4) buffer LightsBuffer
+{
+    int lightsIndex[];
+};
+
+layout(std430, binding = 5) buffer BvhBuffer
 {
 	GPUBvh bvh[];
 };
@@ -116,6 +132,7 @@ struct hitInfo
 	vec3	normal;
 	vec3	position;
 	int		obj_index;
+	int		mat_index;
 };
 
 #include "shaders/random.glsl"
@@ -153,8 +170,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 		if (volume.enabled != 0)
 			transmittance *= exp(-volume.sigma_t * hit.t);
 
-		GPUObject obj = objects[hit.obj_index];
-		GPUMaterial mat = materials[obj.mat_index];
+		GPUMaterial mat = materials[hit.mat_index];
 		
 		// RR
 		float p = max(color.r, max(color.g, color.b));

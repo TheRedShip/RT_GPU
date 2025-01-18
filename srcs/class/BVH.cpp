@@ -12,7 +12,7 @@
 
 #include "BVH.hpp"
 
-BVH::BVH(std::vector<GPUObject> &primitives, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
+BVH::BVH(std::vector<GPUTriangle> &primitives, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
 {
 	_left = nullptr;
 	_right = nullptr;
@@ -26,14 +26,14 @@ BVH::BVH(std::vector<GPUObject> &primitives, int first_primitive, int primitive_
 	subdivide(primitives);
 }
 
-void	BVH::updateBounds(std::vector<GPUObject> &primitives)
+void	BVH::updateBounds(std::vector<GPUTriangle> &primitives)
 {
 	for (int i = 0; i < _primitive_count; i++)
 	{
-		GPUObject leaf_triangle = primitives[_first_primitive + i];
+		GPUTriangle leaf_triangle = primitives[_first_primitive + i];
 		
-		if (leaf_triangle.type != (int)Object::Type::TRIANGLE)
-			continue ;
+		// if (leaf_triangle.type != (int)Object::Type::TRIANGLE)
+			// continue ;
 		
 		_aabb.min = glm::min(_aabb.min, leaf_triangle.position);
         _aabb.min = glm::min(_aabb.min, leaf_triangle.vertex1);
@@ -44,9 +44,9 @@ void	BVH::updateBounds(std::vector<GPUObject> &primitives)
 	}
 }
 
-void	BVH::subdivide(std::vector<GPUObject> &primitives)
+void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 {
-	if (_primitive_count <= 100)
+	if (_primitive_count <= 4)
 		return ;
 
 	glm::vec3 extent = _aabb.max - _aabb.min;
@@ -78,7 +78,6 @@ void	BVH::subdivide(std::vector<GPUObject> &primitives)
 	
 	if (left_count == 0 || left_count == _primitive_count)
 		return ;
-
 
 	_is_leaf = false;
 

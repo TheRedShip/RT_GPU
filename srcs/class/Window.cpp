@@ -175,6 +175,7 @@ void Window::imGuiRender()
 
 	ImGui::Text("Fps: %d", int(_fps));
 	ImGui::Text("Frame: %d", _frameCount);
+	ImGui::Text("Objects: %d", _scene->getObjectData().size() + _scene->getTriangleData().size());
 	
 	ImGui::Separator();
 	if (ImGui::Checkbox("Accumulate", &accumulate))

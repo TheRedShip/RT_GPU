@@ -41,6 +41,20 @@ layout(std430, binding = 1) buffer ObjectBuffer
 };
 
 
+struct GPUTriangle
+{
+	vec3	position;
+	vec3	vertex1;
+	vec3	vertex2;
+	vec3	normal;
+
+	int		mat_index;
+};
+layout(std430, binding = 2) buffer TriangleBuffer
+{
+	GPUTriangle triangles[];
+};
+
 struct GPUBvh
 {
 	vec3	min;
@@ -54,7 +68,7 @@ struct GPUBvh
 	int		first_primitive;
 	int		primitive_count;
 };
-layout(std430, binding = 4) buffer BvhBuffer
+layout(std430, binding = 5) buffer BvhBuffer
 {
 	GPUBvh bvh[];
 };
@@ -78,10 +92,10 @@ struct hitInfo
 	vec3	normal;
 	vec3	position;
 	int		obj_index;
+	int		mat_index;
 };
 
 #include "shaders/intersect.glsl"
-#include "shaders/bvh.glsl"
 
 int traceRay(Ray ray)
 {
@@ -100,9 +114,12 @@ int traceRay(Ray ray)
 	return (num_hit);
 }
 
-int traceBVH(Ray ray)
+hitInfo traceBVH(Ray ray, inout int num_hit)
 {
-    int num_hit = 0;
+	hitInfo hit;
+
+	hit.t = 1e30;
+	hit.obj_index = -1;
 
     const int MAX_STACK_SIZE = 64;
     int stack[MAX_STACK_SIZE];
@@ -126,11 +143,15 @@ int traceBVH(Ray ray)
             {
                 for (int i = 0; i < node.primitive_count; i++)
                 {
-                    GPUObject obj = objects[node.first_primitive + i];
+                    GPUTriangle obj = triangles[node.first_primitive + i];
                     
-                    hitInfo tmp;
-                    if (intersect(ray, obj, tmp))
-                        num_hit;
+                    hitInfo temp_hit;
+					if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+					{
+						hit.t = temp_hit.t;
+						hit.normal = temp_hit.normal;
+						hit.obj_index = node.first_primitive + i;
+					}
                 }
             }
             
@@ -144,7 +165,7 @@ int traceBVH(Ray ray)
         }
     }
     
-	return (num_hit);
+	return (hit);
 }
 
 
@@ -168,10 +189,20 @@ void main()
 
     vec2 uv = ((vec2(pixel_coords)) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
+	
 
 	Ray ray = initRay(uv);
-    int hits = traceBVH(ray);
 
-    vec3 color = vec3(float(hits) / float(u_bvhNum / 4));
-    imageStore(output_image, pixel_coords, vec4(color, 1.));
+	int hits = 0;
+    hitInfo hit = traceBVH(ray, hits);
+    
+	vec3 color = vec3(0.);
+	// if (hit.obj_index != -1)
+		// color = vec3(hit.normal);
+	if (hits > 150)
+		color = vec3(1., 0., 0.);
+	else
+		color = vec3(float(hits) / float(100));
+
+	imageStore(output_image, pixel_coords, vec4(color, 1.));
 }

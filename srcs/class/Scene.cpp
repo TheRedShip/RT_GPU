@@ -53,7 +53,7 @@ bool		Scene::parseScene(char *name)
 	}
 	file.close();
 
-	BVH *bvh = new BVH(_gpu_objects, 0, _gpu_objects.size());
+	BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
 	_gpu_bvh = bvh->getGPUBvhs();
 	
 	return (true);
@@ -84,13 +84,6 @@ void		Scene::addObject(Object *obj)
 		gpu_obj.vertex1 = quad->getUp();
 		gpu_obj.vertex2 = quad->getRight();
 	}
-	else if (obj->getType() == Object::Type::TRIANGLE)
-	{
-		auto triangle = static_cast<Triangle *>(obj);
-		gpu_obj.vertex1 = triangle->getVertex2();
-		gpu_obj.vertex2 = triangle->getVertex3();
-		gpu_obj.normal = triangle->getNormal();
-	}
 	else if (obj->getType() == Object::Type::CUBE)
 	{
 		auto cube = static_cast<Cube *>(obj);
@@ -102,6 +95,22 @@ void		Scene::addObject(Object *obj)
 		auto cylinder = static_cast<Cylinder *>(obj);
 		gpu_obj.normal = glm::vec3(cylinder->getRadius(), cylinder->getHeight(), 0.0f);
 		gpu_obj.transform = glm::mat4(cylinder->getRotation());
+	}
+	else if (obj->getType() == Object::Type::TRIANGLE)
+	{
+		GPUTriangle	gpu_triangle;
+
+		auto triangle = static_cast<Triangle *>(obj);
+		gpu_triangle.position = obj->getPosition();
+		gpu_triangle.mat_index = obj->getMaterialIndex();
+
+		gpu_triangle.vertex1 = triangle->getVertex2();
+		gpu_triangle.vertex2 = triangle->getVertex3();
+		gpu_triangle.normal = triangle->getNormal();
+
+		_gpu_triangles.push_back(gpu_triangle);
+		
+		return ;
 	}
 	else if (obj->getType() == Object::Type::PORTAL)
 	{
@@ -167,6 +176,11 @@ std::set<int>					Scene::getGPULights()
 const std::vector<GPUObject>	&Scene::getObjectData() const
 {
 	return (_gpu_objects);
+}
+
+const std::vector<GPUTriangle>	&Scene::getTriangleData() const
+{
+	return (_gpu_triangles);
 }
 
 std::vector<GPUMaterial>		&Scene::getMaterialData()

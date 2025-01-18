@@ -33,6 +33,16 @@ struct GPUObject
 
 };
 
+struct GPUTriangle
+{
+	alignas(16) glm::vec3	position;
+	alignas(16) glm::vec3	vertex1;
+	alignas(16) glm::vec3	vertex2;
+	alignas(16) glm::vec3	normal;
+
+	int						mat_index;
+};
+
 struct GPUMaterial
 {
 	alignas(16)	glm::vec3	color;
@@ -86,6 +96,8 @@ class Scene
 		std::set<int>					getGPULights();
 
 		const std::vector<GPUObject>	&getObjectData() const;
+		const std::vector<GPUTriangle>	&getTriangleData() const;
+		
 		std::vector<GPUMaterial>		&getMaterialData();
 		GPUVolume						&getVolume();
 		std::vector<GPUBvh>				&getBVH();
@@ -97,6 +109,8 @@ class Scene
 		std::vector<GPUBvh>			_gpu_bvh;
 
 		std::vector<GPUObject>		_gpu_objects;
+		std::vector<GPUTriangle>	_gpu_triangles;
+
 		std::vector<GPUMaterial>	_gpu_materials;
 
 		std::set<int>				_gpu_lights;

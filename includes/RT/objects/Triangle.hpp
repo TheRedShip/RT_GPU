@@ -45,7 +45,7 @@ class Triangle : public Object
 			// _vertex2 -= _position; //optimization
 			// _vertex3 -= _position; //optimization
 
-			_normal = glm::normalize(glm::cross(_vertex2, _vertex3)); //optimization
+			_normal = glm::normalize(glm::cross(_vertex2 - _position, _vertex3 - _position)); //optimization
 		
 			_mat_index = mat_index;
 		}

@@ -15,6 +15,7 @@
 
 # include "RT.hpp"
 
+struct GPUTriangle;
 struct GPUObject;
 struct GPUBvh;
 
@@ -30,13 +31,13 @@ struct AABB
 class BVH
 {
 	public:
-		BVH(std::vector<GPUObject> &primitives, int first_primitive, int primitive_count);
+		BVH(std::vector<GPUTriangle> &primitives, int first_primitive, int primitive_count);
 
 
 		void	showAABB(Scene *scene);
 		
-		void	updateBounds(std::vector <GPUObject> &primitives);
-		void	subdivide(std::vector<GPUObject> &primitives);
+		void	updateBounds(std::vector <GPUTriangle> &primitives);
+		void	subdivide(std::vector<GPUTriangle> &primitives);
 
 		int							size();
 
