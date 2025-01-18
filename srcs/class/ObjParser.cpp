@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ObjParser.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/18 18:57:31 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/18 21:07:12 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,8 @@ void ObjParser::addFace(std::stringstream &line, Scene &scene)
 
 	while(faceVertices.size() > 3)
 		if (!addTriangleFromPolygon(faceVertices, scene, 0))
-			addTriangleFromPolygon(faceVertices, scene, 1);
+			if(!addTriangleFromPolygon(faceVertices, scene, 1))
+				return ;
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");

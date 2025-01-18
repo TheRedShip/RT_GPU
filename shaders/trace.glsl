@@ -77,32 +77,49 @@ hitInfo	traceBVH(Ray ray)
         GPUBvh node = bvh[current_index];
         
 		hitInfo temp_hit;
-        if (intersectRayBVH(ray, node, temp_hit) && temp_hit.t < hit.t)
-        {
-            if (node.is_leaf != 0)
-            {
-                for (int i = 0; i < node.primitive_count; i++)
-                {
-                    GPUTriangle obj = triangles[node.first_primitive + i];
-                    
-                    hitInfo temp_hit;
-					if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
-					{
-						hit.t = temp_hit.t;
-						hit.last_t = temp_hit.last_t;
-						hit.obj_index = node.first_primitive + i;
-						hit.mat_index = obj.mat_index;
-						hit.position = temp_hit.position;
-						hit.normal = temp_hit.normal;
-					}
-                }
-            }
-            else
-            {
-                stack[++stack_ptr] = node.left_index;
-                stack[++stack_ptr] = node.right_index;
-            }
-        }
+		if (node.is_leaf != 0)
+		{
+			for (int i = 0; i < node.primitive_count; i++)
+			{
+				GPUTriangle obj = triangles[node.first_primitive + i];
+				
+				hitInfo temp_hit;
+				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
+				{
+					hit.t = temp_hit.t;
+					hit.last_t = temp_hit.last_t;
+					hit.obj_index = node.first_primitive + i;
+					hit.mat_index = obj.mat_index;
+					hit.position = temp_hit.position;
+					hit.normal = temp_hit.normal;
+				}
+			}
+		}
+		else
+		{
+			GPUBvh left_node = bvh[node.left_index];
+			GPUBvh right_node = bvh[node.right_index];
+
+			hitInfo left_hit;
+			hitInfo right_hit;
+
+			left_hit.t = 1e30;
+			right_hit.t = 1e30;
+
+			bool left_bool = intersectRayBVH(ray, left_node, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node, right_hit);
+
+			if (left_hit.t > right_hit.t)
+			{
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+			}
+			else
+			{
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+			}
+		}
     }
     
 	return (hit);

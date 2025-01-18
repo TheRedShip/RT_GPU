@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/18 19:16:45 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/18 21:11:35 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -165,7 +165,6 @@ std::vector<GPUBvh>	BVH::getGPUBvhs()
     int currentIndex = 0;
     flatten(bvhs, currentIndex);
 
-	std::cout << "BVH Done: " << bvhs.size() << std::endl;
 
     return (bvhs);
 }

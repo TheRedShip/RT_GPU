@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/17 19:05:53 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/18 21:04:56 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,9 +58,15 @@ bool		Scene::parseScene(char *name)
 	}
 	file.close();
 
+	std::cout << "Parsing done" << std::endl;
+	std::cout << "Starting BVH" << std::endl;
+
 	BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
 	_gpu_bvh = bvh->getGPUBvhs();
 	
+	std::cout << "BVH Done: " << bvh->size() << std::endl;
+
+
 	return (true);
 }
 
