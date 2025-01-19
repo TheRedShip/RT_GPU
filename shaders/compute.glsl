@@ -123,6 +123,7 @@ struct Ray
 {
 	vec3 origin;
 	vec3 direction;
+	vec3 inv_direction;
 };
 
 struct hitInfo
@@ -211,7 +212,7 @@ Ray initRay(vec2 uv, inout uint rng_state)
 	origin += right * lens_point.x + up * lens_point.y;
 	ray_direction = normalize(focal_point - origin);
 
-	return (Ray(origin, ray_direction));
+	return (Ray(origin, ray_direction, 1.0 / ray_direction));
 }
 
 void main()

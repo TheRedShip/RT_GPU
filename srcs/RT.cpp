@@ -128,8 +128,8 @@ int main(int argc, char **argv)
 
 			recorded_fps.push_back((int)window.getFps());
 
-			float y_offset = 0;
-			float dist_to_obj = 2;
+			float y_offset = 35;
+			float dist_to_obj = 55;
 			float speed = 0.5;
 
 			camera->setPosition(glm::vec3(

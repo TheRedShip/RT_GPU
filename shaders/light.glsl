@@ -34,7 +34,7 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
     vec3 light_dir = normalize(sample_point - position);
     float light_dist = length(sample_point - position);
     
-    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
+    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir, (1.0 / light_dir));
     hitInfo shadow_hit = traceRay(shadow_ray);
     
     if (shadow_hit.obj_index != light_index)
@@ -53,7 +53,7 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
     vec3 light_dir = normalize(sample_point - position);
     float light_dist = length(sample_point - position);
     
-    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir);
+    Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir, (1.0 / light_dir));
     hitInfo shadow_hit = traceRay(shadow_ray);
     
     if (shadow_hit.obj_index != light_index)
@@ -82,7 +82,7 @@ vec3	sampleLights(vec3 position, inout uint rng_state)
         vec3 light_dir = normalize(obj.position - position);
         float light_dist = length(obj.position - position);
 
-        Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir);
+        Ray shadow_ray = Ray(position + light_dir * 0.01, light_dir, (1.0 / light_dir));
         hitInfo shadow_hit = traceRay(shadow_ray);
 
         if (shadow_hit.obj_index == light_index)

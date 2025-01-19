@@ -207,7 +207,7 @@ Ray initRay(vec2 uv)
 	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));
 	vec3 ray_direction = normalize((inverse(camera.view_matrix) * vec4(view_space_ray, 0.0)).xyz);
 
-	return (Ray(origin, ray_direction));
+	return (Ray(origin, ray_direction, (1.0 / ray_direction)));
 }
 
 vec3 debugColor(vec2 uv)

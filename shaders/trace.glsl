@@ -64,7 +64,7 @@ hitInfo	traceBVH(Ray ray)
     int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
-    
+
     while (stack_ptr >= 0)
     {
         int current_index = stack[stack_ptr--];
