@@ -12,7 +12,7 @@
 
 #include "BVH.hpp"
 
-BVH::BVH(std::vector<GPUTriangle> &primitives, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
+BVH::BVH(std::vector<Triangle> &triangles, int first_primitive, int primitive_count) : _aabb(AABB(glm::vec3(1e30f), glm::vec3(-1e30f)))
 {
 	_left = nullptr;
 	_right = nullptr;
@@ -22,30 +22,27 @@ BVH::BVH(std::vector<GPUTriangle> &primitives, int first_primitive, int primitiv
 	_first_primitive = first_primitive;
 	_primitive_count = primitive_count;
 	
-	updateBounds(primitives);
-	subdivide(primitives);
+	updateBounds(triangles);
+	subdivide(triangles);
 }
 
-void	BVH::updateBounds(std::vector<GPUTriangle> &primitives)
+void	BVH::updateBounds(std::vector<Triangle> &triangles)
 {
 	for (int i = 0; i < _primitive_count; i++)
 	{
-		GPUTriangle leaf_triangle = primitives[_first_primitive + i];
+		Triangle leaf_triangle = triangles[_first_primitive + i];
 		
-		// if (leaf_triangle.type != (int)Object::Type::TRIANGLE)
-			// continue ;
-		
-		_aabb.min = glm::min(_aabb.min, leaf_triangle.position);
-        _aabb.min = glm::min(_aabb.min, leaf_triangle.vertex1);
-        _aabb.min = glm::min(_aabb.min, leaf_triangle.vertex2);
-        _aabb.max = glm::max(_aabb.max, leaf_triangle.position);
-        _aabb.max = glm::max(_aabb.max, leaf_triangle.vertex1);
-        _aabb.max = glm::max(_aabb.max, leaf_triangle.vertex2);
+		_aabb.min = glm::min(_aabb.min, leaf_triangle.getPosition());
+        _aabb.min = glm::min(_aabb.min, leaf_triangle.getVertex2());
+        _aabb.min = glm::min(_aabb.min, leaf_triangle.getVertex3());
+        _aabb.max = glm::max(_aabb.max, leaf_triangle.getPosition());
+        _aabb.max = glm::max(_aabb.max, leaf_triangle.getVertex2());
+        _aabb.max = glm::max(_aabb.max, leaf_triangle.getVertex3());
 	}
 }
 
 
-float	BVH::evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos)
+float	BVH::evaluateSah(std::vector<Triangle> &triangles, int axis, float pos)
 {
     AABB left_box(glm::vec3(1e30f), glm::vec3(-1e30f));
 	AABB right_box(glm::vec3(1e30f), glm::vec3(-1e30f));
@@ -55,22 +52,21 @@ float	BVH::evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos
 
     for (int i = 0; i < _primitive_count; i++)
     {
-        GPUTriangle triangle = primitives[_first_primitive + i];
-		glm::vec3 centroid = (triangle.position + triangle.vertex1 + triangle.vertex2) / 3.0f;
+        Triangle triangle = triangles[_first_primitive + i];
 
-        if (centroid[axis] < pos)
+        if (triangle.getCentroid()[axis] < pos)
         {
             left_count++;
-            left_box.grow( triangle.position );
-            left_box.grow( triangle.vertex1 );
-            left_box.grow( triangle.vertex2 );
+            left_box.grow( triangle.getPosition() );
+            left_box.grow( triangle.getVertex2() );
+            left_box.grow( triangle.getVertex3() );
         }
         else
         {
             right_count++;
-            right_box.grow( triangle.position );
-            right_box.grow( triangle.vertex1 );
-            right_box.grow( triangle.vertex2 );
+            right_box.grow( triangle.getPosition() );
+            right_box.grow( triangle.getVertex2() );
+            right_box.grow( triangle.getVertex3() );
         }
     }
     float cost = left_count * left_box.area() + right_count * right_box.area();
@@ -79,7 +75,7 @@ float	BVH::evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos
 
 
 
-void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
+void	BVH::subdivide(std::vector<Triangle> &triangles)
 {
 	if (_primitive_count <= 4)
 		return ;
@@ -100,7 +96,7 @@ void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 			float split_t = (i + 1) / (num_test_per_axis + 1.0f);
 			float candidate_pos = start_pos + (end_pos - start_pos) * split_t;
 
-			float cost = evaluateSah(primitives, axis, candidate_pos);
+			float cost = evaluateSah(triangles, axis, candidate_pos);
 
 			if (cost < best_cost)
 			{
@@ -119,14 +115,13 @@ void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 
 	while (i <= j)
 	{
-		GPUTriangle triangle = primitives[i];
-		glm::vec3 centroid = (triangle.position + triangle.vertex1 + triangle.vertex2) / 3.0f;
+		Triangle triangle = triangles[i];
 
-		if (centroid[axis] < split_pos)
+		if (triangle.getCentroid()[axis] < split_pos)
 			i++;
 		else
 		{
-			std::swap(primitives[i], primitives[j]);
+			std::swap(triangles[i], triangles[j]);
 			j--;
 		}
 	}
@@ -138,30 +133,10 @@ void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 
 	_is_leaf = false;
 
-	_left = new BVH(primitives, _first_primitive, left_count);
-	_right = new BVH(primitives, i , _primitive_count - left_count);
+	_left = new BVH(triangles, _first_primitive, left_count);
+	_right = new BVH(triangles, i , _primitive_count - left_count);
 
 	_primitive_count = 0;
-}
-
-void	BVH::showAABB(Scene *scene)
-{
-	if (!_is_leaf)
-	{
-		scene->addObject(new Sphere(_aabb.min, 0.5f, 6));
-		scene->addObject(new Sphere(_aabb.max, 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.min.x, _aabb.min.y, _aabb.max.z), 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.min.x, _aabb.max.y, _aabb.min.z), 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.max.x, _aabb.min.y, _aabb.min.z), 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.min.x, _aabb.max.y, _aabb.max.z), 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.max.x, _aabb.min.y, _aabb.max.z), 0.5f, 6));
-		scene->addObject(new Sphere(glm::vec3(_aabb.max.x, _aabb.max.y, _aabb.min.z), 0.5f, 6));
-	}
-	else
-	{
-		// _left->showAABB(scene);
-		// _right->showAABB(scene);
-	}
 }
 
 const AABB &BVH::getAABB() const

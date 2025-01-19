@@ -59,20 +59,20 @@ bool		Scene::parseScene(char *name)
 	file.close();
 
 	std::cout << "Parsing done" << std::endl;
-	std::cout << "Starting BVH" << std::endl;
+	// std::cout << "Starting BVH" << std::endl;
 
-	BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
-	_gpu_bvh = bvh->getGPUBvhs();
+	// BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
+	// _gpu_bvh = bvh->getGPUBvhs();
 	
-	std::cout << "BVH Done: " << std::endl;
+	// std::cout << "BVH Done: " << std::endl;
 
-	std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
-	std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
+	// std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
+	// std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
 
-	BVHStats stats = bvh->analyzeBVHLeaves(bvh);
-	std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
-	std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
-	std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
+	// BVHStats stats = bvh->analyzeBVHLeaves(bvh);
+	// std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
+	// std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
+	// std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
 
 	return (true);
 }
@@ -119,15 +119,14 @@ void		Scene::addObject(Object *obj)
 		GPUTriangle	gpu_triangle;
 
 		auto triangle = static_cast<Triangle *>(obj);
-		gpu_triangle.position = obj->getPosition();
-		gpu_triangle.mat_index = obj->getMaterialIndex();
+		gpu_triangle.position = triangle->getPosition();
+		gpu_triangle.mat_index = triangle->getMaterialIndex();
 
 		gpu_triangle.vertex1 = triangle->getVertex2();
 		gpu_triangle.vertex2 = triangle->getVertex3();
 		gpu_triangle.normal = triangle->getNormal();
 
 		_gpu_triangles.push_back(gpu_triangle);
-		
 		return ;
 	}
 	else if (obj->getType() == Object::Type::PORTAL)
@@ -154,6 +153,37 @@ void		Scene::addObject(Object *obj)
 	}
 
 	_gpu_objects.push_back(gpu_obj);
+}
+
+void		Scene::addBvh(std::vector<Triangle> &triangles)
+{
+	GPUBvhData			new_bvh_data;
+	std::vector<GPUBvh>	new_bvhs_list;
+	
+	BVH *bvh = new BVH(triangles, 0, triangles.size());
+	new_bvhs_list = bvh->getGPUBvhs();
+
+	new_bvh_data.offset = glm::vec3(0., 0., 0.);
+	new_bvh_data.bvh_start_index = _gpu_bvh.size();
+	new_bvh_data.triangle_start_index = _gpu_triangles.size();
+	
+	_gpu_bvh_data.push_back(new_bvh_data);
+	_gpu_bvh.insert(_gpu_bvh.end(), new_bvhs_list.begin(), new_bvhs_list.end());
+
+	for (int i = 0; i < (int)triangles.size(); i++)
+	{
+		GPUTriangle	gpu_triangle;
+
+		gpu_triangle.position = triangles[i].getPosition();
+		gpu_triangle.mat_index = triangles[i].getMaterialIndex();
+
+		gpu_triangle.vertex1 = triangles[i].getVertex2();
+		gpu_triangle.vertex2 = triangles[i].getVertex3();
+		gpu_triangle.normal = triangles[i].getNormal();
+
+		_gpu_triangles.push_back(gpu_triangle);
+	}
+	
 }
 
 void		Scene::addMaterial(Material *material)
@@ -216,7 +246,12 @@ GPUDebug						&Scene::getDebug()
 	return (_gpu_debug);
 }
 
-std::vector<GPUBvh>				&Scene::getBVH()
+std::vector<GPUBvhData>				&Scene::getBvhData()
+{
+	return (_gpu_bvh_data);
+}
+
+std::vector<GPUBvh>				&Scene::getBvh()
 {
 	return (_gpu_bvh);
 }

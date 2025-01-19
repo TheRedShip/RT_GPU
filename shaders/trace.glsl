@@ -130,7 +130,7 @@ hitInfo traceRay(Ray ray)
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 1
+		#if 0
 			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
 				break ;
 			ray = portalRay(ray, hit);

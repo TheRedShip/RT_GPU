@@ -39,6 +39,8 @@ class ObjParser
 		std::vector<glm::vec2>		_textureVertices;
 		int							_mat;
 		std::map<std::string, int>	_matNames;
+
+		std::vector<Triangle>		_triangles;
 };
 
 #endif 

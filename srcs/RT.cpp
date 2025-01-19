@@ -20,21 +20,22 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
 
 	const std::vector<GPUObject> &object_data = scene.getObjectData();
 	const std::vector<GPUTriangle> &triangle_data = scene.getTriangleData();
-	const std::vector<GPUBvh> &bvh_data = scene.getBVH();
+	const std::vector<GPUBvh> &bvh_nodes = scene.getBvh();
+	const std::vector<GPUBvhData> &bvh_data = scene.getBvhData();
 	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
 
 	std::cout << "Sending " << object_data.size() << " objects for " << \
 				object_data.size() * sizeof(GPUObject) + \
 				triangle_data.size() * sizeof(GPUTriangle) + \
-				bvh_data.size() * sizeof(GPUBvh) + \
+				bvh_nodes.size() * sizeof(GPUBvh) + \
 				material_data.size() * sizeof(GPUMaterial) \
 				<< " / " << max_gpu_size << " bytes" << std::endl;
 
@@ -50,23 +51,29 @@ int main(int argc, char **argv)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUTriangle) * triangle_data.size(), triangle_data.data(), GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, trianglesSSBO);
 
+	GLuint bvh_nodesSSBO;
+	glGenBuffers(1, &bvh_nodesSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvh_nodesSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvhData) * bvh_data.size(), bvh_data.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bvh_nodesSSBO);
+
 	GLuint bvhSSBO;
 	glGenBuffers(1, &bvhSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvh) * bvh_data.size(), bvh_data.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bvhSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvh) * bvh_nodes.size(), bvh_nodes.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvhSSBO);
 
 	GLuint materialSSBO;
     glGenBuffers(1, &materialSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, materialSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, materialSSBO);
 	
 	GLuint lightSSBO;
 	glGenBuffers(1, &lightSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, lightSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, lightSSBO);
 
 
 	GLuint cameraUBO;
@@ -151,7 +158,7 @@ int main(int argc, char **argv)
 
 		shader.set_int("u_frameCount", window.getFrameCount());
 		shader.set_int("u_objectsNum", object_data.size());
-		shader.set_int("u_bvhNum", scene.getBVH().size());
+		shader.set_int("u_bvhNum", bvh_data.size());
 		shader.set_int("u_lightsNum", gpu_lights.size());
 		shader.set_int("u_pixelisation", window.getPixelisation());
 		shader.set_float("u_time", (float)(glfwGetTime()));

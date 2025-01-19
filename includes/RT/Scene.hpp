@@ -86,6 +86,14 @@ struct GPUBvh
 	int						primitive_count;
 };
 
+struct GPUBvhData
+{
+	alignas(16) glm::vec3	offset;
+
+	int						bvh_start_index;
+	int						triangle_start_index;
+};
+
 class Sphere;
 class Camera;
 
@@ -103,11 +111,15 @@ class Scene
 		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
 
+		void							addBvh(std::vector<Triangle> &triangles);
+
 		const std::vector<GPUObject>	&getObjectData() const;
 		const std::vector<GPUTriangle>	&getTriangleData() const;
 		
 		std::vector<GPUMaterial>		&getMaterialData();
-		std::vector<GPUBvh>				&getBVH();
+		
+		std::vector<GPUBvhData>			&getBvhData();
+		std::vector<GPUBvh>				&getBvh();
 
 		GPUVolume						&getVolume();
 		GPUDebug						&getDebug();
@@ -116,6 +128,7 @@ class Scene
 		GPUMaterial						getMaterial(int material_index);
 		
 	private:
+		std::vector<GPUBvhData>		_gpu_bvh_data;
 		std::vector<GPUBvh>			_gpu_bvh;
 
 		std::vector<GPUObject>		_gpu_objects;

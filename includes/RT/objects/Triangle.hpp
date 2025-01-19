@@ -46,6 +46,7 @@ class Triangle : public Object
 			// _vertex3 -= _position; //optimization
 
 			_normal = glm::normalize(glm::cross(_vertex2 - _position, _vertex3 - _position)); //optimization
+			_centroid = (_position + _vertex2 + _vertex3) / 3.0f;
 		
 			_mat_index = mat_index;
 		}
@@ -55,11 +56,14 @@ class Triangle : public Object
 				// _vertex3 -= _position; //optimization
 		
 				_normal = glm::normalize(glm::cross(_vertex2 - _position, _vertex3 - _position)); //optimization
+				_centroid = (_position + _vertex2 + _vertex3) / 3.0f;
 			}
 
 		const glm::vec3		&getVertex2() const { return (_vertex2); }
 		const glm::vec3		&getVertex3() const { return (_vertex3); }
 		const glm::vec3		&getNormal() const { return (_normal); }
+		const glm::vec3		&getCentroid() const { return (_centroid); }
+
 
 		Type				getType() const override { return Type::TRIANGLE; }
 
@@ -68,6 +72,8 @@ class Triangle : public Object
 		glm::vec3	_vertex3;
 
 		glm::vec3	_normal;
+
+		glm::vec3	_centroid;
 };
 
 #endif

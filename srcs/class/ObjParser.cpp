@@ -16,8 +16,10 @@ ObjParser::ObjParser(std::string &filename)
 {
 	_mat = 0;
 	_file.open(filename);
+
 	if(!_file.is_open())
 		throw std::runtime_error("OBJ : could not open object file");
+
 }
 
 ObjParser::~ObjParser()
@@ -164,7 +166,7 @@ void ObjParser::addFace(std::stringstream &line, Scene &scene)
 
 void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Scene &scene)
 {
-	scene.addObject(new Triangle(v1, v2, v3, _mat));
+	_triangles.push_back(Triangle(v1, v2, v3, _mat));
 }
 
 void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
@@ -272,5 +274,7 @@ void	ObjParser::parse(Scene &scene)
 			throw;
 		}
 	}
+
+	scene.addBvh(_triangles);
 }
 
