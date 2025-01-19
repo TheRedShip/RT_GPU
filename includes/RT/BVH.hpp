@@ -25,9 +25,18 @@ struct AABB
 	glm::vec3				max;
 
 	AABB(glm::vec3 min, glm::vec3 max) : min(min), max(max) {}
+	
+	void grow( glm::vec3 p ) { min = glm::min( min, p ), max = glm::max( max, p ); }
+
+    float area() 
+    { 
+        glm::vec3 e = max - min;
+        return (e.x * e.y + e.y * e.z + e.z * e.x); 
+    }
 };
 
-struct BVHStats {
+struct BVHStats
+{
     int min_triangles;
     int max_triangles;
     float average_triangles;
@@ -43,6 +52,8 @@ class BVH
 		
 		void	updateBounds(std::vector <GPUTriangle> &primitives);
 		void	subdivide(std::vector<GPUTriangle> &primitives);
+
+		float	evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos);
 
 		int							getSize();
 		int							getLeaves();

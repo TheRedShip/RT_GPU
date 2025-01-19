@@ -85,20 +85,22 @@ layout(std430, binding = 2) buffer TriangleBuffer
 	GPUTriangle triangles[];
 };
 
-layout(std430, binding = 3) buffer MaterialBuffer
+layout(std430, binding = 3) buffer BvhBuffer
+{
+	GPUBvh bvh[];
+};
+
+layout(std430, binding = 4) buffer MaterialBuffer
 {
 	GPUMaterial materials[];
 };
 
-layout(std430, binding = 4) buffer LightsBuffer
+layout(std430, binding = 5) buffer LightsBuffer
 {
     int lightsIndex[];
 };
 
-layout(std430, binding = 5) buffer BvhBuffer
-{
-	GPUBvh bvh[];
-};
+
 
 
 layout(std140, binding = 0) uniform CameraData

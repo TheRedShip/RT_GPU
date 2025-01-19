@@ -44,26 +44,85 @@ void	BVH::updateBounds(std::vector<GPUTriangle> &primitives)
 	}
 }
 
+
+float	BVH::evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos)
+{
+    AABB left_box(glm::vec3(1e30f), glm::vec3(-1e30f));
+	AABB right_box(glm::vec3(1e30f), glm::vec3(-1e30f));
+
+    int left_count = 0;
+	int right_count = 0;
+
+    for (unsigned int i = 0; i < _primitive_count; i++)
+    {
+        GPUTriangle triangle = primitives[_first_primitive + i];
+		glm::vec3 centroid = (triangle.position + triangle.vertex1 + triangle.vertex2) / 3.0f;
+
+        if (centroid[axis] < pos)
+        {
+            left_count++;
+            left_box.grow( triangle.position );
+            left_box.grow( triangle.vertex1 );
+            left_box.grow( triangle.vertex2 );
+        }
+        else
+        {
+            right_count++;
+            right_box.grow( triangle.position );
+            right_box.grow( triangle.vertex1 );
+            right_box.grow( triangle.vertex2 );
+        }
+    }
+    float cost = left_count * left_box.area() + right_count * right_box.area();
+    return (cost > 0 ? cost : 1e30f);
+}
+
+
+
 void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 {
-	if (_primitive_count <= 100)
+	if (_primitive_count <= 4)
 		return ;
 
 	glm::vec3 extent = _aabb.max - _aabb.min;
 	
-	int axis = 0; 
-	if (extent.y > extent.x) axis = 1;
-	if (extent.z > extent[axis]) axis = 2;
+	const int num_test_per_axis = 5;
 
-	float split_pos = _aabb.min[axis] + extent[axis] * 0.5f;
+	int best_axis = 0;
+	float best_pos = 0;
+	float best_cost = 1e30f;
+
+	for (int axis = 0; axis < 3; axis++)
+	{
+		float start_pos = _aabb.min[axis];
+		float end_pos = _aabb.max[axis];
+
+		for (int i = 0; i < num_test_per_axis; i++)
+		{
+			float split_t = (i + 1) / (num_test_per_axis + 1.0f);
+			float candidate_pos = start_pos + (end_pos - start_pos) * split_t;
+
+			float cost = evaluateSah(primitives, axis, candidate_pos);
+
+			if (cost < best_cost)
+			{
+				best_pos = candidate_pos;
+				best_axis = axis;
+				best_cost = cost;
+			}
+		}
+	}
+
+	int axis = best_axis;
+	float split_pos = best_pos;
 
 	int i = _first_primitive;
 	int j = _first_primitive + _primitive_count - 1;
 
 	while (i <= j)
 	{
-		glm::vec3 centroid = primitives[i].position + primitives[i].vertex1 + primitives[i].vertex2;
-		centroid /= 3.0f;
+		GPUTriangle triangle = primitives[i];
+		glm::vec3 centroid = (triangle.position + triangle.vertex1 + triangle.vertex2) / 3.0f;
 
 		if (centroid[axis] < split_pos)
 			i++;
