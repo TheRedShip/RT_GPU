@@ -46,7 +46,7 @@ void	BVH::updateBounds(std::vector<GPUTriangle> &primitives)
 
 void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 {
-	if (_primitive_count <= 4)
+	if (_primitive_count <= 100)
 		return ;
 
 	glm::vec3 extent = _aabb.max - _aabb.min;

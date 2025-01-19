@@ -186,6 +186,7 @@ vec3    pathtrace(Ray ray, inout uint rng_state)
 			break;
 
 		ray = newRay(hit, ray, rng_state);
+		ray.inv_direction = 1.0 / ray.direction;
 	}
 
 	return (color * light);

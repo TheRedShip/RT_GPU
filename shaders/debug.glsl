@@ -95,6 +95,7 @@ struct Ray
 {
 	vec3 origin;
 	vec3 direction;
+	vec3 inv_direction;
 };
 
 struct hitInfo
