@@ -31,8 +31,8 @@ hitInfo	traceScene(Ray ray)
 {
 	hitInfo hit;
 
-	for (int p = 0; p < 25; p++) //portals
-	{
+	// for (int p = 0; p < 25; p++) //portals
+	// {
 		hit.t = 1e30;
 		hit.obj_index = -1;
 		
@@ -51,16 +51,17 @@ hitInfo	traceScene(Ray ray)
 				hit.normal = temp_hit.normal;
 			}
 		}
-		if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
-			break ;
-		ray = portalRay(ray, hit);
-	}
+		// if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
+		// 	break ;
+		// ray = portalRay(ray, hit);
+	// }
 
 	return (hit);
 }
 
 hitInfo	traceBVH(Ray ray)
 {
+	hitInfo temp_hit;
 	hitInfo hit;
 
 	hit.t = 1e30;
@@ -76,14 +77,12 @@ hitInfo	traceBVH(Ray ray)
 
         GPUBvh node = bvh[current_index];
         
-		hitInfo temp_hit;
 		if (node.is_leaf != 0)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
 			{
 				GPUTriangle obj = triangles[node.first_primitive + i];
 				
-				hitInfo temp_hit;
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
@@ -127,10 +126,20 @@ hitInfo	traceBVH(Ray ray)
 
 hitInfo traceRay(Ray ray)
 {
-	hitInfo hitBVH = traceBVH(ray);
-	hitInfo hitScene = traceScene(ray);
+	hitInfo hitBVH;
+	hitInfo hitScene;
+	hitInfo hit;
 
-	if (hitBVH.t < hitScene.t)
-		return (hitBVH);
-	return (hitScene);
+	for (int i = 0; i < 10; i++) // portal ray
+	{
+		hitBVH = traceBVH(ray);
+		hitScene = traceScene(ray);
+	
+		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
+		if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
+			break ;
+		ray = portalRay(ray, hit);
+	}
+
+	return (hit);
 }
