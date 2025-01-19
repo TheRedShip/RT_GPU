@@ -130,10 +130,11 @@ hitInfo traceRay(Ray ray)
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 0
+		#if 1
 			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
 				break ;
 			ray = portalRay(ray, hit);
+			ray.inv_direction = (1.0 / ray.direction);
 		#else
 			return (hit);
 		#endif

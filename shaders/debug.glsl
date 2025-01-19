@@ -80,7 +80,7 @@ struct GPUBvh
 	int		first_primitive;
 	int		primitive_count;
 };
-layout(std430, binding = 5) buffer BvhBuffer
+layout(std430, binding = 3) buffer BvhBuffer
 {
 	GPUBvh bvh[];
 };

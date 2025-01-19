@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/18 21:11:35 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/19 18:30:27 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ float	BVH::evaluateSah(std::vector<GPUTriangle> &primitives, int axis, float pos
     int left_count = 0;
 	int right_count = 0;
 
-    for (unsigned int i = 0; i < _primitive_count; i++)
+    for (int i = 0; i < _primitive_count; i++)
     {
         GPUTriangle triangle = primitives[_first_primitive + i];
 		glm::vec3 centroid = (triangle.position + triangle.vertex1 + triangle.vertex2) / 3.0f;
@@ -84,8 +84,6 @@ void	BVH::subdivide(std::vector<GPUTriangle> &primitives)
 	if (_primitive_count <= 4)
 		return ;
 
-	glm::vec3 extent = _aabb.max - _aabb.min;
-	
 	const int num_test_per_axis = 5;
 
 	int best_axis = 0;
