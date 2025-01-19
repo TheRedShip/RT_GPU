@@ -31,30 +31,24 @@ hitInfo	traceScene(Ray ray)
 {
 	hitInfo hit;
 
-	// for (int p = 0; p < 25; p++) //portals
-	// {
-		hit.t = 1e30;
-		hit.obj_index = -1;
-		
-		for (int i = 0; i < u_objectsNum; i++)
-		{
-			GPUObject obj = objects[i];
+	hit.t = 1e30;
+	hit.obj_index = -1;
+	
+	for (int i = 0; i < u_objectsNum; i++)
+	{
+		GPUObject obj = objects[i];
 
-			hitInfo temp_hit;
-			if (intersect(ray, obj, temp_hit) && temp_hit.t > 0.0f && temp_hit.t < hit.t + 0.0001)
-			{
-				hit.t = temp_hit.t;
-				hit.last_t = temp_hit.last_t;
-				hit.obj_index = i;
-				hit.mat_index = obj.mat_index;
-				hit.position = temp_hit.position;
-				hit.normal = temp_hit.normal;
-			}
+		hitInfo temp_hit;
+		if (intersect(ray, obj, temp_hit) && temp_hit.t < hit.t)
+		{
+			hit.t = temp_hit.t;
+			hit.last_t = temp_hit.last_t;
+			hit.obj_index = i;
+			hit.mat_index = obj.mat_index;
+			hit.position = temp_hit.position;
+			hit.normal = temp_hit.normal;
 		}
-		// if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
-		// 	break ;
-		// ray = portalRay(ray, hit);
-	// }
+	}
 
 	return (hit);
 }
@@ -134,11 +128,15 @@ hitInfo traceRay(Ray ray)
 	{
 		hitBVH = traceBVH(ray);
 		hitScene = traceScene(ray);
-	
+		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
-			break ;
-		ray = portalRay(ray, hit);
+		#if 0
+			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
+				break ;
+			ray = portalRay(ray, hit);
+		#else
+			return (hit);
+		#endif
 	}
 
 	return (hit);
