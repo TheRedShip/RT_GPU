@@ -20,8 +20,9 @@ class ObjParser
 	public:
 		ObjParser(std::string &filename);
 		~ObjParser();
-		void		parse(Scene &scene);
 
+		void	parse(Scene &scene, glm::vec3 offset);
+	
 	private:
 		glm::vec3					getVertex(std::stringstream &line);
 		glm::vec2					getUV(std::stringstream &line);

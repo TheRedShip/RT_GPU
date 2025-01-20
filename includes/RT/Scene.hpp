@@ -111,7 +111,7 @@ class Scene
 		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
 
-		void							addBvh(std::vector<Triangle> &triangles);
+		void							addBvh(std::vector<Triangle> &triangles, glm::vec3 offset);
 
 		const std::vector<GPUObject>	&getObjectData() const;
 		const std::vector<GPUTriangle>	&getTriangleData() const;

@@ -24,8 +24,8 @@ pl	0 -2 0		0 1 0		2 // floor
 
 qu	-1 1.999 -1	2 0 0		0 0 2		6
 
-OBJ obj/Dragon_80K.obj
-# OBJ obj/Dragon_80K.obj
+OBJ obj/Dragon_80K.obj 0 0 0
+OBJ obj/Dragon_80K.obj 0 0 1
 # OBJ obj/teapot.obj
 
 # OBJ obj/Model.obj

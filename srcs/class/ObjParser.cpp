@@ -240,7 +240,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 	file.close();
 }
 
-void	ObjParser::parse(Scene &scene)
+void	ObjParser::parse(Scene &scene, glm::vec3 offset)
 {
 	std::string				line;
 	std::string				identifier;
@@ -275,6 +275,6 @@ void	ObjParser::parse(Scene &scene)
 		}
 	}
 
-	scene.addBvh(_triangles);
+	scene.addBvh(_triangles, offset);
 }
 

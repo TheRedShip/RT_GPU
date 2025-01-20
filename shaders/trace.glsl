@@ -129,7 +129,7 @@ hitInfo traverseBVHs(Ray ray)
 	{
 		GPUBvhData bvh_data = BvhData[i];
 
-		ray.origin = ray.origin + vec3(float(i), 0., 0.);
+		ray.origin -= bvh_data.offset;
 		hitInfo temp_hit = traceBVH(ray, bvh_data);
 
 		if (temp_hit.t < hit.t)
@@ -141,6 +141,8 @@ hitInfo traverseBVHs(Ray ray)
 			hit.position = temp_hit.position;
 			hit.normal = temp_hit.normal;
 		}
+		
+		ray.origin += bvh_data.offset;
 	}
 
 	return (hit);

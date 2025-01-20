@@ -95,6 +95,20 @@ void	SceneParser::parseCamera(std::stringstream &line)
 
 }
 
+void		SceneParser::parseObj(std::stringstream &line)
+{
+	std::string	name;
+	float x = 0.;
+	float y = 0.;
+	float z = 0.;
+
+	line >> name;
+	line >> x >> y >> z;
+
+	ObjParser obj(name);
+	obj.parse(*_scene, glm::vec3(x, y, z));
+}
+
 bool		SceneParser::parseLine(const std::string &line)
 {
 	if (line.empty() || line[0] == '#')
@@ -128,11 +142,7 @@ bool		SceneParser::parseLine(const std::string &line)
 		else if (identifier == "CAM")
 			this->parseCamera(ss);
 		else if (identifier == "OBJ")
-		{
-			ss >> identifier;
-			ObjParser obj(identifier);
-			obj.parse(*_scene);	
-		}
+			this->parseObj(ss);
 	}
 	catch (const std::exception& e)
 	{
