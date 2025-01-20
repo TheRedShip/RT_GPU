@@ -73,8 +73,6 @@ float	BVH::evaluateSah(std::vector<Triangle> &triangles, int axis, float pos)
     return (cost > 0 ? cost : 1e30f);
 }
 
-
-
 void	BVH::subdivide(std::vector<Triangle> &triangles)
 {
 	if (_primitive_count <= 4)

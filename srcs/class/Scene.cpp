@@ -58,21 +58,8 @@ bool		Scene::parseScene(char *name)
 	}
 	file.close();
 
+
 	std::cout << "Parsing done" << std::endl;
-	// std::cout << "Starting BVH" << std::endl;
-
-	// BVH *bvh = new BVH(_gpu_triangles, 0, _gpu_triangles.size());
-	// _gpu_bvh = bvh->getGPUBvhs();
-	
-	// std::cout << "BVH Done: " << std::endl;
-
-	// std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
-	// std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
-
-	// BVHStats stats = bvh->analyzeBVHLeaves(bvh);
-	// std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
-	// std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
-	// std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
 
 	return (true);
 }
@@ -159,7 +146,11 @@ void		Scene::addBvh(std::vector<Triangle> &triangles)
 {
 	GPUBvhData			new_bvh_data;
 	std::vector<GPUBvh>	new_bvhs_list;
+
+	uint64_t start_time = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 	
+	std::cout << "New BVH" << std::endl;
+
 	BVH *bvh = new BVH(triangles, 0, triangles.size());
 	new_bvhs_list = bvh->getGPUBvhs();
 
@@ -183,6 +174,17 @@ void		Scene::addBvh(std::vector<Triangle> &triangles)
 
 		_gpu_triangles.push_back(gpu_triangle);
 	}
+
+	uint64_t time_elapsed = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() - start_time;
+	std::cout << "\tBuild done in " << time_elapsed << "ms" <<  std::endl;
+
+	std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
+	std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
+
+	BVHStats stats = bvh->analyzeBVHLeaves(bvh);
+	std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
+	std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
+	std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
 	
 }
 

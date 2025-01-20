@@ -84,7 +84,7 @@ int ObjParser::pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices
 	return(0);
 }
 
-bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &scene, int inv)
+bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv)
 {
 	glm::vec3 v1, v2 ,v3;
 	float dot;
@@ -108,7 +108,7 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, Scene &
 		if(pointInTriangle(triangleVertices, vertices, i))
 			continue;
 		vertices.erase(vertices.begin() + i);
-		addTriangle(v1, v2 ,v3 , scene);
+		addTriangle(v1, v2 ,v3);
 		return(1);
 	}
 	return(0);
@@ -144,7 +144,7 @@ void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::strin
 	}
 }
 
-void ObjParser::addFace(std::stringstream &line, Scene &scene)
+void ObjParser::addFace(std::stringstream &line)
 {
 	std::vector<glm::vec3> faceVertices;
 
@@ -155,16 +155,16 @@ void ObjParser::addFace(std::stringstream &line, Scene &scene)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
 	while(faceVertices.size() > 3)
-		if (!addTriangleFromPolygon(faceVertices, scene, 0))
-			if(!addTriangleFromPolygon(faceVertices, scene, 1))
+		if (!addTriangleFromPolygon(faceVertices, 0))
+			if(!addTriangleFromPolygon(faceVertices, 1))
 				return ;
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], scene);
+	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2]);
 }
 
-void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, Scene &scene)
+void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
 {
 	_triangles.push_back(Triangle(v1, v2, v3, _mat));
 }
@@ -258,7 +258,7 @@ void	ObjParser::parse(Scene &scene)
 			else if (identifier == "vt")
 				_textureVertices.push_back(getUV(lineStream));
 			else if (identifier == "f")
-				addFace(lineStream, scene);
+				addFace(lineStream);
 			else if (identifier == "mtllib")
 				parseMtl(lineStream, scene);
 			else if (identifier == "usemtl")
