@@ -25,7 +25,12 @@ pl	0 -2 0		0 1 0		2 // floor
 qu	-1 1.999 -1	2 0 0		0 0 2		6
 
 OBJ obj/Dragon_80K.obj
+# OBJ obj/Dragon_80K.obj
+# OBJ obj/teapot.obj
+
+# OBJ obj/Model.obj
+
 # OBJ obj/Lowpoly_tree_sample.obj
 
-# po  -1.99 -0.5 -0.5           0 1 0   	0 0 1		1	4
-# po  -0.5 -0.5 -1.99            	  0 1 0   	1 0 0		0	4
+po  -1.99 -0.5 -0.5           0 1 0   	0 0 1		1	4
+po  -0.5 -0.5 -1.99            	  0 1 0   	1 0 0		0	4

@@ -127,8 +127,10 @@ hitInfo traverseBVHs(Ray ray)
 
 	for (int i = 0; i < u_bvhNum; i++)
 	{
-		ray.origin = i == 0 ? ray.origin : ray.origin + vec3(2., 0., 0.);
-		hitInfo temp_hit = traceBVH(ray, BvhData[i]);
+		GPUBvhData bvh_data = BvhData[i];
+
+		ray.origin = ray.origin + vec3(float(i), 0., 0.);
+		hitInfo temp_hit = traceBVH(ray, bvh_data);
 
 		if (temp_hit.t < hit.t)
 		{
@@ -156,7 +158,7 @@ hitInfo traceRay(Ray ray)
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 0
+		#if 1
 			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
 				break ;
 			ray = portalRay(ray, hit);
