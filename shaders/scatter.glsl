@@ -105,7 +105,7 @@ Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 	GPUMaterial	mat;
 
 	obj = objects[hit.obj_index];
-	mat = materials[obj.mat_index];
+	mat = materials[hit.mat_index];
 
     if (mat.type == 0)
         return (lambertRay(hit, ray, mat, rng_state));
