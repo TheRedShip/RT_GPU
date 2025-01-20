@@ -53,10 +53,10 @@ hitInfo	traceScene(Ray ray)
 	return (hit);
 }
 
-hitInfo	traceBVH(Ray ray)
+hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 {
-	hitInfo temp_hit;
 	hitInfo hit;
+	hitInfo hit_bvh;
 
 	hit.t = 1e30;
 	hit.obj_index = -1;
@@ -64,24 +64,24 @@ hitInfo	traceBVH(Ray ray)
     int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
-
+    
     while (stack_ptr >= 0)
     {
         int current_index = stack[stack_ptr--];
+        GPUBvh node = Bvh[bvh_data.bvh_start_index + current_index];
 
-        GPUBvh node = bvh[current_index];
-        
 		if (node.is_leaf != 0)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
 			{
-				GPUTriangle obj = triangles[node.first_primitive + i];
+				GPUTriangle obj = triangles[bvh_data.triangle_start_index + node.first_primitive + i];
 				
+				hitInfo temp_hit;
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
 					hit.last_t = temp_hit.last_t;
-					hit.obj_index = node.first_primitive + i;
+					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
 					hit.mat_index = obj.mat_index;
 					hit.position = temp_hit.position;
 					hit.normal = temp_hit.normal;
@@ -90,8 +90,8 @@ hitInfo	traceBVH(Ray ray)
 		}
 		else
 		{
-			GPUBvh left_node = bvh[node.left_index];
-			GPUBvh right_node = bvh[node.right_index];
+			GPUBvh left_node = Bvh[bvh_data.bvh_start_index + node.left_index];
+			GPUBvh right_node = Bvh[bvh_data.bvh_start_index + node.right_index];
 
 			hitInfo left_hit;
 			hitInfo right_hit;
@@ -118,6 +118,32 @@ hitInfo	traceBVH(Ray ray)
 	return (hit);
 }
 
+hitInfo traverseBVHs(Ray ray)
+{
+	hitInfo hit;
+	
+	hit.t = 1e30;
+	hit.obj_index = -1;
+
+	for (int i = 0; i < u_bvhNum; i++)
+	{
+		ray.origin = i == 0 ? ray.origin : ray.origin + vec3(2., 0., 0.);
+		hitInfo temp_hit = traceBVH(ray, BvhData[i]);
+
+		if (temp_hit.t < hit.t)
+		{
+			hit.t = temp_hit.t;
+			hit.last_t = temp_hit.last_t;
+			hit.obj_index = temp_hit.obj_index;
+			hit.mat_index = temp_hit.mat_index;
+			hit.position = temp_hit.position;
+			hit.normal = temp_hit.normal;
+		}
+	}
+
+	return (hit);
+}
+
 hitInfo traceRay(Ray ray)
 {
 	hitInfo hitBVH;
@@ -126,7 +152,7 @@ hitInfo traceRay(Ray ray)
 
 	for (int i = 0; i < 10; i++) // portal ray
 	{
-		hitBVH = traceBVH(ray);
+		hitBVH = traverseBVHs(ray);
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;

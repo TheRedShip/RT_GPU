@@ -61,6 +61,14 @@ struct GPUVolume
 	int		enabled;
 };
 
+struct GPUBvhData
+{
+	vec3	offset;
+
+	int		bvh_start_index;
+	int		triangle_start_index;
+};
+
 struct GPUBvh
 {
 	vec3	min;
@@ -85,17 +93,22 @@ layout(std430, binding = 2) buffer TriangleBuffer
 	GPUTriangle triangles[];
 };
 
-layout(std430, binding = 3) buffer BvhBuffer
+layout(std430, binding = 3) buffer BvhDataBuffer
 {
-	GPUBvh bvh[];
+	GPUBvhData BvhData[];
 };
 
-layout(std430, binding = 4) buffer MaterialBuffer
+layout(std430, binding = 4) buffer BvhBuffer
+{
+	GPUBvh Bvh[];
+};
+
+layout(std430, binding = 5) buffer MaterialBuffer
 {
 	GPUMaterial materials[];
 };
 
-layout(std430, binding = 5) buffer LightsBuffer
+layout(std430, binding = 6) buffer LightsBuffer
 {
     int lightsIndex[];
 };
@@ -115,6 +128,7 @@ layout(std140, binding = 1) uniform VolumeData
 
 
 uniform int     u_objectsNum;
+uniform int     u_bvhNum;
 uniform int     u_lightsNum;
 uniform vec2    u_resolution;
 uniform int		u_pixelisation;
