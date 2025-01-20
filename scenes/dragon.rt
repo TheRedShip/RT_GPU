@@ -1,4 +1,4 @@
-CAM     1.82501 0.45 -0.0162945     -10 180.6     0.02 2.164		30   5
+CAM     1.82501 0.45 0     -10 180     0.005 2.164		35   5
 
 
 MAT	255 255 255		0.0		1. 0.3 // white 0
@@ -24,8 +24,8 @@ pl	0 -2 0		0 1 0		2 // floor
 
 qu	-1 1.999 -1	2 0 0		0 0 2		6
 
-OBJ obj/Dragon_80K.obj 0 0 0
-OBJ obj/Dragon_80K.obj 0 0 1
+OBJ obj/Dragon_80K.obj 0 0 0.5
+OBJ obj/Dragon_80K.obj 0 0 -0.5	1		0 15 100
 # OBJ obj/teapot.obj
 
 # OBJ obj/Model.obj
@@ -33,4 +33,4 @@ OBJ obj/Dragon_80K.obj 0 0 1
 # OBJ obj/Lowpoly_tree_sample.obj
 
 po  -1.99 -0.5 -0.5           0 1 0   	0 0 1		1	4
-po  -0.5 -0.5 -1.99            	  0 1 0   	1 0 0		0	4
+po  1.99 -0.5 -0.5            0 1 0   	0 0 1		0	4

@@ -88,7 +88,9 @@ struct GPUBvh
 
 struct GPUBvhData
 {
+	glm::mat4				transform;
 	alignas(16) glm::vec3	offset;
+	float					scale;
 
 	int						bvh_start_index;
 	int						triangle_start_index;
@@ -111,7 +113,7 @@ class Scene
 		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
 
-		void							addBvh(std::vector<Triangle> &triangles, glm::vec3 offset);
+		void							addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float scale, glm::mat4 transform);
 
 		const std::vector<GPUObject>	&getObjectData() const;
 		const std::vector<GPUTriangle>	&getTriangleData() const;

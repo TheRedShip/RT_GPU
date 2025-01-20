@@ -79,7 +79,8 @@
 		"xlocmes": "cpp",
 		"xlocmon": "cpp",
 		"xloctime": "cpp",
-		"xtree": "cpp"
+		"xtree": "cpp",
+		"forward_list": "cpp"
 	},
 	"cmake.ignoreCMakeListsMissing": true
 }

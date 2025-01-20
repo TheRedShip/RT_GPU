@@ -69,7 +69,9 @@ layout(std430, binding = 2) buffer TriangleBuffer
 
 struct GPUBvhData
 {
+	mat4	transform;
 	vec3	offset;
+	float	scale;
 
 	int		bvh_start_index;
 	int		triangle_start_index;
@@ -210,6 +212,44 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	return (hit);
 }
 
+mat3 rotateX(float angleRadians) {
+    float c = cos(angleRadians);
+    float s = sin(angleRadians);
+    return mat3(
+        1.0, 0.0, 0.0,
+        0.0,   c,  -s,
+        0.0,   s,   c
+    );
+}
+
+mat3 rotateY(float angleRadians) {
+    float c = cos(angleRadians);
+    float s = sin(angleRadians);
+    return mat3(
+         c, 0.0,   s,
+        0.0, 1.0, 0.0,
+        -s, 0.0,   c
+    );
+}
+
+mat3 rotateZ(float angleRadians) {
+    float c = cos(angleRadians);
+    float s = sin(angleRadians);
+    return mat3(
+          c,  -s, 0.0,
+          s,   c, 0.0,
+        0.0, 0.0, 1.0
+    );
+}
+
+mat3 createTransformMatrix(vec3 rotationAngles, float scale) {
+    mat3 rotMatrix = rotateZ(rotationAngles.z) * 
+                    rotateY(rotationAngles.y) * 
+                    rotateX(rotationAngles.x);
+    
+    return rotMatrix * scale;
+}
+
 hitInfo traverseBVHs(Ray ray, inout Stats stats)
 {
 	hitInfo hit;
@@ -219,14 +259,25 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 
 	for (int i = 0; i < u_bvhNum; i++)
 	{
-		ray.origin = i == 0 ? ray.origin : ray.origin + vec3(2., 0., 0.);
-		hitInfo temp_hit = traceBVH(ray, BvhData[i], stats);
+		GPUBvhData bvh_data = BvhData[i];
+		
+		mat3 transformMatrix = mat3(bvh_data.transform);
+		mat3 inverseTransformMatrix = inverse(transformMatrix);
 
+		Ray transformedRay;
+		transformedRay.direction = normalize(transformMatrix * ray.direction);
+		transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
+		transformedRay.inv_direction = (1. / transformedRay.direction);
+		
+		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i], stats);
+
+		temp_hit.t = temp_hit.t / bvh_data.scale;
+		
 		if (temp_hit.t < hit.t)
 		{
 			hit.t = temp_hit.t;
 			hit.obj_index = temp_hit.obj_index;
-			hit.normal = temp_hit.normal;
+			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
 		}
 	}
 

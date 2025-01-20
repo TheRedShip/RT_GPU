@@ -63,7 +63,9 @@ struct GPUVolume
 
 struct GPUBvhData
 {
+	mat4	transform;
 	vec3	offset;
+	float	scale;
 
 	int		bvh_start_index;
 	int		triangle_start_index;

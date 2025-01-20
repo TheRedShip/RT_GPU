@@ -118,6 +118,36 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 	return (hit);
 }
 
+// hitInfo traverseBVHs(Ray ray)
+// {
+// 	hitInfo hit;
+	
+// 	hit.t = 1e30;
+// 	hit.obj_index = -1;
+
+// 	for (int i = 0; i < u_bvhNum; i++)
+// 	{
+// 		GPUBvhData bvh_data = BvhData[i];
+
+// 		ray.origin -= bvh_data.offset;
+// 		hitInfo temp_hit = traceBVH(ray, bvh_data);
+
+// 		if (temp_hit.t < hit.t)
+// 		{
+// 			hit.t = temp_hit.t;
+// 			hit.last_t = temp_hit.last_t;
+// 			hit.obj_index = temp_hit.obj_index;
+// 			hit.mat_index = temp_hit.mat_index;
+// 			hit.position = temp_hit.position;
+// 			hit.normal = temp_hit.normal;
+// 		}
+		
+// 		ray.origin += bvh_data.offset;
+// 	}
+
+// 	return (hit);
+// }
+
 hitInfo traverseBVHs(Ray ray)
 {
 	hitInfo hit;
@@ -128,21 +158,28 @@ hitInfo traverseBVHs(Ray ray)
 	for (int i = 0; i < u_bvhNum; i++)
 	{
 		GPUBvhData bvh_data = BvhData[i];
+		
+		mat3 transformMatrix = mat3(bvh_data.transform);
+		mat3 inverseTransformMatrix = inverse(transformMatrix);
 
-		ray.origin -= bvh_data.offset;
-		hitInfo temp_hit = traceBVH(ray, bvh_data);
+		Ray transformedRay;
+		transformedRay.direction = normalize(transformMatrix * ray.direction);
+		transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
+		transformedRay.inv_direction = (1. / transformedRay.direction);
+		
+		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i]);
+
+		temp_hit.t = temp_hit.t / bvh_data.scale;
 
 		if (temp_hit.t < hit.t)
 		{
 			hit.t = temp_hit.t;
-			hit.last_t = temp_hit.last_t;
+			hit.last_t = temp_hit.last_t / bvh_data.scale;
 			hit.obj_index = temp_hit.obj_index;
 			hit.mat_index = temp_hit.mat_index;
-			hit.position = temp_hit.position;
-			hit.normal = temp_hit.normal;
+			hit.position = inverseTransformMatrix * temp_hit.position + bvh_data.offset;
+			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
 		}
-		
-		ray.origin += bvh_data.offset;
 	}
 
 	return (hit);

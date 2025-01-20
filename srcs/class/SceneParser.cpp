@@ -102,11 +102,21 @@ void		SceneParser::parseObj(std::stringstream &line)
 	float y = 0.;
 	float z = 0.;
 
+	float scale = 1.;
+	
+	float xtransform = 0.;
+	float ytransform = 0.;
+	float ztransform = 0.;
+
 	line >> name;
 	line >> x >> y >> z;
+	line >> scale;
+	line >> xtransform >> ytransform >> ztransform;
+
+	glm::mat4 transform = glm::eulerAngleXYZ(glm::radians(xtransform), glm::radians(ytransform), glm::radians(ztransform));
 
 	ObjParser obj(name);
-	obj.parse(*_scene, glm::vec3(x, y, z));
+	obj.parse(*_scene, glm::vec3(x, y, z), (1.0 / scale), transform);
 }
 
 bool		SceneParser::parseLine(const std::string &line)

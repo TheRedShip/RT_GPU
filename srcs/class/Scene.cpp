@@ -142,7 +142,7 @@ void		Scene::addObject(Object *obj)
 	_gpu_objects.push_back(gpu_obj);
 }
 
-void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset)
+void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float scale, glm::mat4 transform)
 {
 	GPUBvhData			new_bvh_data;
 	std::vector<GPUBvh>	new_bvhs_list;
@@ -154,8 +154,9 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset)
 	BVH *bvh = new BVH(triangles, 0, triangles.size());
 	new_bvhs_list = bvh->getGPUBvhs();
 	
-	std::cout << glm::to_string(offset) << std::endl;
+	new_bvh_data.transform = transform * scale;
 	new_bvh_data.offset = offset;
+	new_bvh_data.scale = scale;
 	new_bvh_data.bvh_start_index = _gpu_bvh.size();
 	new_bvh_data.triangle_start_index = _gpu_triangles.size();
 	

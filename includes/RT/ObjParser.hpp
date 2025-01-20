@@ -21,7 +21,7 @@ class ObjParser
 		ObjParser(std::string &filename);
 		~ObjParser();
 
-		void	parse(Scene &scene, glm::vec3 offset);
+		void	parse(Scene &scene, glm::vec3 offset, float scale, glm::mat4 transform);
 	
 	private:
 		glm::vec3					getVertex(std::stringstream &line);

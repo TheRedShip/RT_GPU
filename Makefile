@@ -11,7 +11,7 @@ ifeq ($(OS),Windows_NT)
 	LINE_CLR	=	\33[2K\r
 	RM          :=	del /S /Q
 	DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
-	CC          :=	g++
+	CC          :=	g++ -O3
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui
 	LDFLAGS     :=  -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 else
