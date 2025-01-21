@@ -24,7 +24,8 @@ qu	-2.5 0 -2.5		0 5 0		15 0 0		3
 qu	11.5 0 -2.5		0 5 0		0 0 15		1
 qu	-2.5 0 11.5		0 5 0		15 0 0		4
 
-
+OBJ obj/Dragon_8K.obj -5 0.38 0  1
+OBJ obj/Dragon_8K.obj 5 0.38 0  1
 
 OBJ obj/Dragon_8K.obj 0 0.38 0  1
 OBJ obj/Dragon_8K.obj 0 0.38 1  1

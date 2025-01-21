@@ -11,7 +11,7 @@ ifeq ($(OS),Windows_NT)
 	LINE_CLR	=	\33[2K\r
 	RM          :=	del /S /Q
 	DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
-	CC          :=	g++ -O3
+	CC          :=	g++ -g
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui
 	LDFLAGS     :=  -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
 else
@@ -28,7 +28,7 @@ else
 	RM          :=	rm -rf
 	DIR_DUP     =	mkdir -p $(@D)
 	CC          :=	clang++
-	CFLAGS      :=	-Wall -Wextra -Werror -g -O3
+	CFLAGS      :=	-Wall -Wextra -Werror -g
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui -I/usr/include
 	LDFLAGS		:=  -L/usr/lib/x86_64-linux-gnu -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lstdc++
 	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
@@ -55,6 +55,7 @@ ALL_SRCS	:=	$(IMGUI_SRCS)			\
 				class/SceneParser.cpp	\
 				class/ObjParser.cpp		\
 				class/BVH.cpp			\
+				class/TopBVH.cpp	\
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

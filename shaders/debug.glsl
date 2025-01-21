@@ -212,44 +212,6 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	return (hit);
 }
 
-mat3 rotateX(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-        1.0, 0.0, 0.0,
-        0.0,   c,  -s,
-        0.0,   s,   c
-    );
-}
-
-mat3 rotateY(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-         c, 0.0,   s,
-        0.0, 1.0, 0.0,
-        -s, 0.0,   c
-    );
-}
-
-mat3 rotateZ(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-          c,  -s, 0.0,
-          s,   c, 0.0,
-        0.0, 0.0, 1.0
-    );
-}
-
-mat3 createTransformMatrix(vec3 rotationAngles, float scale) {
-    mat3 rotMatrix = rotateZ(rotationAngles.z) * 
-                    rotateY(rotationAngles.y) * 
-                    rotateX(rotationAngles.x);
-    
-    return rotMatrix * scale;
-}
-
 hitInfo traverseBVHs(Ray ray, inout Stats stats)
 {
 	hitInfo hit;

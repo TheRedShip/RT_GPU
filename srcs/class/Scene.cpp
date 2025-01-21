@@ -58,6 +58,9 @@ bool		Scene::parseScene(char *name)
 	}
 	file.close();
 
+	TopBVH	*top_bvh = new TopBVH(_gpu_bvh_data, _gpu_bvh, 0, _gpu_bvh_data.size());
+	(void) top_bvh;
+
 
 	std::cout << "Parsing done" << std::endl;
 
@@ -187,7 +190,6 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 	std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
 	std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
 	std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
-	
 }
 
 void		Scene::addMaterial(Material *material)

@@ -18,22 +18,7 @@
 struct GPUTriangle;
 struct GPUObject;
 struct GPUBvh;
-
-struct AABB
-{
-	glm::vec3				min;
-	glm::vec3				max;
-
-	AABB(glm::vec3 min, glm::vec3 max) : min(min), max(max) {}
-	
-	void grow( glm::vec3 p ) { min = glm::min( min, p ), max = glm::max( max, p ); }
-
-    float area()
-    { 
-        glm::vec3 e = max - min;
-        return (e.x * e.y + e.y * e.z + e.z * e.x); 
-    }
-};
+struct AABB;
 
 struct BVHStats
 {
