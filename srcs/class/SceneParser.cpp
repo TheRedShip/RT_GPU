@@ -6,13 +6,13 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/16 15:17:10 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/21 15:57:42 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "SceneParser.hpp"
 
-SceneParser::SceneParser(Scene *scene) : _scene(scene)
+SceneParser::SceneParser(Scene *scene, char *filename) : _scene(scene), _filename(filename)
 {
 	object_parsers["sp"] = [](std::stringstream &ss) -> Object * { return (new Sphere(ss)); };
 	object_parsers["pl"] = [](std::stringstream &ss) -> Object * { return (new Plane(ss)); };
@@ -115,7 +115,7 @@ void		SceneParser::parseObj(std::stringstream &line)
 
 	glm::mat4 transform = glm::eulerAngleXYZ(glm::radians(xtransform), glm::radians(ytransform), glm::radians(ztransform));
 
-	ObjParser obj(name);
+	ObjParser obj(name, _filename);
 	obj.parse(*_scene, glm::vec3(x, y, z), (1.0 / scale), transform);
 }
 

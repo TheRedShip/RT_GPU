@@ -6,25 +6,38 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/18 21:07:12 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/21 16:02:48 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
-ObjParser::ObjParser(std::string &filename)
+ObjParser::ObjParser(std::string &filename, std::string &scene_filename)
 {
 	_mat = 0;
-	_file.open(filename);
+	_filename = getFilePath(scene_filename) + filename;
+	std::cout << _filename << std::endl;
+	_file.open(_filename);
 
 	if(!_file.is_open())
 		throw std::runtime_error("OBJ : could not open object file");
-
 }
 
 ObjParser::~ObjParser()
 {
 	_file.close();
+}
+
+std::string ObjParser::getFilePath(std::string &file)
+{
+	int index;
+
+	if(file.find("/") == std::string::npos)
+		return("");
+	index = file.length() - 1;
+	while(index && file[index] != '/')
+		index--;
+	return(file.substr(0, index + 1));
 }
 
 glm::vec3	ObjParser::getVertex(std::stringstream &line)
@@ -116,7 +129,6 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv
 
 std::vector<std::string> ObjParser::objSplit(std::string str, std::string delim)
 {
-	
 	std::vector<std::string> res;
 	
 	while(str.find(delim) != std::string::npos)
@@ -179,6 +191,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 	Material *mat;
 
 	input_line >> filename;
+	filename = getFilePath(_filename) + filename;
 	file.open(filename);
 	mat = 0;
 	if(!file.is_open())
@@ -201,7 +214,8 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 				throw std::runtime_error("OBJ: syntax error in material file, missing material name");
 			mat = new Material;
 			memset(mat, 0, sizeof(Material));
-			mat->metallic = 1.0f;
+			mat->refraction = 1.0f;
+			mat->roughness = 1.0f;
 			continue;
 		}
 		if(!mat)
@@ -229,6 +243,28 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			if(!(lineStream >> mat->refraction))
 				throw std::runtime_error("OBJ: syntax error while getting material refraction");
 		}
+		else if(identifier == "Tr")
+		{
+			float prob;
+
+			if(!(lineStream >> prob)) 
+				throw std::runtime_error("OBJ : syntax error wile getting material transparency");
+			if(prob == 0)
+				continue;
+			mat->metallic = 1 - prob;
+			mat->type = 2;
+		}
+		else if(identifier == "d")
+		{
+			float prob;
+
+			if(!(lineStream >> prob)) 
+				throw std::runtime_error("OBJ : syntax error wile getting material transparency");
+			if(prob == 1)
+				continue;
+			mat->metallic = prob;
+			mat->type = 2;
+		}
 		else
 			std::cerr << "unsupported material setting : " << identifier << std::endl;
 	}
@@ -238,6 +274,11 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 		_matNames[matName] = scene.getMaterialData().size() - 1;
 	}
 	file.close();
+	for(auto i = _matNames.begin(); i != _matNames.end(); i++)
+	{
+		std::cout << "key : " << i->first << std::endl;
+		std::cout << "value :" << i->second << std::endl;
+	}
 }
 
 void	ObjParser::parse(Scene &scene, glm::vec3 offset, float scale, glm::mat4 transform)

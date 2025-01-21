@@ -6,7 +6,7 @@
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:37:37 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/16 15:02:01 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/21 15:15:13 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class SceneParser
 {
 	public:
-		SceneParser(Scene *scene);
+		SceneParser(Scene *scene, char *filename);
 
 		bool		parseLine(const std::string &line);
 
@@ -28,6 +28,7 @@ class SceneParser
 		void		parseObj(std::stringstream &line);
 
 		Scene		*_scene;
+		std::string	_filename;
 
 		std::map<std::string, std::function<Object *(std::stringstream &)>> object_parsers;
 };

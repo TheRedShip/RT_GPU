@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/20 18:42:50 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/21 14:45:04 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ bool		Scene::parseScene(char *name)
 		return (false);
 	}
 
-	SceneParser		scene_parser(this);
+	SceneParser		scene_parser(this, name);
 
 	while (std::getline(file, line))
 	{

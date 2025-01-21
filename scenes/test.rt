@@ -13,13 +13,14 @@ MAT	255 255 255		5.0		0.0 0.0 // white light 6
 
 MAT	255 255 255		0.0		0.0 0.0 TRN // glass 7
 
-pl	0 0 -40		0 0 1		1 // back wall
-pl	0 0 40		0 0 -1		5 // front wall
-pl	40 0 0		-1 0 0		3 // right wall
-pl	-40 0 0		1 0 0		2 // left wall
-pl	0 60 0		0 -1 0		4 // ceiling
-pl	0 -10 0		0 1 0		2 // floor
+#pl	0 0 -40		0 0 1		1 // back wall
+#pl	0 0 40		0 0 -1		5 // front wall
+#pl	40 0 0		-1 0 0		3 // right wall
+#pl	-40 0 0		1 0 0		2 // left wall
+#pl	0 60 0		0 -1 0		4 // ceiling
+#pl	0 -10 0		0 1 0		2 // floor
+#
+#qu	-20 59 -20	40 0 0		0 0 40		6
 
-qu	-20 59 -20	40 0 0		0 0 40		6
-
-OBJ obj/Model.obj
+OBJ obj/Tree1.obj 0 0 0
+# OBJ	obj/Dragon_800K.obj 10 10 -2
