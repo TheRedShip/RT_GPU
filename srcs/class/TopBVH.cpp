@@ -57,7 +57,9 @@ float	TopBVH::evaluateSah(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh
 		glm::vec3 min = bvh_root.min + bvh_data.offset;
 		glm::vec3 max = bvh_root.max + bvh_data.offset;
 
-		if (min[axis] < pos)
+		glm::vec3 centroid = (min + max) * 0.5f;
+
+		if (centroid[axis] < pos)
 		{
 			left_count++;
 			left_box.grow( min );

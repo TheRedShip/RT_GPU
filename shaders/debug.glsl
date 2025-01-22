@@ -233,7 +233,7 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 {
 	hitInfo hit;
-	
+
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
@@ -245,16 +245,17 @@ hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
 	transformedRay.inv_direction = (1. / transformedRay.direction);
 	
-	hitInfo temp_hit = traceBVH(transformedRay, bvh_data, stats);
+	hit = traceBVH(transformedRay, bvh_data, stats);
 
-	temp_hit.t = temp_hit.t / bvh_data.scale;
-	
-	if (temp_hit.t < hit.t)
-	{
-		hit.t = temp_hit.t;
-		hit.obj_index = temp_hit.obj_index;
-		hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
-	}
+	if (hit.obj_index == -1)
+		return (hit);
+
+	hit.t = hit.t / bvh_data.scale;
+	hit.last_t = hit.last_t / bvh_data.scale;
+	hit.obj_index = hit.obj_index;
+	hit.mat_index = hit.mat_index;
+	hit.position = inverseTransformMatrix * hit.position + bvh_data.offset;
+	hit.normal = normalize(inverseTransformMatrix * hit.normal);
 
 	return (hit);
 }
