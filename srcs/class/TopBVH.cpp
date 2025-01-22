@@ -33,8 +33,8 @@ void	TopBVH::updateBounds(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh
 		GPUBvhData bvh_data = bvhs_data[_first_bvh + i];
 		GPUBvh root_bvh = bvhs[bvh_data.bvh_start_index];
 
-		glm::vec3 min = root_bvh.min - bvh_data.offset;
-		glm::vec3 max = root_bvh.max - bvh_data.offset;
+		glm::vec3 min = root_bvh.min + bvh_data.offset;
+		glm::vec3 max = root_bvh.max + bvh_data.offset;
 		
 		_aabb.min = glm::min(_aabb.min, min);
 		_aabb.max = glm::max(_aabb.max, max);

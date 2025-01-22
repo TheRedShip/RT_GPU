@@ -15,7 +15,7 @@ MAT	255 255 255		5.0		0.0 0.0 // white light 7
 MAT	255 255 255		0.0		0.0 0.0 TRN // glass 8
 
 pl	0 0 0		0 1 0		2 // floor
-pl	0 5 0		0 -1 0		5
+# pl	0 5 0		0 -1 0		5
 
 qu	3 4.9 3			3 0 0		0 0 3		7
 
@@ -24,115 +24,1116 @@ qu	-2.5 0 -2.5		0 5 0		15 0 0		3
 qu	11.5 0 -2.5		0 5 0		0 0 15		1
 qu	-2.5 0 11.5		0 5 0		15 0 0		4
 
-OBJ obj/Dragon_8K.obj -5 0.38 0  1
-OBJ obj/Dragon_8K.obj 5 0.38 0  1
+# OBJ scenes/obj/test.obj 0 0 1
+# OBJ scenes/obj/test.obj 0 0 -1
 
-OBJ obj/Dragon_8K.obj 0 0.38 0  1
-OBJ obj/Dragon_8K.obj 0 0.38 1  1
-OBJ obj/Dragon_8K.obj 0 0.38 2  1
-OBJ obj/Dragon_8K.obj 0 0.38 3  1
-OBJ obj/Dragon_8K.obj 0 0.38 4  1
-OBJ obj/Dragon_8K.obj 0 0.38 5  1
-OBJ obj/Dragon_8K.obj 0 0.38 6  1
-OBJ obj/Dragon_8K.obj 0 0.38 7  1
-OBJ obj/Dragon_8K.obj 0 0.38 8  1
-OBJ obj/Dragon_8K.obj 0 0.38 9  1
 
-OBJ obj/Dragon_8K.obj 1 0.38 0  1
-OBJ obj/Dragon_8K.obj 1 0.38 1  1
-OBJ obj/Dragon_8K.obj 1 0.38 2  1
-OBJ obj/Dragon_8K.obj 1 0.38 3  1
-OBJ obj/Dragon_8K.obj 1 0.38 4  1
-OBJ obj/Dragon_8K.obj 1 0.38 5  1
-OBJ obj/Dragon_8K.obj 1 0.38 6  1
-OBJ obj/Dragon_8K.obj 1 0.38 7  1
-OBJ obj/Dragon_8K.obj 1 0.38 8  1
-OBJ obj/Dragon_8K.obj 1 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 9  1
 
-OBJ obj/Dragon_8K.obj 2 0.38 0  1
-OBJ obj/Dragon_8K.obj 2 0.38 1  1
-OBJ obj/Dragon_8K.obj 2 0.38 2  1
-OBJ obj/Dragon_8K.obj 2 0.38 3  1
-OBJ obj/Dragon_8K.obj 2 0.38 4  1
-OBJ obj/Dragon_8K.obj 2 0.38 5  1
-OBJ obj/Dragon_8K.obj 2 0.38 6  1
-OBJ obj/Dragon_8K.obj 2 0.38 7  1
-OBJ obj/Dragon_8K.obj 2 0.38 8  1
-OBJ obj/Dragon_8K.obj 2 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 19  1
 
-OBJ obj/Dragon_8K.obj 3 0.38 0  1
-OBJ obj/Dragon_8K.obj 3 0.38 1  1
-OBJ obj/Dragon_8K.obj 3 0.38 2  1
-OBJ obj/Dragon_8K.obj 3 0.38 3  1
-OBJ obj/Dragon_8K.obj 3 0.38 4  1
-OBJ obj/Dragon_8K.obj 3 0.38 5  1
-OBJ obj/Dragon_8K.obj 3 0.38 6  1
-OBJ obj/Dragon_8K.obj 3 0.38 7  1
-OBJ obj/Dragon_8K.obj 3 0.38 8  1
-OBJ obj/Dragon_8K.obj 3 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 29  1
 
-OBJ obj/Dragon_8K.obj 4 0.38 0  1
-OBJ obj/Dragon_8K.obj 4 0.38 1  1
-OBJ obj/Dragon_8K.obj 4 0.38 2  1
-OBJ obj/Dragon_8K.obj 4 0.38 3  1
-OBJ obj/Dragon_8K.obj 4 0.38 4  1
-OBJ obj/Dragon_8K.obj 4 0.38 5  1
-OBJ obj/Dragon_8K.obj 4 0.38 6  1
-OBJ obj/Dragon_8K.obj 4 0.38 7  1
-OBJ obj/Dragon_8K.obj 4 0.38 8  1
-OBJ obj/Dragon_8K.obj 4 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 39  1
 
-OBJ obj/Dragon_8K.obj 5 0.38 0  1
-OBJ obj/Dragon_8K.obj 5 0.38 1  1
-OBJ obj/Dragon_8K.obj 5 0.38 2  1
-OBJ obj/Dragon_8K.obj 5 0.38 3  1
-OBJ obj/Dragon_8K.obj 5 0.38 4  1
-OBJ obj/Dragon_8K.obj 5 0.38 5  1
-OBJ obj/Dragon_8K.obj 5 0.38 6  1
-OBJ obj/Dragon_8K.obj 5 0.38 7  1
-OBJ obj/Dragon_8K.obj 5 0.38 8  1
-OBJ obj/Dragon_8K.obj 5 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 49  1
 
-OBJ obj/Dragon_8K.obj 6 0.38 0  1
-OBJ obj/Dragon_8K.obj 6 0.38 1  1
-OBJ obj/Dragon_8K.obj 6 0.38 2  1
-OBJ obj/Dragon_8K.obj 6 0.38 3  1
-OBJ obj/Dragon_8K.obj 6 0.38 4  1
-OBJ obj/Dragon_8K.obj 6 0.38 5  1
-OBJ obj/Dragon_8K.obj 6 0.38 6  1
-OBJ obj/Dragon_8K.obj 6 0.38 7  1
-OBJ obj/Dragon_8K.obj 6 0.38 8  1
-OBJ obj/Dragon_8K.obj 6 0.38 9  1
 
-OBJ obj/Dragon_8K.obj 7 0.38 0  1
-OBJ obj/Dragon_8K.obj 7 0.38 1  1
-OBJ obj/Dragon_8K.obj 7 0.38 2  1
-OBJ obj/Dragon_8K.obj 7 0.38 3  1
-OBJ obj/Dragon_8K.obj 7 0.38 4  1
-OBJ obj/Dragon_8K.obj 7 0.38 5  1
-OBJ obj/Dragon_8K.obj 7 0.38 6  1
-OBJ obj/Dragon_8K.obj 7 0.38 7  1
-OBJ obj/Dragon_8K.obj 7 0.38 8  1
-OBJ obj/Dragon_8K.obj 7 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 59  1
 
-OBJ obj/Dragon_8K.obj 8 0.38 0  1
-OBJ obj/Dragon_8K.obj 8 0.38 1  1
-OBJ obj/Dragon_8K.obj 8 0.38 2  1
-OBJ obj/Dragon_8K.obj 8 0.38 3  1
-OBJ obj/Dragon_8K.obj 8 0.38 4  1
-OBJ obj/Dragon_8K.obj 8 0.38 5  1
-OBJ obj/Dragon_8K.obj 8 0.38 6  1
-OBJ obj/Dragon_8K.obj 8 0.38 7  1
-OBJ obj/Dragon_8K.obj 8 0.38 8  1
-OBJ obj/Dragon_8K.obj 8 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 69  1
 
-OBJ obj/Dragon_8K.obj 9 0.38 0  1
-OBJ obj/Dragon_8K.obj 9 0.38 1  1
-OBJ obj/Dragon_8K.obj 9 0.38 2  1
-OBJ obj/Dragon_8K.obj 9 0.38 3  1
-OBJ obj/Dragon_8K.obj 9 0.38 4  1
-OBJ obj/Dragon_8K.obj 9 0.38 5  1
-OBJ obj/Dragon_8K.obj 9 0.38 6  1
-OBJ obj/Dragon_8K.obj 9 0.38 7  1
-OBJ obj/Dragon_8K.obj 9 0.38 8  1
-OBJ obj/Dragon_8K.obj 9 0.38 9  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 0 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 1 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 2 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 3 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 4 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 5 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 49  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 59  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 6 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 49  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 59  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 7 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 49  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 69  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 8 0.38 99  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 0  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 1  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 2  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 3  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 4  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 5  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 6  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 7  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 8  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 9  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 10  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 11  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 12  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 13  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 14  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 15  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 16  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 17  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 18  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 19  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 20  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 21  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 22  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 23  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 24  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 25  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 26  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 27  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 28  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 29  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 30  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 31  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 32  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 33  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 34  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 35  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 36  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 37  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 38  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 39  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 40  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 41  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 42  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 43  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 44  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 45  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 46  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 47  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 48  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 49  1
+
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 50  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 51  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 52  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 53  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 54  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 55  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 56  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 57  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 58  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 59  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 60  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 61  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 62  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 63  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 64  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 65  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 66  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 67  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 68  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 69  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 70  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 71  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 72  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 73  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 74  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 75  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 76  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 77  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 78  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 79  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 80  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 81  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 82  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 83  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 84  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 85  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 86  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 87  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 88  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 89  1
+
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 90  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 91  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 92  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 93  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 94  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 95  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 96  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 97  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 98  1
+OBJ scenes/obj/Dragon_8K.obj 9 0.38 99  1

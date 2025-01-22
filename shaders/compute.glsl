@@ -61,6 +61,20 @@ struct GPUVolume
 	int		enabled;
 };
 
+struct GPUTopBvh
+{
+	vec3	min;
+	vec3	max;
+
+	int		left_index;
+	int		right_index;
+
+	int		is_leaf;
+	
+	int		first_bvh;
+	int		bvh_count;
+};
+
 struct GPUBvhData
 {
 	mat4	transform;
@@ -95,22 +109,27 @@ layout(std430, binding = 2) buffer TriangleBuffer
 	GPUTriangle triangles[];
 };
 
-layout(std430, binding = 3) buffer BvhDataBuffer
+layout(std430, binding = 3) buffer TopBvhBuffer
+{
+	GPUTopBvh TopBvh[];
+};
+
+layout(std430, binding = 4) buffer BvhDataBuffer
 {
 	GPUBvhData BvhData[];
 };
 
-layout(std430, binding = 4) buffer BvhBuffer
+layout(std430, binding = 5) buffer BvhBuffer
 {
 	GPUBvh Bvh[];
 };
 
-layout(std430, binding = 5) buffer MaterialBuffer
+layout(std430, binding = 6) buffer MaterialBuffer
 {
 	GPUMaterial materials[];
 };
 
-layout(std430, binding = 6) buffer LightsBuffer
+layout(std430, binding = 7) buffer LightsBuffer
 {
     int lightsIndex[];
 };

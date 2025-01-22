@@ -100,7 +100,7 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 			right_hit.t = 1e30;
 
 			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
-			bool right_bool = intersectRayBVH(ray, right_node.min, left_node.max, right_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, right_node.max, right_hit);
 
 			if (left_hit.t > right_hit.t)
 			{
@@ -118,9 +118,10 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 	return (hit);
 }
 
-
 hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data)
 {
+	hitInfo hit;
+
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
@@ -132,7 +133,7 @@ hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data)
 	transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
 	transformedRay.inv_direction = (1. / transformedRay.direction);
 	
-	hit = traceBVH(transformedRay, BvhData[i]);
+	hit = traceBVH(transformedRay, bvh_data);
 
 	if (hit.obj_index == -1)
 		return (hit);
@@ -155,6 +156,24 @@ hitInfo traceTopBVH(Ray ray)
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
+	//this is working
+	// for (int i = 0; i < u_bvhNum; i++)
+	// {
+	// 	hit_bvh = traverseBVHs(ray, BvhData[i]);
+	// 	if (hit_bvh.t < hit.t)
+	// 	{
+	// 		hit.t = hit_bvh.t;
+	// 		hit.last_t = hit_bvh.last_t;
+	// 		hit.obj_index = hit_bvh.obj_index;
+	// 		hit.mat_index = hit_bvh.mat_index;
+	// 		hit.position = hit_bvh.position;
+	// 		hit.normal = hit_bvh.normal;
+	// 	}
+	// }
+
+	// return (hit);
+	//
+
     int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
@@ -164,19 +183,20 @@ hitInfo traceTopBVH(Ray ray)
         int current_index = stack[stack_ptr--];
         GPUTopBvh node = TopBvh[current_index];
 
+
 		if (node.is_leaf != 0)
 		{
 			for (int i = 0; i < node.bvh_count; i++)
 			{
-				GPUBvhData bvh_data = bvh_data[node.first_bvh + i];
+				GPUBvhData bvh_data = BvhData[node.first_bvh + i];
 				
 				hitInfo temp_hit = traverseBVHs(ray, bvh_data);
 				if (temp_hit.obj_index != -1 && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
 					hit.last_t = temp_hit.last_t;
-					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
-					hit.mat_index = obj.mat_index;
+					hit.obj_index = temp_hit.obj_index;
+					hit.mat_index = temp_hit.mat_index;
 					hit.position = temp_hit.position;
 					hit.normal = temp_hit.normal;
 				}
@@ -194,7 +214,7 @@ hitInfo traceTopBVH(Ray ray)
 			right_hit.t = 1e30;
 
 			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
-			bool right_bool = intersectRayBVH(ray, right_node.min, left_mode.max, right_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, right_node.max, right_hit);
 
 			if (left_hit.t > right_hit.t)
 			{
@@ -224,7 +244,7 @@ hitInfo traceRay(Ray ray)
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 1
+		#if 0
 			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
 				break ;
 			ray = portalRay(ray, hit);

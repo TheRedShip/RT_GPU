@@ -192,12 +192,10 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
-					hit.last_t = temp_hit.last_t;
-					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
-					hit.mat_index = obj.mat_index;
-					hit.position = temp_hit.position;
 					hit.normal = temp_hit.normal;
+					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
 				}
+				stats.triangle_count++;
 			}
 		}
 		else
@@ -211,8 +209,10 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 			left_hit.t = 1e30;
 			right_hit.t = 1e30;
 
+			// stats.box_count += 2;
+
 			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
-			bool right_bool = intersectRayBVH(ray, right_node.min, left_node.max, right_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, right_node.max, right_hit);
 
 			if (left_hit.t > right_hit.t)
 			{
@@ -230,11 +230,10 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	return (hit);
 }
 
-
 hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 {
-	hitInfo	hit;
-
+	hitInfo hit;
+	
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
@@ -246,17 +245,16 @@ hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
 	transformedRay.inv_direction = (1. / transformedRay.direction);
 	
-	hit = traceBVH(transformedRay, bvh_data, stats);
+	hitInfo temp_hit = traceBVH(transformedRay, bvh_data, stats);
 
-	if (hit.obj_index == -1)
-		return (hit);
-
-	hit.t = hit.t / bvh_data.scale;
-	hit.last_t = hit.last_t / bvh_data.scale;
-	hit.obj_index = hit.obj_index;
-	hit.mat_index = hit.mat_index;
-	hit.position = inverseTransformMatrix * hit.position + bvh_data.offset;
-	hit.normal = normalize(inverseTransformMatrix * hit.normal);
+	temp_hit.t = temp_hit.t / bvh_data.scale;
+	
+	if (temp_hit.t < hit.t)
+	{
+		hit.t = temp_hit.t;
+		hit.obj_index = temp_hit.obj_index;
+		hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
+	}
 
 	return (hit);
 }
@@ -289,10 +287,7 @@ hitInfo traceTopBVH(Ray ray, inout Stats stats)
 				if (temp_hit.obj_index != -1 && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
-					hit.last_t = temp_hit.last_t;
 					hit.obj_index = temp_hit.obj_index;
-					hit.mat_index = temp_hit.mat_index;
-					hit.position = temp_hit.position;
 					hit.normal = temp_hit.normal;
 				}
 			}
@@ -346,8 +341,10 @@ vec3 debugColor(vec2 uv)
 	Ray ray = initRay(uv);
 	Stats stats = Stats(0, 0);
 
+	// hitInfo hit = traceBVH(ray, BvhData[0], stats);
+	// hitInfo hit = traverseBVHs(ray, BvhData[0], stats);
 	hitInfo hit = traceTopBVH(ray, stats);
-	
+
 	float box_display = float(stats.box_count) / float(debug.box_treshold);
 	float triangle_display = float(stats.triangle_count) / float(debug.triangle_treshold);
 
