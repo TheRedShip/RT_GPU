@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/20 18:55:25 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/22 18:45:48 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int main(int argc, char **argv)
 	const std::vector<GPUTriangle> &triangle_data = scene.getTriangleData();
 	const std::vector<GPUBvh> &bvh_nodes = scene.getBvh();
 	const std::vector<GPUBvhData> &bvh_data = scene.getBvhData();
+	const std::vector<GPUTopBvh> &top_bvh = scene.getTopBvh();
 	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
 
 	std::cout << "Sending " << object_data.size() << " objects for " << \
@@ -51,29 +52,35 @@ int main(int argc, char **argv)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUTriangle) * triangle_data.size(), triangle_data.data(), GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, trianglesSSBO);
 
-	GLuint bvh_nodesSSBO;
-	glGenBuffers(1, &bvh_nodesSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvh_nodesSSBO);
+	GLuint top_bvhSSBO;
+	glGenBuffers(1, &top_bvhSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, top_bvhSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUTopBvh) * top_bvh.size(), top_bvh.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, top_bvhSSBO);
+
+	GLuint bvh_dataSSBO;
+	glGenBuffers(1, &bvh_dataSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvh_dataSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvhData) * bvh_data.size(), bvh_data.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bvh_nodesSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvh_dataSSBO);
 
 	GLuint bvhSSBO;
 	glGenBuffers(1, &bvhSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvh) * bvh_nodes.size(), bvh_nodes.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvhSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, bvhSSBO);
 
 	GLuint materialSSBO;
     glGenBuffers(1, &materialSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, materialSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, materialSSBO);
 	
 	GLuint lightSSBO;
 	glGenBuffers(1, &lightSSBO);
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, lightSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, lightSSBO);
 
 
 	GLuint cameraUBO;

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/21 14:45:04 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/22 19:17:21 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ bool		Scene::parseScene(char *name)
 	file.close();
 
 	TopBVH	*top_bvh = new TopBVH(_gpu_bvh_data, _gpu_bvh, 0, _gpu_bvh_data.size());
-	(void) top_bvh;
+	_gpu_top_bvh = top_bvh->getGPUTopBvhs();
 
 
 	std::cout << "Parsing done" << std::endl;
@@ -252,7 +252,12 @@ GPUDebug						&Scene::getDebug()
 	return (_gpu_debug);
 }
 
-std::vector<GPUBvhData>				&Scene::getBvhData()
+std::vector<GPUTopBvh>			&Scene::getTopBvh()
+{
+	return (_gpu_top_bvh);
+}
+
+std::vector<GPUBvhData>			&Scene::getBvhData()
 {
 	return (_gpu_bvh_data);
 }

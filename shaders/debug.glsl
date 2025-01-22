@@ -67,6 +67,24 @@ layout(std430, binding = 2) buffer TriangleBuffer
 	GPUTriangle triangles[];
 };
 
+struct GPUTopBvh
+{
+	vec3	min;
+	vec3	max;
+
+	int		left_index;
+	int		right_index;
+
+	int		is_leaf;
+	
+	int		first_bvh;
+	int		bvh_count;
+};
+layout(std430, binding = 3) buffer TopBvhBuffer
+{
+	GPUTopBvh TopBvh[];
+};
+
 struct GPUBvhData
 {
 	mat4	transform;
@@ -76,7 +94,7 @@ struct GPUBvhData
 	int		bvh_start_index;
 	int		triangle_start_index;
 };
-layout(std430, binding = 3) buffer BvhDataBuffer
+layout(std430, binding = 4) buffer BvhDataBuffer
 {
 	GPUBvhData BvhData[];
 };
@@ -94,7 +112,7 @@ struct GPUBvh
 	int		first_primitive;
 	int		primitive_count;
 };
-layout(std430, binding = 4) buffer BvhBuffer
+layout(std430, binding = 5) buffer BvhBuffer
 {
 	GPUBvh Bvh[];
 };
@@ -174,10 +192,12 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
-					hit.normal = temp_hit.normal;
+					hit.last_t = temp_hit.last_t;
 					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
+					hit.mat_index = obj.mat_index;
+					hit.position = temp_hit.position;
+					hit.normal = temp_hit.normal;
 				}
-				stats.triangle_count++;
 			}
 		}
 		else
@@ -191,10 +211,8 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 			left_hit.t = 1e30;
 			right_hit.t = 1e30;
 
-			stats.box_count += 2;
-
-			bool left_bool = intersectRayBVH(ray, left_node, left_hit);
-			bool right_bool = intersectRayBVH(ray, right_node, right_hit);
+			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, left_node.max, right_hit);
 
 			if (left_hit.t > right_hit.t)
 			{
@@ -212,37 +230,102 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 	return (hit);
 }
 
-hitInfo traverseBVHs(Ray ray, inout Stats stats)
+
+hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 {
-	hitInfo hit;
-	
+	hitInfo	hit;
+
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-	for (int i = 0; i < u_bvhNum; i++)
-	{
-		GPUBvhData bvh_data = BvhData[i];
-		
-		mat3 transformMatrix = mat3(bvh_data.transform);
-		mat3 inverseTransformMatrix = inverse(transformMatrix);
+	mat3 transformMatrix = mat3(bvh_data.transform);
+	mat3 inverseTransformMatrix = inverse(transformMatrix);
 
-		Ray transformedRay;
-		transformedRay.direction = normalize(transformMatrix * ray.direction);
-		transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
-		transformedRay.inv_direction = (1. / transformedRay.direction);
-		
-		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i], stats);
+	Ray transformedRay;
+	transformedRay.direction = normalize(transformMatrix * ray.direction);
+	transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
+	transformedRay.inv_direction = (1. / transformedRay.direction);
+	
+	hit = traceBVH(transformedRay, bvh_data, stats);
 
-		temp_hit.t = temp_hit.t / bvh_data.scale;
-		
-		if (temp_hit.t < hit.t)
+	if (hit.obj_index == -1)
+		return (hit);
+
+	hit.t = hit.t / bvh_data.scale;
+	hit.last_t = hit.last_t / bvh_data.scale;
+	hit.obj_index = hit.obj_index;
+	hit.mat_index = hit.mat_index;
+	hit.position = inverseTransformMatrix * hit.position + bvh_data.offset;
+	hit.normal = normalize(inverseTransformMatrix * hit.normal);
+
+	return (hit);
+}
+
+hitInfo traceTopBVH(Ray ray, inout Stats stats)
+{
+	hitInfo hit;
+	hitInfo hit_bvh;
+
+	hit.t = 1e30;
+	hit.obj_index = -1;
+
+    int stack[32];
+    int stack_ptr = 0;
+    stack[0] = 0;
+    
+    while (stack_ptr >= 0)
+    {
+        int current_index = stack[stack_ptr--];
+        GPUTopBvh node = TopBvh[current_index];
+
+
+		if (node.is_leaf != 0)
 		{
-			hit.t = temp_hit.t;
-			hit.obj_index = temp_hit.obj_index;
-			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
+			for (int i = 0; i < node.bvh_count; i++)
+			{
+				GPUBvhData bvh_data = BvhData[node.first_bvh + i];
+				
+				hitInfo temp_hit = traverseBVHs(ray, bvh_data, stats);
+				if (temp_hit.obj_index != -1 && temp_hit.t < hit.t)
+				{
+					hit.t = temp_hit.t;
+					hit.last_t = temp_hit.last_t;
+					hit.obj_index = temp_hit.obj_index;
+					hit.mat_index = temp_hit.mat_index;
+					hit.position = temp_hit.position;
+					hit.normal = temp_hit.normal;
+				}
+			}
 		}
-	}
+		else
+		{
+			GPUTopBvh left_node = TopBvh[node.left_index];
+			GPUTopBvh right_node = TopBvh[node.right_index];
 
+			hitInfo left_hit;
+			hitInfo right_hit;
+
+			left_hit.t = 1e30;
+			right_hit.t = 1e30;
+
+			stats.box_count += 2;
+
+			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, right_node.max, right_hit);
+
+			if (left_hit.t > right_hit.t)
+			{
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+			}
+			else
+			{
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+			}
+		}
+    }
+    
 	return (hit);
 }
 
@@ -263,7 +346,7 @@ vec3 debugColor(vec2 uv)
 	Ray ray = initRay(uv);
 	Stats stats = Stats(0, 0);
 
-	hitInfo hit = traverseBVHs(ray, stats);
+	hitInfo hit = traceTopBVH(ray, stats);
 	
 	float box_display = float(stats.box_count) / float(debug.box_treshold);
 	float triangle_display = float(stats.triangle_count) / float(debug.triangle_treshold);

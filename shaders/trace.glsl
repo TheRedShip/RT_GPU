@@ -99,8 +99,8 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 			left_hit.t = 1e30;
 			right_hit.t = 1e30;
 
-			bool left_bool = intersectRayBVH(ray, left_node, left_hit);
-			bool right_bool = intersectRayBVH(ray, right_node, right_hit);
+			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, left_node.max, right_hit);
 
 			if (left_hit.t > right_hit.t)
 			{
@@ -118,70 +118,97 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 	return (hit);
 }
 
-// hitInfo traverseBVHs(Ray ray)
-// {
-// 	hitInfo hit;
-	
-// 	hit.t = 1e30;
-// 	hit.obj_index = -1;
 
-// 	for (int i = 0; i < u_bvhNum; i++)
-// 	{
-// 		GPUBvhData bvh_data = BvhData[i];
-
-// 		ray.origin -= bvh_data.offset;
-// 		hitInfo temp_hit = traceBVH(ray, bvh_data);
-
-// 		if (temp_hit.t < hit.t)
-// 		{
-// 			hit.t = temp_hit.t;
-// 			hit.last_t = temp_hit.last_t;
-// 			hit.obj_index = temp_hit.obj_index;
-// 			hit.mat_index = temp_hit.mat_index;
-// 			hit.position = temp_hit.position;
-// 			hit.normal = temp_hit.normal;
-// 		}
-		
-// 		ray.origin += bvh_data.offset;
-// 	}
-
-// 	return (hit);
-// }
-
-hitInfo traverseBVHs(Ray ray)
+hitInfo traverseBVHs(Ray ray, GPUBvhData bvh_data)
 {
-	hitInfo hit;
-	
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-	for (int i = 0; i < u_bvhNum; i++)
-	{
-		GPUBvhData bvh_data = BvhData[i];
-		
-		mat3 transformMatrix = mat3(bvh_data.transform);
-		mat3 inverseTransformMatrix = inverse(transformMatrix);
+	mat3 transformMatrix = mat3(bvh_data.transform);
+	mat3 inverseTransformMatrix = inverse(transformMatrix);
 
-		Ray transformedRay;
-		transformedRay.direction = normalize(transformMatrix * ray.direction);
-		transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
-		transformedRay.inv_direction = (1. / transformedRay.direction);
-		
-		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i]);
+	Ray transformedRay;
+	transformedRay.direction = normalize(transformMatrix * ray.direction);
+	transformedRay.origin = transformMatrix * (ray.origin - bvh_data.offset);
+	transformedRay.inv_direction = (1. / transformedRay.direction);
+	
+	hit = traceBVH(transformedRay, BvhData[i]);
 
-		temp_hit.t = temp_hit.t / bvh_data.scale;
+	if (hit.obj_index == -1)
+		return (hit);
 
-		if (temp_hit.t < hit.t)
+	hit.t = hit.t / bvh_data.scale;
+	hit.last_t = hit.last_t / bvh_data.scale;
+	hit.obj_index = hit.obj_index;
+	hit.mat_index = hit.mat_index;
+	hit.position = inverseTransformMatrix * hit.position + bvh_data.offset;
+	hit.normal = normalize(inverseTransformMatrix * hit.normal);
+
+	return (hit);
+}
+
+hitInfo traceTopBVH(Ray ray)
+{
+	hitInfo hit;
+	hitInfo hit_bvh;
+
+	hit.t = 1e30;
+	hit.obj_index = -1;
+
+    int stack[32];
+    int stack_ptr = 0;
+    stack[0] = 0;
+    
+    while (stack_ptr >= 0)
+    {
+        int current_index = stack[stack_ptr--];
+        GPUTopBvh node = TopBvh[current_index];
+
+		if (node.is_leaf != 0)
 		{
-			hit.t = temp_hit.t;
-			hit.last_t = temp_hit.last_t / bvh_data.scale;
-			hit.obj_index = temp_hit.obj_index;
-			hit.mat_index = temp_hit.mat_index;
-			hit.position = inverseTransformMatrix * temp_hit.position + bvh_data.offset;
-			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
+			for (int i = 0; i < node.bvh_count; i++)
+			{
+				GPUBvhData bvh_data = bvh_data[node.first_bvh + i];
+				
+				hitInfo temp_hit = traverseBVHs(ray, bvh_data);
+				if (temp_hit.obj_index != -1 && temp_hit.t < hit.t)
+				{
+					hit.t = temp_hit.t;
+					hit.last_t = temp_hit.last_t;
+					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
+					hit.mat_index = obj.mat_index;
+					hit.position = temp_hit.position;
+					hit.normal = temp_hit.normal;
+				}
+			}
 		}
-	}
+		else
+		{
+			GPUTopBvh left_node = TopBvh[node.left_index];
+			GPUTopBvh right_node = TopBvh[node.right_index];
 
+			hitInfo left_hit;
+			hitInfo right_hit;
+
+			left_hit.t = 1e30;
+			right_hit.t = 1e30;
+
+			bool left_bool = intersectRayBVH(ray, left_node.min, left_node.max, left_hit);
+			bool right_bool = intersectRayBVH(ray, right_node.min, left_mode.max, right_hit);
+
+			if (left_hit.t > right_hit.t)
+			{
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+			}
+			else
+			{
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+			}
+		}
+    }
+    
 	return (hit);
 }
 
@@ -193,7 +220,7 @@ hitInfo traceRay(Ray ray)
 
 	for (int i = 0; i < 10; i++) // portal ray
 	{
-		hitBVH = traverseBVHs(ray);
+		hitBVH = traceTopBVH(ray);
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;

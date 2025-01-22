@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   TopBvh.cpp                                         :+:      :+:    :+:   */
+/*   TopBVH.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/21 21:46:45 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/21 21:46:45 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/01/22 19:32:43 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ float	TopBVH::evaluateSah(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh
 		GPUBvhData bvh_data = bvhs_data[_first_bvh + i];
 		GPUBvh bvh_root = bvhs[bvh_data.bvh_start_index];
 
-		glm::vec3 min = bvh_root.min - bvh_data.offset;
-		glm::vec3 max = bvh_root.max - bvh_data.offset;
+		glm::vec3 min = bvh_root.min + bvh_data.offset;
+		glm::vec3 max = bvh_root.max + bvh_data.offset;
 
 		if (min[axis] < pos)
 		{
@@ -117,8 +117,8 @@ void	TopBVH::subdivide(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &
 	{
 		GPUBvhData bvh_data = bvhs_data[i];
 		GPUBvh root = bvhs[bvh_data.bvh_start_index];
-		glm::vec3 min = root.min - bvh_data.offset;
-		glm::vec3 max = root.max - bvh_data.offset;
+		glm::vec3 min = root.min + bvh_data.offset;
+		glm::vec3 max = root.max + bvh_data.offset;
 		glm::vec3 centroid = (min + max) * 0.5f;
 
 		if (centroid[axis] < split_pos)
@@ -141,4 +141,54 @@ void	TopBVH::subdivide(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &
 	_right = new TopBVH(bvhs_data, bvhs, i, _bvh_count - left_count);
 
 	_bvh_count = 0;
+}
+
+int	TopBVH::getSize()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (0);
+	
+	count += 1 + _left->getSize();
+	count += 1 + _right->getSize();
+
+	return (count);
+}
+
+void TopBVH::flatten(std::vector<GPUTopBvh> &top_bvhs, int &currentIndex)
+{
+    GPUTopBvh self_top_bvh;
+
+	self_top_bvh.is_leaf = _is_leaf;
+	self_top_bvh.first_bvh_data = _first_bvh;
+	self_top_bvh.bvh_data_count = _bvh_count;
+	self_top_bvh.max = _aabb.max;
+	self_top_bvh.min = _aabb.min;
+
+    int self_index = currentIndex++;
+
+    self_top_bvh.left_index = -1;
+    self_top_bvh.right_index = -1;
+
+    if (!_is_leaf)
+    {
+        self_top_bvh.left_index = currentIndex;
+        _left->flatten(top_bvhs, currentIndex);
+
+        self_top_bvh.right_index = currentIndex;
+        _right->flatten(top_bvhs, currentIndex);
+    }
+
+    top_bvhs[self_index] = self_top_bvh;
+}
+
+std::vector<GPUTopBvh>	TopBVH::getGPUTopBvhs()
+{
+	std::vector<GPUTopBvh> bvhs(getSize() + 1);
+    
+    int currentIndex = 0;
+    flatten(bvhs, currentIndex);
+
+    return (bvhs);
 }

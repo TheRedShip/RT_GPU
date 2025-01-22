@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/19 18:46:38 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/22 19:20:09 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,20 @@ struct GPUBvhData
 	int						triangle_start_index;
 };
 
+struct GPUTopBvh
+{
+	alignas(16) glm::vec3	min;
+	alignas(16) glm::vec3	max;
+
+	int						left_index;
+	int						right_index;
+
+	int						is_leaf;
+
+	int						first_bvh_data;
+	int						bvh_data_count;
+};
+
 class Sphere;
 class Camera;
 
@@ -120,6 +134,7 @@ class Scene
 		
 		std::vector<GPUMaterial>		&getMaterialData();
 		
+		std::vector<GPUTopBvh>			&getTopBvh();
 		std::vector<GPUBvhData>			&getBvhData();
 		std::vector<GPUBvh>				&getBvh();
 
@@ -130,6 +145,7 @@ class Scene
 		GPUMaterial						getMaterial(int material_index);
 		
 	private:
+		std::vector<GPUTopBvh>		_gpu_top_bvh;
 		std::vector<GPUBvhData>		_gpu_bvh_data;
 		std::vector<GPUBvh>			_gpu_bvh;
 

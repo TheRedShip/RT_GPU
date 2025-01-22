@@ -29,14 +29,16 @@ class TopBVH
 
 		float	evaluateSah(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &bvhs, int axis, float pos);
 
-		// int							getSize();
+		int							getSize();
 		// int							getLeaves();
 
-		// void						flatten(std::vector<GPUTopBVH> &TopBVHs, int &currentIndex);
-		// GPUTopBVH					toGPUTopBVH();
+		// void						flatten(std::vector<GPUTopBvh> &TopBVHs, int &currentIndex);
+		// GPUTopBvh					toGPUTopBvh();
+		std::vector<GPUTopBvh>		getGPUTopBvhs();
+		void						flatten(std::vector<GPUTopBvh> &top_bvhs, int &currentIndex);
 
 		// const AABB					&getAABB() const;
-		// std::vector<GPUTopBVH>		getGPUTopBVHs();
+		// std::vector<GPUTopBvh>		getGPUTopBvhs();
 		
 
 	private:
