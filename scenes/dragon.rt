@@ -1,4 +1,4 @@
-CAM     1.82501 0.45 0     -10 180     0.005 2.164		35   5
+CAM     1.99 0.45 0     -10 180     0.005 2.164		35   5
 
 
 MAT	255 255 255		0.0		1. 0.3 // white 0
@@ -24,8 +24,9 @@ pl	0 -2 0		0 1 0		2 // floor
 
 qu	-1 1.999 -1	2 0 0		0 0 2		6
 
-OBJ obj/Dragon_80K.obj -0.5 0 0.55  1       0 90 0
-OBJ obj/Dragon_80K.obj 0.5 0 -0.55 1		0 -90 0
+OBJ obj/Dragon_800K.obj -0.5 0 0.55  5       0 90 0
+OBJ obj/Dragon_800K.obj 0.5 0 -0.55 5		0 -90 0
+
 
 # OBJ obj/Model.obj
 

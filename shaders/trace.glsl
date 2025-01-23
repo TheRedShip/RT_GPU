@@ -156,24 +156,6 @@ hitInfo traceTopBVH(Ray ray)
 	hit.t = 1e30;
 	hit.obj_index = -1;
 
-	//this is working
-	// for (int i = 0; i < u_bvhNum; i++)
-	// {
-	// 	hit_bvh = traverseBVHs(ray, BvhData[i]);
-	// 	if (hit_bvh.t < hit.t)
-	// 	{
-	// 		hit.t = hit_bvh.t;
-	// 		hit.last_t = hit_bvh.last_t;
-	// 		hit.obj_index = hit_bvh.obj_index;
-	// 		hit.mat_index = hit_bvh.mat_index;
-	// 		hit.position = hit_bvh.position;
-	// 		hit.normal = hit_bvh.normal;
-	// 	}
-	// }
-
-	// return (hit);
-	//
-
     int stack[32];
     int stack_ptr = 0;
     stack[0] = 0;
@@ -244,7 +226,7 @@ hitInfo traceRay(Ray ray)
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 0
+		#if 1
 			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
 				break ;
 			ray = portalRay(ray, hit);

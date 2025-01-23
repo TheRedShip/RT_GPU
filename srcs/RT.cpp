@@ -20,8 +20,8 @@ int main(int argc, char **argv)
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
