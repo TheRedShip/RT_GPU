@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/22 19:27:03 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:34:29 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ void		Camera::setDirection(float pitch, float yaw)
 {
 	_pitch = pitch;
 	_yaw = yaw;
+	updateCameraVectors();
 }
 
 void		Camera::setDOV(float aperture, float focus)

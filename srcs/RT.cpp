@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/22 16:33:56 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:37:21 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,6 +115,7 @@ int main(int argc, char **argv)
 		std::vector<int> gpu_lights_array(gpu_lights.begin(), gpu_lights.end());
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
+		window.rendererUpdate();
 
 		Camera *camera = scene.getCamera();
 
@@ -142,7 +143,6 @@ int main(int argc, char **argv)
 				break;
 
 			camera->setDirection(0, yaw - 180);
-			camera->updateCameraVectors();
 		}
 		//
 
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
 		window.imGuiRender();
 
 		window.display();
-		window.pollEvents();		
+		window.pollEvents();
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

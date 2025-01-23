@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/21 15:57:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:39:28 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,6 @@ void	SceneParser::parseCamera(std::stringstream &line)
 
 	_scene->getCamera()->setPosition(glm::vec3(x, y, z));
 	_scene->getCamera()->setDirection(yaw, pitch);
-	_scene->getCamera()->updateCameraVectors();
 	
 	_scene->getCamera()->setDOV(aperture, focus);
 	_scene->getCamera()->setFov(fov);

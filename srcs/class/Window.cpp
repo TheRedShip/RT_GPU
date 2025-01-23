@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/23 00:39:21 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 16:26:39 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +159,11 @@ void Window::pollEvents()
 bool Window::shouldClose()
 {
     return glfwWindowShouldClose(_window);
+}
+
+void		Window::rendererUpdate(void)
+{
+	_renderer->update();
 }
 
 void Window::imGuiNewFrame()
