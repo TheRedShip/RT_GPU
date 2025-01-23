@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/11 16:14:11 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 00:39:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class Window
 		void		display();
 		void		pollEvents();
 		bool		shouldClose();
-		
+
 		void		process_input();
 		
 		static void	keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
@@ -44,9 +44,12 @@ class Window
 
 		bool		&getAccumulate(void);
 
+		void		setFrameCount(int nb);
+
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;
+		Renderer	*_renderer;
 		
 		float		_fps;
 		float		_delta;

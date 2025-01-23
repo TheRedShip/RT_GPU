@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/16 15:02:34 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/22 16:37:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,7 @@ struct Vertex {
 # include "objects/Cylinder.hpp"
 
 # include "Camera.hpp"
+# include "Renderer.hpp"
 # include "Window.hpp"
 # include "Shader.hpp"
 # include "Scene.hpp"

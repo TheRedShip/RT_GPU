@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/18 19:24:04 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/23 00:39:21 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 	_scene = scene;
 	_frameCount = 0;
 	_pixelisation = 0;
+	_renderer = new Renderer(scene, this);
 	
 	if (!glfwInit())
 	{
@@ -258,8 +259,11 @@ void Window::imGuiRender()
 
 	ImGui::End();
 
+	_renderer->renderImgui();;
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
 	if (has_changed)
 		_frameCount = (accumulate == 0) - 1;
@@ -278,6 +282,11 @@ float		Window::getFps(void) const
 int			Window::getFrameCount(void) const
 {
 	return (_frameCount);
+}
+
+void		Window::setFrameCount(int nb)
+{
+	_frameCount = nb;
 }
 
 bool		&Window::getAccumulate(void)
