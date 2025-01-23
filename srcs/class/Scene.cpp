@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/21 14:45:04 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:31:52 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,7 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 	new_bvhs_list = bvh->getGPUBvhs();
 	
 	new_bvh_data.transform = transform * scale;
+	new_bvh_data.inv_transform = glm::inverse(new_bvh_data.transform);
 	new_bvh_data.offset = offset;
 	new_bvh_data.scale = scale;
 	new_bvh_data.bvh_start_index = _gpu_bvh.size();

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/19 18:46:38 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/23 18:30:18 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ struct GPUBvh
 struct GPUBvhData
 {
 	glm::mat4				transform;
+	glm::mat4				inv_transform;
 	alignas(16) glm::vec3	offset;
 	float					scale;
 

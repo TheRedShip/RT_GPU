@@ -22,7 +22,7 @@ Ray	portalRay(Ray ray, hitInfo hit)
 	ray.origin = portal_2.position + rotation * relative;
 	ray.direction = normalize(rotation * ray.direction);
 
-	ray.origin += ray.direction * 0.01f;
+	ray.origin += ray.direction * 0.01f;	
 
 	return (ray);
 }
@@ -39,6 +39,7 @@ hitInfo	traceScene(Ray ray)
 		GPUObject obj = objects[i];
 
 		hitInfo temp_hit;
+		
 		if (intersect(ray, obj, temp_hit) && temp_hit.t < hit.t)
 		{
 			hit.t = temp_hit.t;
@@ -118,36 +119,6 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 	return (hit);
 }
 
-// hitInfo traverseBVHs(Ray ray)
-// {
-// 	hitInfo hit;
-	
-// 	hit.t = 1e30;
-// 	hit.obj_index = -1;
-
-// 	for (int i = 0; i < u_bvhNum; i++)
-// 	{
-// 		GPUBvhData bvh_data = BvhData[i];
-
-// 		ray.origin -= bvh_data.offset;
-// 		hitInfo temp_hit = traceBVH(ray, bvh_data);
-
-// 		if (temp_hit.t < hit.t)
-// 		{
-// 			hit.t = temp_hit.t;
-// 			hit.last_t = temp_hit.last_t;
-// 			hit.obj_index = temp_hit.obj_index;
-// 			hit.mat_index = temp_hit.mat_index;
-// 			hit.position = temp_hit.position;
-// 			hit.normal = temp_hit.normal;
-// 		}
-		
-// 		ray.origin += bvh_data.offset;
-// 	}
-
-// 	return (hit);
-// }
-
 hitInfo traverseBVHs(Ray ray)
 {
 	hitInfo hit;
@@ -160,7 +131,7 @@ hitInfo traverseBVHs(Ray ray)
 		GPUBvhData bvh_data = BvhData[i];
 		
 		mat3 transformMatrix = mat3(bvh_data.transform);
-		mat3 inverseTransformMatrix = inverse(transformMatrix);
+		mat3 inverseTransformMatrix = mat3(bvh_data.inv_transform);
 
 		Ray transformedRay;
 		transformedRay.direction = normalize(transformMatrix * ray.direction);

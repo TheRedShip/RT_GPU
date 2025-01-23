@@ -93,31 +93,26 @@ bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 	return (valid);
 }
 
-bool intersectTriangle(Ray ray, GPUTriangle obj, out hitInfo hit)
+bool intersectTriangle(Ray ray, GPUTriangle tri, out hitInfo hit)
 {
-	vec3 vertex1 = obj.vertex1 - obj.position;
-	vec3 vertex2 = obj.vertex2 - obj.position;
+	vec3 edgeAB = tri.vertex1 - tri.position;
+	vec3 edgeAC = tri.vertex2 - tri.position;
+	vec3 normalVector = tri.normal;
+	vec3 ao = ray.origin - tri.position;
+	vec3 dao = cross(ao, ray.direction);
 
-	vec3 pvec = cross(ray.direction, vertex2);
-	float det = dot(vertex1, pvec);
-	vec3 tvec = ray.origin - obj.position;
-	
-	float invDet = 1.0 / det;
-	float u = dot(tvec, pvec) * invDet;
-	vec3 qvec = cross(tvec, vertex1);
-	float v = dot(ray.direction, qvec) * invDet;
-	float t = dot(vertex2, qvec) * invDet;
-	
-	bool valid = abs(det) > 1e-8 &&
-				u >= 0.0 && u <= 1.0 &&
-				v >= 0.0 && (u + v) <= 1.0 &&
-				t > 0.0;
-	
-	hit.t = t;
-	hit.position = ray.origin + ray.direction * t;
-	hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
-	
-	return (valid);
+	float determinant = -dot(ray.direction, normalVector);
+	float invDet = 1 / determinant;
+
+	float dst = dot(ao, normalVector) * invDet;
+	float u = dot(edgeAC, dao) * invDet;
+	float v = -dot(edgeAB, dao) * invDet;
+	float w = 1 - u - v;
+
+	hit.position = ray.origin + ray.direction * dst;
+	hit.normal = normalVector;
+	hit.t = dst;
+	return (determinant >= 1E-8 && dst >= 0 && u >= 0 && v >= 0 && w >= 0);
 }
 
 bool intersectCube(Ray ray, GPUObject obj, out hitInfo hit)

@@ -262,7 +262,7 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 		GPUBvhData bvh_data = BvhData[i];
 		
 		mat3 transformMatrix = mat3(bvh_data.transform);
-		mat3 inverseTransformMatrix = inverse(transformMatrix);
+		mat3 inverseTransformMatrix = mat3(bvh_data.inv_transform);
 
 		Ray transformedRay;
 		transformedRay.direction = normalize(transformMatrix * ray.direction);

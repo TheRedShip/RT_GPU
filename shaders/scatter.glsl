@@ -79,26 +79,6 @@ Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
     return newRay;
 }
 
-
-// Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
-// {
-// 	vec3 specular_origin = hit.position + hit.normal * 0.001;
-// 	vec3 specular_dir = mix(normalize(reflect(ray.direction, hit.normal)), lambertRay(hit, ray, mat, rng_state).direction, mat.roughness);
-
-// 	vec3 transparency_origin = ray.origin + ray.direction * hit.last_t + ray.direction * 0.001;
-// 	vec3 transparency_dir = ray.direction;
-
-// 	Ray specular_ray = Ray(specular_origin, specular_dir);
-// 	Ray transparency_ray = Ray(transparency_origin, transparency_dir);
-
-// 	bool is_transparent = (mat.metallic >= randomValue(rng_state));
-
-// 	if (is_transparent)
-// 		return (transparency_ray);
-// 	return (specular_ray);
-// }
-
-
 Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
     GPUObject	obj;
