@@ -237,21 +237,20 @@ TopBVHStats		TopBVH::analyzeBVHLeaves()
 
     // Get stats from left and right subtrees
     TopBVHStats left = _left->analyzeBVHLeaves();
-    TopBVHStats right = _left->analyzeBVHLeaves();
+    TopBVHStats right = _right->analyzeBVHLeaves();
 
     // Combine the results
     int min_count = std::min(left.min_bvh, right.min_bvh);
     int max_count = std::max(left.max_bvh, right.max_bvh);
     
     // Calculate weighted average based on number of leaves in each subtree
-    float left_leaf_count = (left.average_bvh > 0) ? 1.0f : 0.0f;
-    float right_leaf_count = (right.average_bvh > 0) ? 1.0f : 0.0f;
-    float total_leaf_count = left_leaf_count + right_leaf_count;
-    
+    float left_weighted = left.average_bvh * (left.max_bvh - left.min_bvh + 1);
+    float right_weighted = right.average_bvh * (right.max_bvh - right.min_bvh + 1);
+    int total_count = (left.max_bvh - left.min_bvh + 1) + (right.max_bvh - right.min_bvh + 1);
+
     float avg_count = 0.0f;
-    if (total_leaf_count > 0)
-        avg_count = (left.average_bvh * left_leaf_count + 
-                    right.average_bvh * right_leaf_count) / total_leaf_count;
+    if (total_count > 0)
+        avg_count = (left_weighted + right_weighted) / total_count;
 
     return {min_count, max_count, avg_count};
 }
