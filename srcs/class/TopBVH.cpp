@@ -29,16 +29,34 @@ TopBVH::TopBVH(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &bvhs, in
 void	TopBVH::updateBounds(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &bvhs)
 {
 	for (int i = 0; i < _bvh_count; i++)
-	{
-		GPUBvhData bvh_data = bvhs_data[_first_bvh + i];
-		GPUBvh root_bvh = bvhs[bvh_data.bvh_start_index];
+    {
+        GPUBvhData bvh_data = bvhs_data[_first_bvh + i];
+        GPUBvh root_bvh = bvhs[bvh_data.bvh_start_index];
 
-		glm::vec3 min = root_bvh.min + bvh_data.offset;
-		glm::vec3 max = root_bvh.max + bvh_data.offset;
-		
-		_aabb.min = glm::min(_aabb.min, min);
-		_aabb.max = glm::max(_aabb.max, max);
-	}
+        glm::vec3 corners[8] = {
+            glm::vec3(root_bvh.min.x, root_bvh.min.y, root_bvh.min.z),
+            glm::vec3(root_bvh.max.x, root_bvh.min.y, root_bvh.min.z),
+            glm::vec3(root_bvh.min.x, root_bvh.max.y, root_bvh.min.z),
+            glm::vec3(root_bvh.max.x, root_bvh.max.y, root_bvh.min.z),
+            glm::vec3(root_bvh.min.x, root_bvh.min.y, root_bvh.max.z),
+            glm::vec3(root_bvh.max.x, root_bvh.min.y, root_bvh.max.z),
+            glm::vec3(root_bvh.min.x, root_bvh.max.y, root_bvh.max.z),
+            glm::vec3(root_bvh.max.x, root_bvh.max.y, root_bvh.max.z)
+        };
+
+        glm::vec3 transformed_min(1e30);
+        glm::vec3 transformed_max(-1e30);
+
+        for (glm::vec3 corner : corners)
+        {
+            glm::vec3 transformed = glm::vec3(glm::inverse(bvh_data.transform) * glm::vec4(corner, 1.0)) + bvh_data.offset;
+            transformed_min = glm::min(transformed_min, transformed);
+            transformed_max = glm::max(transformed_max, transformed);
+        }
+
+        _aabb.min = glm::min(_aabb.min, transformed_min);
+        _aabb.max = glm::max(_aabb.max, transformed_max);
+    }
 }
 
 float	TopBVH::evaluateSah(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &bvhs, int axis, float pos)

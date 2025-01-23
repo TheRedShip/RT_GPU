@@ -342,8 +342,7 @@ vec3 debugColor(vec2 uv)
 	Ray ray = initRay(uv);
 	Stats stats = Stats(0, 0);
 
-	// hitInfo hit = traceBVH(ray, BvhData[0], stats);
-	// hitInfo hit = traverseBVHs(ray, BvhData[0], stats);
+	// hitInfo hit = traverseBVHs(ray, BvhData[0], stats); //working with scaling offset transfo
 	hitInfo hit = traceTopBVH(ray, stats);
 
 	float box_display = float(stats.box_count) / float(debug.box_treshold);
@@ -354,6 +353,8 @@ vec3 debugColor(vec2 uv)
 		case 0:
 			return (hit.normal * 0.5 + 0.5) * int(hit.obj_index != -1);
 		case 1:
+			if (hit.obj_index != -1)
+				return (hit.normal * 0.5 + 0.5);
 			return (box_display < 1. ? vec3(box_display) : vec3(1., 0., 0.));
 		case 2:
 			return (triangle_display < 1. ? vec3(triangle_display) : vec3(1., 0., 0.));
