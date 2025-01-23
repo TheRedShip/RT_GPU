@@ -24,18 +24,8 @@ pl	0 -2 0		0 1 0		2 // floor
 
 qu	-1 1.999 -1	2 0 0		0 0 2		6
 
-OBJ scenes/obj/Dragon_80K.obj -0.5 0 0.55  5    0 0 0
-OBJ scenes/obj/Dragon_80K.obj 0.5 0 -0.55 1		0 0 0
-
-OBJ scenes/obj/Dragon_80K.obj -1.5 0 1.5  1    0 0 0
-OBJ scenes/obj/Dragon_80K.obj 1.5 0 -1.5 1		0 0 0
-
-OBJ scenes/obj/Dragon_80K.obj -0.5 1 0.55  1    0 0 0
-OBJ scenes/obj/Dragon_80K.obj 0.5 1 -0.55 1		0 0 0
-
-OBJ scenes/obj/Dragon_80K.obj -3.5 3 3.5  1    0 0 0
-OBJ scenes/obj/Dragon_80K.obj 3.5 3 -3.5 1		0 0 0
-
+OBJ obj/Dragon_80K.obj -0.5 0 0.55  1       0 90 0
+OBJ obj/Dragon_80K.obj 0.5 0 -0.55 1		0 -90 0
 
 # OBJ obj/Model.obj
 

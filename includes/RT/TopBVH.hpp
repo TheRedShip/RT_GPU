@@ -19,6 +19,13 @@ struct GPUBvhData;
 struct GPUTopBvh;
 struct AABB;
 
+struct TopBVHStats
+{
+    int min_bvh;
+    int max_bvh;
+    float average_bvh;
+};
+
 class TopBVH
 {
 	public:
@@ -30,16 +37,12 @@ class TopBVH
 		float	evaluateSah(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &bvhs, int axis, float pos);
 
 		int							getSize();
-		// int							getLeaves();
+		int							getLeaves();
 
-		// void						flatten(std::vector<GPUTopBvh> &TopBVHs, int &currentIndex);
-		// GPUTopBvh					toGPUTopBvh();
 		std::vector<GPUTopBvh>		getGPUTopBvhs();
 		void						flatten(std::vector<GPUTopBvh> &top_bvhs, int &currentIndex);
 
-		// const AABB					&getAABB() const;
-		// std::vector<GPUTopBvh>		getGPUTopBvhs();
-		
+		TopBVHStats					analyzeBVHLeaves();		
 
 	private:
 		AABB					_aabb;
