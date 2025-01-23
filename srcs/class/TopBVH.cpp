@@ -163,19 +163,6 @@ void	TopBVH::subdivide(std::vector<GPUBvhData> &bvhs_data, std::vector<GPUBvh> &
 	_bvh_count = 0;
 }
 
-int	TopBVH::getSize()
-{
-	int count = 0;
-
-	if (_is_leaf)
-		return (0);
-	
-	count += 1 + _left->getSize();
-	count += 1 + _right->getSize();
-
-	return (count);
-}
-
 void TopBVH::flatten(std::vector<GPUTopBvh> &top_bvhs, int &currentIndex)
 {
     GPUTopBvh self_top_bvh;
@@ -211,4 +198,60 @@ std::vector<GPUTopBvh>	TopBVH::getGPUTopBvhs()
     flatten(bvhs, currentIndex);
 
     return (bvhs);
+}
+
+int	TopBVH::getSize()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (0);
+	
+	count += 1 + _left->getSize();
+	count += 1 + _right->getSize();
+
+	return (count);
+}
+
+int	TopBVH::getLeaves()
+{
+	int count = 0;
+
+	if (_is_leaf)
+		return (1);
+	
+	count += _left->getLeaves();
+	count += _right->getLeaves();
+
+	return (count);
+}
+
+TopBVHStats		TopBVH::analyzeBVHLeaves()
+{
+    if (_is_leaf)
+        return {
+            _bvh_count,  // min
+            _bvh_count,  // max
+            (float)_bvh_count  // average
+        };
+
+    // Get stats from left and right subtrees
+    TopBVHStats left = _left->analyzeBVHLeaves();
+    TopBVHStats right = _left->analyzeBVHLeaves();
+
+    // Combine the results
+    int min_count = std::min(left.min_bvh, right.min_bvh);
+    int max_count = std::max(left.max_bvh, right.max_bvh);
+    
+    // Calculate weighted average based on number of leaves in each subtree
+    float left_leaf_count = (left.average_bvh > 0) ? 1.0f : 0.0f;
+    float right_leaf_count = (right.average_bvh > 0) ? 1.0f : 0.0f;
+    float total_leaf_count = left_leaf_count + right_leaf_count;
+    
+    float avg_count = 0.0f;
+    if (total_leaf_count > 0)
+        avg_count = (left.average_bvh * left_leaf_count + 
+                    right.average_bvh * right_leaf_count) / total_leaf_count;
+
+    return {min_count, max_count, avg_count};
 }

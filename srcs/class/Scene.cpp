@@ -61,6 +61,14 @@ bool		Scene::parseScene(char *name)
 	TopBVH	*top_bvh = new TopBVH(_gpu_bvh_data, _gpu_bvh, 0, _gpu_bvh_data.size());
 	_gpu_top_bvh = top_bvh->getGPUTopBvhs();
 
+	std::cout << "TopBVH done" << std::endl;
+	std::cout << "\tTopBVH size: " << top_bvh->getSize() << std::endl;
+	std::cout << "\tTopBVH leaves: " << top_bvh->getLeaves() << std::endl << std::endl;
+
+	TopBVHStats stats = top_bvh->analyzeBVHLeaves();
+	std::cout << "\tMin bvh per leaf: " << stats.min_bvh << std::endl;
+	std::cout << "\tMax bvh per leaf: " << stats.max_bvh << std::endl;
+	std::cout << "\tAverage bvh per leaf: " << stats.average_bvh << std::endl << std::endl;
 
 	std::cout << "Parsing done" << std::endl;
 
