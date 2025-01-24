@@ -6,15 +6,15 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/21 16:02:48 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/24 18:49:42 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
-ObjParser::ObjParser(std::string &filename, std::string &scene_filename)
+ObjParser::ObjParser(std::string &filename, std::string &scene_filename, int mat)
 {
-	_mat = 0;
+	_mat = mat;
 	_filename = getFilePath(scene_filename) + filename;
 	std::cout << _filename << std::endl;
 	_file.open(_filename);

@@ -1,4 +1,5 @@
 #version 430 core
+#extension GL_NV_gpu_shader5 : enable
 
 layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) uniform image2D output_image;
@@ -80,10 +81,9 @@ struct GPUBvh
 	int		left_index;	
 	int		right_index;
 
-	int		is_leaf;
-	
 	int		first_primitive;
 	int		primitive_count;
+	
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -162,53 +162,41 @@ struct hitInfo
 #include "shaders/volumetric.glsl"
 #include "shaders/trace.glsl"
 
-
-vec3    pathtrace(Ray ray, inout uint rng_state)
+vec3 pathtrace(Ray ray, inout uint rng_state)
 {
-	vec3	color = vec3(1.0);
-	vec3	light = vec3(0.0);
-	
-	vec3 transmittance = vec3(1.0);
+    vec3 color = vec3(1.0);
+    vec3 light = vec3(0.0);
+    vec3 transmittance = vec3(1.0);
+    
+    for (int i = 0; i < camera.bounce; i++)
+    {
+        hitInfo hit = traceRay(ray);
+        
+        float t_scatter = 0.0;
+        float scatter_valid = float(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
+        
+        float miss_condition = float(hit.obj_index == -1);
+        light += miss_condition * transmittance * GetEnvironmentLight(ray);
+        
+        float p = max(color.r, max(color.g, color.b));
+        float rr_continue = float(randomValue(rng_state) <= p);
+        color /= max(p, 0.001);
+        
+        GPUMaterial mat = materials[hit.mat_index];
 
-	for (int i = 0; i < camera.bounce; i++)
-	{
-		hitInfo hit = traceRay(ray);
-
-		float t_scatter = 0.0;
-		if (volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state))
-        {
-			calculateVolumetricLight(t_scatter, ray, color, light, transmittance, rng_state);
-            continue;
-        }
-
-		if (hit.obj_index == -1)
-		{
-			light += transmittance * GetEnvironmentLight(ray);
-			break;
-		}
-
-		if (volume.enabled != 0)
-			transmittance *= exp(-volume.sigma_t * hit.t);
-
-		GPUMaterial mat = materials[hit.mat_index];
-		
-		// RR
-		float p = max(color.r, max(color.g, color.b));
-        if (randomValue(rng_state) > p)
-            break;
-        color /= p;
-		//
-
-		calculateLightColor(mat, hit, color, light, rng_state);
-		
+        float break_condition = miss_condition + (1.0 - rr_continue);
+        if (break_condition > 0.0) break;
+        
+        calculateLightColor(mat, hit, color, light, rng_state);
+        
 		if (mat.emission > 0.0)
 			break;
 
-		ray = newRay(hit, ray, rng_state);
-		ray.inv_direction = 1.0 / ray.direction;
-	}
-
-	return (color * light);
+        ray = newRay(hit, ray, rng_state);
+        ray.inv_direction = 1.0 / ray.direction;
+    }
+    
+    return color * light;
 }
 
 Ray initRay(vec2 uv, inout uint rng_state)

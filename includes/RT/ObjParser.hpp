@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ObjParser.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:49 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/21 16:01:21 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/24 18:49:57 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class ObjParser
 {
 	public:
-		ObjParser(std::string &filename, std::string &scene_filename);
+		ObjParser(std::string &filename, std::string &scene_filename, int mat);
 		~ObjParser();
 
 		void	parse(Scene &scene, glm::vec3 offset, float scale, glm::mat4 transform);

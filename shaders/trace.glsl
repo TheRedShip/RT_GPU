@@ -71,7 +71,7 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
         int current_index = stack[stack_ptr--];
         GPUBvh node = Bvh[bvh_data.bvh_start_index + current_index];
 
-		if (node.is_leaf != 0)
+		if (node.primitive_count != 0)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
 			{

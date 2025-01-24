@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/23 18:30:20 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/24 19:36:07 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ GPUBvh	BVH::toGPUBvh()
 {
 	GPUBvh bvh;
 
-	bvh.is_leaf = _is_leaf;
 	bvh.first_primitive = _first_primitive;
 	bvh.primitive_count = _primitive_count;
 	bvh.max = _aabb.max;

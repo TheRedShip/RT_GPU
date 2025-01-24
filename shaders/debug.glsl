@@ -70,6 +70,7 @@ layout(std430, binding = 2) buffer TriangleBuffer
 struct GPUBvhData
 {
 	mat4	transform;
+	mat4	inv_transform;
 	vec3	offset;
 	float	scale;
 

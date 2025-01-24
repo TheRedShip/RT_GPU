@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/21 15:57:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/24 18:50:33 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,15 +107,18 @@ void		SceneParser::parseObj(std::stringstream &line)
 	float xtransform = 0.;
 	float ytransform = 0.;
 	float ztransform = 0.;
+	
+	int mat = 0;
 
 	line >> name;
 	line >> x >> y >> z;
 	line >> scale;
 	line >> xtransform >> ytransform >> ztransform;
+	line >> mat;
 
 	glm::mat4 transform = glm::eulerAngleXYZ(glm::radians(xtransform), glm::radians(ytransform), glm::radians(ztransform));
 
-	ObjParser obj(name, _filename);
+	ObjParser obj(name, _filename, mat);
 	obj.parse(*_scene, glm::vec3(x, y, z), (1.0 / scale), transform);
 }
 

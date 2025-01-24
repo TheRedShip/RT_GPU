@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/23 18:30:18 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/24 19:35:52 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,10 +80,9 @@ struct GPUBvh
 	int						left_index;	
 	int						right_index;
 
-	int						is_leaf;
-	
 	int						first_primitive;
 	int						primitive_count;
+	
 };
 
 struct GPUBvhData

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 20:21:13 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/23 18:46:34 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/24 19:13:13 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string com
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
 
-	// printWithLineNumbers(computeCode);
+	printWithLineNumbers(computeCode);
 
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	
