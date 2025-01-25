@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/14 19:51:46 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/25 02:40:13 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ class Shader
 
 		GLuint	getProgram(void) const;
 		GLuint	getProgramCompute(void) const;
+
+		std::vector<float> getOutputImage(void);
 		
 
 	private:

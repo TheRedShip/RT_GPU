@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/23 15:31:28 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 03:09:23 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ class Window
 
 		void		setFrameCount(int nb);
 
-		void		rendererUpdate(void);
+		void		rendererUpdate(Shader &shader);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;

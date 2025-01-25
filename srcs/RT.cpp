@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/23 18:37:21 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 02:29:18 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ int main(int argc, char **argv)
 		std::vector<int> gpu_lights_array(gpu_lights.begin(), gpu_lights.end());
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
-		window.rendererUpdate();
+		window.rendererUpdate(shader);
 
 		Camera *camera = scene.getCamera();
 

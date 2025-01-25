@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/23 19:42:56 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 03:25:48 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,109 @@ Renderer::Renderer(Scene *scene, Window *win)
 	_win = win;
 	_min = 0;
 	_sec = 0;
+	_fps = 30;
 	_samples = 1;
+	_testSamples = 1;
 	_curSamples = 0;
+	_destPathIndex = 0;
+	_frameCount = 0;
+
+	_frame = 0;
+	_format = 0;
+	_codec_context = 0;
 }
 
-void Renderer::addPoint(void)
+void	Renderer::initFfmpeg(std::string filename)
+{
+	const AVCodec *codec;
+	AVStream *stream;
+	
+	avformat_alloc_output_context2(&_format, nullptr, nullptr, filename.c_str());
+	codec = avcodec_find_encoder(AV_CODEC_ID_H264);
+	if (!codec)
+		throw std::runtime_error("unable to find H264 audio/video codec, glhf");
+	
+	_codec_context = avcodec_alloc_context3(codec);
+	_codec_context->width = WIDTH;
+	_codec_context->height = HEIGHT;
+	_codec_context->time_base = {1, _fps};
+	_codec_context->framerate = {_fps, 1};
+	_codec_context->pix_fmt = AV_PIX_FMT_RGB24;
+	_codec_context->gop_size = 10;
+	_codec_context->max_b_frames = 1;
+
+	if (_format->oformat->flags & AVFMT_GLOBALHEADER)
+		_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
+
+	if (avcodec_open2(_codec_context, codec, nullptr) < 0)
+		throw std::runtime_error("Failed to open codec");
+	
+	stream = avformat_new_stream(_format, codec);
+	if (!stream) 
+		throw std::runtime_error("Failed to create stream");
+	stream->time_base = _codec_context->time_base;
+	avcodec_parameters_from_context(stream->codecpar, _codec_context);
+
+	if (!(_format->flags & AVFMT_NOFILE))
+	{
+		if (avio_open(&_format->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
+			throw std::runtime_error("couldn't open " + filename);
+	}
+	(void)avformat_write_header(_format, nullptr);
+
+	_frame = av_frame_alloc();
+	_frame->format = _codec_context->pix_fmt;
+	_frame->width = _codec_context->width;
+	_frame->height = _codec_context->height;
+	av_image_alloc(_frame->data, _frame->linesize, WIDTH, HEIGHT, _codec_context->pix_fmt, 32);
+}
+
+void	Renderer::addImageToRender(Shader &shader)
+{
+	std::vector<float> image;
+	AVPacket *pkt;
+	long int videoFrameOffset;
+	long int outputImageOffset;
+
+	image = shader.getOutputImage();
+
+	for (int x = 0; x < WIDTH; x++)
+	{
+		for(int y = 0; y < HEIGHT; y++)
+		{
+			videoFrameOffset = (y * _frame->linesize[0]) + (x * 3);
+			outputImageOffset = (y * (WIDTH * 4)) + (x * 4);
+			_frame->data[0][videoFrameOffset] = image[outputImageOffset];
+			_frame->data[0][videoFrameOffset + 1] = image[outputImageOffset + 1];
+			_frame->data[0][videoFrameOffset + 2] = image[outputImageOffset + 2];
+		}
+	}
+
+	_frame->pts = _frameCount;
+	if (avcodec_send_frame(_codec_context, _frame) == 0) {
+		pkt = av_packet_alloc();
+		while (avcodec_receive_packet(_codec_context, pkt) == 0) {
+			av_interleaved_write_frame(_format, pkt);
+			av_packet_unref(pkt);
+		}
+		av_packet_free(&pkt);
+	}
+}
+
+void	Renderer::endRender(void)
+{
+	av_write_trailer(_format);
+    av_frame_free(&_frame);
+    avcodec_free_context(&_codec_context);
+    avio_close(_format->pb);
+    avformat_free_context(_format);
+
+	_format = 0;
+	_frame = 0;
+	_codec_context = 0;
+}
+
+void	Renderer::addPoint(void)
 {
 	t_pathPoint newPoint;
 	Camera		*cam;
@@ -31,26 +129,29 @@ void Renderer::addPoint(void)
 	cam = _scene->getCamera();
 	newPoint.pos = cam->getPosition();	
 	newPoint.dir = cam->getDirection();
-	newPoint.time = _min + (_sec / 60);
+	newPoint.time = _min + ((float)_sec / 60);
 	pos = _path.begin();
 	while(pos != _path.end() && pos->time <= newPoint.time)
 		pos++;
 	_path.insert(pos, newPoint);
 }
 
-void Renderer::update(void)
+void Renderer::update(Shader &shader)
 {
 	double			curTime;
 
+	(void)shader;
 	if(!_destPathIndex)
 		return;
 	curTime = glfwGetTime();
 	_curSamples++;
-	if(_curSamples == _samples)
+	if(_testMode && _curSamples == _testSamples)
 	{
 		makeMovement(curTime - _curSplitStart, curTime);
-		_curSamples = 0;	
+		_curSamples = 0;
+		return;
 	}
+	//TODO: the rest
 }
 
 void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
@@ -65,7 +166,7 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	from = _path[_curPathIndex];
 	to = _path[_curPathIndex + 1];
 	cam = _scene->getCamera();
-	pathTime = (to.time - from.time) * 60;	
+	pathTime = (to.time - from.time) * 60;
 
 	posStep.x = ((to.pos.x - from.pos.x) / pathTime) * timeFromStart;
 	posStep.y = ((to.pos.y - from.pos.y) / pathTime) * timeFromStart;
@@ -86,7 +187,7 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	if(_curPathIndex == _destPathIndex)
 	{
 		_destPathIndex = 0;
-		std::cout << "done" << std::endl;
+		_testMode = 0;
 	}
 }
 
@@ -94,11 +195,23 @@ void Renderer::renderImgui(void)
 {
 	ImGui::Begin("Renderer");
 
-	ImGui::SliderInt("spi", &_samples, 1, 1000);
+	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
+	ImGui::SliderInt("render spi", &_samples, 1, 1000);
+	ImGui::SliderInt("render fps", &_fps, 30, 120);
+	if(_path.size() && ImGui::Button("try full path"))
+	{
+		_scene->getCamera()->setPosition(_path[0].pos);	
+		_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);	
+		_win->setFrameCount(-1);
+		_curSplitStart = glfwGetTime();
+		_curPathIndex = 0;
+		_destPathIndex = _path.size() - 1;
+		_testMode = 1;
+	}
 	ImGui::Separator();
 
 	ImGui::SliderInt("minutes", &_min, 0, 2);
-	ImGui::SliderFloat("seconds", &_sec, 0, 60);
+	ImGui::SliderInt("seconds", &_sec, 0, 60);
 	if(ImGui::Button("add step"))
 		addPoint();
 	ImGui::Separator();
@@ -139,8 +252,10 @@ void Renderer::renderImgui(void)
 			_curSplitStart = glfwGetTime();
 			_curPathIndex = i - 1;
 			_destPathIndex = i;
+			_testMode = 1;
 		}
 		ImGui::Separator();
 	}
+
 	ImGui::End();
 }

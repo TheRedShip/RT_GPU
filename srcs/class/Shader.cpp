@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 20:21:13 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/19 18:58:42 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/25 03:11:43 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -206,3 +206,13 @@ GLuint	Shader::getProgramCompute(void) const
 {
 	return (_program_compute);
 }
+
+std::vector<float> Shader::getOutputImage(void)
+{
+	std::vector<float>	res(WIDTH * HEIGHT * 4);
+
+	glBindTexture(GL_TEXTURE_2D, _output_texture);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, res.data());
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return (res);
+}	

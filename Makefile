@@ -30,7 +30,7 @@ else
 	CC          :=	clang++
 	CFLAGS      :=	-Wall -Wextra -Werror -g -O3
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui -I/usr/include
-	LDFLAGS		:=  -L/usr/lib/x86_64-linux-gnu -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lstdc++
+	LDFLAGS		:=  -L/usr/lib/x86_64-linux-gnu -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lstdc++ -lavformat -lavcodec -lavutil -lswscale -lswresample
 	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
 	CMP			=	1
 endif
@@ -62,19 +62,19 @@ OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 HEADERS		:=	includes/RT.hpp
 MAKEFLAGS   += --no-print-directory
 
-ifeq ($(OS),Windows_NT)
-all: windows
-else
-all: linux
-endif
+all: $(NAME)
 
-windows: $(OBJS) $(HEADERS)
+ifeq ($(OS),Windows_NT)
+$(NAME): $(OBJS) $(HEADERS)
 	@$(CC) $(OBJS) $(IFLAGS) $(LDFLAGS) -o $(NAME)
 	@echo $(WHITE) $(NAME): PROJECT COMPILED !$(RESET)
-
-linux: $(OBJS) $(HEADERS)
+else
+$(NAME): $(OBJS) $(HEADERS)
 	@$(CC) $(OBJS) $(IFLAGS) $(CFLAGS) $(LDFLAGS) -o $(NAME)
 	@printf "$(LINE_CLR)$(WHITE) $(NAME): PROJECT COMPILED !$(RESET)\n\n"
+endif
+
+
 
 $(OBJS_DIR)/%.o: %.cpp
 	@$(DIR_DUP)
@@ -109,10 +109,6 @@ else
 	@$(RM) $(OBJS_DIR)
 endif
 
-ifeq ($(OS),Windows_NT)
-re: fclean windows
-else
-re: fclean linux
-endif
+re: fclean $(NAME) 
 
 .PHONY: all clean fclean re windows linux

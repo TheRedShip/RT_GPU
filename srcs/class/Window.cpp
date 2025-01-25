@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/23 16:26:39 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 03:09:56 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 Window::Window(Scene *scene, int width, int height, const char *title, int sleep)
 {
 	_scene = scene;
+	_fps = 0;
 	_frameCount = 0;
 	_pixelisation = 0;
 	_renderer = new Renderer(scene, this);
@@ -161,9 +162,9 @@ bool Window::shouldClose()
     return glfwWindowShouldClose(_window);
 }
 
-void		Window::rendererUpdate(void)
+void		Window::rendererUpdate(Shader &shader)
 {
-	_renderer->update();
+	_renderer->update(shader);
 }
 
 void Window::imGuiNewFrame()
