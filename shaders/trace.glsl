@@ -75,14 +75,14 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
 			{
-				GPUTriangle obj = triangles[bvh_data.triangle_start_index + node.first_primitive + i];
+				GPUTriangle obj = triangles[bvh_data.triangle_start_index + node.index + i];
 				
 				hitInfo temp_hit;
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
 					hit.last_t = temp_hit.last_t;
-					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
+					hit.obj_index = bvh_data.triangle_start_index + node.index + i;
 					hit.mat_index = obj.mat_index;
 					hit.position = temp_hit.position;
 					hit.normal = temp_hit.normal;
@@ -91,8 +91,8 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 		}
 		else
 		{
-			GPUBvh left_node = Bvh[bvh_data.bvh_start_index + node.left_index];
-			GPUBvh right_node = Bvh[bvh_data.bvh_start_index + node.right_index];
+			GPUBvh left_node = Bvh[bvh_data.bvh_start_index + current_index + 1];
+			GPUBvh right_node = Bvh[bvh_data.bvh_start_index + node.index];
 
 			hitInfo left_hit;
 			hitInfo right_hit;
@@ -105,13 +105,13 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 
 			if (left_hit.t > right_hit.t)
 			{
-				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
-				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = current_index + 1;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.index;
 			}
 			else
 			{
-				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
-				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = current_index + 1;
 			}
 		}
     }

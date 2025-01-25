@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/24 19:36:07 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/25 14:25:57 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,7 @@ GPUBvh	BVH::toGPUBvh()
 {
 	GPUBvh bvh;
 
-	bvh.first_primitive = _first_primitive;
+	bvh.index = _first_primitive;
 	bvh.primitive_count = _primitive_count;
 	bvh.max = _aabb.max;
 	bvh.min = _aabb.min;
@@ -159,15 +159,11 @@ void BVH::flatten(std::vector<GPUBvh> &bvhs, int &currentIndex)
     GPUBvh self_bvh = toGPUBvh();
     int self_index = currentIndex++;
 
-    self_bvh.left_index = -1;
-    self_bvh.right_index = -1;
-
     if (!_is_leaf)
     {
-        self_bvh.left_index = currentIndex;
         _left->flatten(bvhs, currentIndex);
 
-        self_bvh.right_index = currentIndex;
+        self_bvh.index = currentIndex;
         _right->flatten(bvhs, currentIndex);
     }
 

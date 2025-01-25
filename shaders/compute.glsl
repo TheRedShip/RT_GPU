@@ -78,10 +78,7 @@ struct GPUBvh
 	vec3	min;
 	vec3	max;
 
-	int		left_index;	
-	int		right_index;
-
-	int		first_primitive;
+	int		index;
 	int		primitive_count;
 	
 };
