@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/25 03:25:48 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 18:28:19 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,25 @@ Renderer::Renderer(Scene *scene, Window *win)
 	_destPathIndex = 0;
 	_frameCount = 0;
 
-	_frame = 0;
+	_rgb_frame = 0;
+	_yuv_frame = 0;
 	_format = 0;
 	_codec_context = 0;
 }
 
-void	Renderer::initFfmpeg(std::string filename)
+void	Renderer::initRender(std::string filename)
 {
 	const AVCodec *codec;
-	AVStream *stream;
 	
+
+	_destPathIndex = _path.size() - 1;
+	_curPathIndex = 0;
+	_frameCount = 0;
+	_curSamples = 0;
+	_curSplitStart = 0;
+	_testMode = 0;
+	_scene->getCamera()->setPosition(_path[0].pos);
+	_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
 	avformat_alloc_output_context2(&_format, nullptr, nullptr, filename.c_str());
 	codec = avcodec_find_encoder(AV_CODEC_ID_H264);
 	if (!codec)
@@ -45,7 +54,7 @@ void	Renderer::initFfmpeg(std::string filename)
 	_codec_context->height = HEIGHT;
 	_codec_context->time_base = {1, _fps};
 	_codec_context->framerate = {_fps, 1};
-	_codec_context->pix_fmt = AV_PIX_FMT_RGB24;
+	_codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
 	_codec_context->gop_size = 10;
 	_codec_context->max_b_frames = 1;
 
@@ -55,11 +64,11 @@ void	Renderer::initFfmpeg(std::string filename)
 	if (avcodec_open2(_codec_context, codec, nullptr) < 0)
 		throw std::runtime_error("Failed to open codec");
 	
-	stream = avformat_new_stream(_format, codec);
-	if (!stream) 
+	_stream = avformat_new_stream(_format, codec);
+	if (!_stream) 
 		throw std::runtime_error("Failed to create stream");
-	stream->time_base = _codec_context->time_base;
-	avcodec_parameters_from_context(stream->codecpar, _codec_context);
+	_stream->time_base = _codec_context->time_base;
+	avcodec_parameters_from_context(_stream->codecpar, _codec_context);
 
 	if (!(_format->flags & AVFMT_NOFILE))
 	{
@@ -68,11 +77,22 @@ void	Renderer::initFfmpeg(std::string filename)
 	}
 	(void)avformat_write_header(_format, nullptr);
 
-	_frame = av_frame_alloc();
-	_frame->format = _codec_context->pix_fmt;
-	_frame->width = _codec_context->width;
-	_frame->height = _codec_context->height;
-	av_image_alloc(_frame->data, _frame->linesize, WIDTH, HEIGHT, _codec_context->pix_fmt, 32);
+    _rgb_frame = av_frame_alloc();
+    _rgb_frame->format = AV_PIX_FMT_RGB24;
+    _rgb_frame->width = WIDTH;
+    _rgb_frame->height = HEIGHT;
+    av_image_alloc(_rgb_frame->data, _rgb_frame->linesize, WIDTH, HEIGHT, AV_PIX_FMT_RGB24, 32);
+
+    _yuv_frame = av_frame_alloc();
+    _yuv_frame->format = _codec_context->pix_fmt;
+    _yuv_frame->width = WIDTH;
+    _yuv_frame->height = HEIGHT;
+    av_image_alloc(_yuv_frame->data, _yuv_frame->linesize, WIDTH, HEIGHT, _codec_context->pix_fmt, 32);
+
+	_sws_context = sws_getContext(
+        WIDTH, HEIGHT, AV_PIX_FMT_RGB24,
+        WIDTH, HEIGHT, AV_PIX_FMT_YUV420P,
+        SWS_BILINEAR, nullptr, nullptr, nullptr);
 }
 
 void	Renderer::addImageToRender(Shader &shader)
@@ -88,18 +108,28 @@ void	Renderer::addImageToRender(Shader &shader)
 	{
 		for(int y = 0; y < HEIGHT; y++)
 		{
-			videoFrameOffset = (y * _frame->linesize[0]) + (x * 3);
-			outputImageOffset = (y * (WIDTH * 4)) + (x * 4);
-			_frame->data[0][videoFrameOffset] = image[outputImageOffset];
-			_frame->data[0][videoFrameOffset + 1] = image[outputImageOffset + 1];
-			_frame->data[0][videoFrameOffset + 2] = image[outputImageOffset + 2];
+			videoFrameOffset = (y * _rgb_frame->linesize[0]) + (x * 3);
+			outputImageOffset = (((HEIGHT - 1) - y) * (WIDTH * 4)) + (x * 4);
+			glm::vec3 colors(image[outputImageOffset], image[outputImageOffset + 1], image[outputImageOffset + 2]);
+		//	if(colors.x > 1 || colors.y > 1 || colors.z > 1)
+		//		colors = glm::normalize(colors);
+			colors.x = fmin(colors.x, 1);
+			colors.y = fmin(colors.y, 1);
+			colors.z = fmin(colors.z, 1);
+			_rgb_frame->data[0][videoFrameOffset] = colors.x * 255;
+			_rgb_frame->data[0][videoFrameOffset + 1] = colors.y * 255;
+			_rgb_frame->data[0][videoFrameOffset + 2] = colors.z * 255;
 		}
 	}
+	sws_scale(_sws_context, _rgb_frame->data, _rgb_frame->linesize, 0, HEIGHT, _yuv_frame->data, _yuv_frame->linesize);
+	_yuv_frame->pts = _frameCount;
 
-	_frame->pts = _frameCount;
-	if (avcodec_send_frame(_codec_context, _frame) == 0) {
+	if (avcodec_send_frame(_codec_context, _yuv_frame) == 0) {
 		pkt = av_packet_alloc();
 		while (avcodec_receive_packet(_codec_context, pkt) == 0) {
+			pkt->stream_index = _stream->index;
+        	pkt->pts = av_rescale_q(pkt->pts, _codec_context->time_base, _stream->time_base);
+        	pkt->dts = av_rescale_q(pkt->dts, _codec_context->time_base, _stream->time_base);
 			av_interleaved_write_frame(_format, pkt);
 			av_packet_unref(pkt);
 		}
@@ -109,14 +139,29 @@ void	Renderer::addImageToRender(Shader &shader)
 
 void	Renderer::endRender(void)
 {
+	AVPacket *pkt;
+
+	avcodec_send_frame(_codec_context, 0);
+	pkt = av_packet_alloc();
+	while (avcodec_receive_packet(_codec_context, pkt) == 0) {
+		pkt->stream_index = _stream->index;
+		pkt->pts = av_rescale_q(pkt->pts, _codec_context->time_base, _stream->time_base);
+		pkt->dts = av_rescale_q(pkt->dts, _codec_context->time_base, _stream->time_base);
+		av_interleaved_write_frame(_format, pkt);
+		av_packet_unref(pkt);
+	}
+	av_packet_free(&pkt);
+
 	av_write_trailer(_format);
-    av_frame_free(&_frame);
+    av_frame_free(&_rgb_frame);
+    av_frame_free(&_yuv_frame);
     avcodec_free_context(&_codec_context);
     avio_close(_format->pb);
     avformat_free_context(_format);
 
 	_format = 0;
-	_frame = 0;
+	_rgb_frame = 0;
+	_yuv_frame = 0;
 	_codec_context = 0;
 }
 
@@ -143,15 +188,23 @@ void Renderer::update(Shader &shader)
 	(void)shader;
 	if(!_destPathIndex)
 		return;
-	curTime = glfwGetTime();
+
 	_curSamples++;
-	if(_testMode && _curSamples == _testSamples)
-	{
-		makeMovement(curTime - _curSplitStart, curTime);
-		_curSamples = 0;
+	if((_testMode && _curSamples < _testSamples) || (!_testMode && _curSamples < _samples))
 		return;
+
+	if(_testMode)
+		curTime = glfwGetTime();
+	else
+		curTime = (1 / (double)_fps) * (double)_frameCount;
+
+	if(!_testMode)
+	{
+		addImageToRender(shader);
+		_frameCount++;
 	}
-	//TODO: the rest
+	makeMovement(curTime - _curSplitStart, curTime);
+	_curSamples = 0;
 }
 
 void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
@@ -187,7 +240,8 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	if(_curPathIndex == _destPathIndex)
 	{
 		_destPathIndex = 0;
-		_testMode = 0;
+		if(!_testMode)
+			endRender();
 	}
 }
 
@@ -207,6 +261,10 @@ void Renderer::renderImgui(void)
 		_curPathIndex = 0;
 		_destPathIndex = _path.size() - 1;
 		_testMode = 1;
+	}
+	if(_path.size() && ImGui::Button("start render"))
+	{
+		initRender("output.mp4");
 	}
 	ImGui::Separator();
 

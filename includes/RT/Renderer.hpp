@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/25 03:12:38 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/25 17:07:46 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,10 +15,11 @@
 
 # include "RT.hpp"
 extern "C" {
-#include <libavformat/avformat.h>
-#include <libavcodec/avcodec.h>
-#include <libavutil/avutil.h>
-#include <libavutil/imgutils.h>
+	#include <libavformat/avformat.h>
+	#include <libavcodec/avcodec.h>
+	#include <libavutil/avutil.h>
+	#include <libavutil/imgutils.h>
+	#include <libswscale/swscale.h>
 }
 
 class Scene;
@@ -42,7 +43,7 @@ class Renderer
 	private:
 		void	addPoint(void);
 		void	makeMovement(float timeFromStart, float curSplitTimeReset);
-		void	initFfmpeg(std::string filename);
+		void	initRender(std::string filename);
 		void	addImageToRender(Shader &shader);
 		void	endRender(void);
 
@@ -62,9 +63,12 @@ class Renderer
 		int							_testMode;
 		long int					_frameCount;
 
-		AVFrame						*_frame;
 		AVFormatContext				*_format;
 		AVCodecContext				*_codec_context;
+		AVFrame						*_rgb_frame;
+		AVFrame						*_yuv_frame;
+		SwsContext					*_sws_context;
+		AVStream					*_stream;
 
 };
 
