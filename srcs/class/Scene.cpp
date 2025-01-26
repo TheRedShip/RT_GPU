@@ -114,7 +114,10 @@ void		Scene::addObject(Object *obj)
 		gpu_triangle.normal = triangle->getNormal();
 
 		_gpu_triangles.push_back(gpu_triangle);
-		return ;
+
+		gpu_obj.vertex1 = triangle->getVertex2();
+		gpu_obj.vertex2 = triangle->getVertex3();
+		gpu_obj.normal = triangle->getNormal();
 	}
 	else if (obj->getType() == Object::Type::PORTAL)
 	{

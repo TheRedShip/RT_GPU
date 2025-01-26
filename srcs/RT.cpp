@@ -12,6 +12,10 @@
 
 #include "RT.hpp"
 
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 int main(int argc, char **argv)
 {
 	Scene		scene;
@@ -97,6 +101,28 @@ int main(int argc, char **argv)
 
 	shader.attach();
 
+	// texture
+	int width, height, channels;
+	unsigned char* image = stbi_load("texture.jpg", &width, &height, &channels, STBI_rgb_alpha);
+
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// Set texture parameters
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Upload texture data
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	// Free the image data
+	stbi_image_free(image);
+	//
+
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
 	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
 	shader.setupVertexBuffer(vertices, size);
@@ -163,6 +189,12 @@ int main(int argc, char **argv)
 		shader.set_int("u_pixelisation", window.getPixelisation());
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
+
+		//texture
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+		glUniform1i(glGetUniformLocation(shader.getProgramCompute(), "sphereTexture"), 0);
+		//
 
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

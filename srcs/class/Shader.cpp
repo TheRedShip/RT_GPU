@@ -105,6 +105,13 @@ void Shader::attach(void)
 	_program = glCreateProgram();
 	_program_compute = glCreateProgram();
 
+	glProgramParameteri(_program_compute, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+	glProgramParameteri(_program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+
+	glEnable(GL_DEBUG_OUTPUT);
+	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
 	glAttachShader(_program, _vertex);
 	glAttachShader(_program, _fragment);
 	glAttachShader(_program_compute, _compute);

@@ -2,7 +2,7 @@ hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    return vec3(0.);
+    // return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -88,8 +88,29 @@ vec3 sampleLights(vec3 position, inout uint rng_state)
 	return (light);
 }
 
+vec2 getSphereUV(vec3 surfacePoint)
+{
+    // Convert 3D point to spherical coordinates
+    float phi = atan(surfacePoint.z, surfacePoint.x);
+    float theta = acos(surfacePoint.y);
+    
+    // Map to [0, 1] UV space
+    float u = (phi + M_PI) / (2.0 * M_PI);
+    float v = theta / M_PI;
+    
+    return vec2(u, v);
+}
+
+uniform sampler2D sphereTexture;
+
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
+    // if (objects[hit.obj_index].type == 0)
+    // {
+    //     vec2 uv = getSphereUV(hit.normal);
+    //     color *= texture(sphereTexture, uv).rgb;
+    // }
+    // else
     color *= mat.color;
     light += mat.emission * mat.color;
     // light += sampleLights(hit.position, rng_state);
