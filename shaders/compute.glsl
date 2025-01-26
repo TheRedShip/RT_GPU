@@ -1,5 +1,4 @@
 #version 430 core
-#extension GL_NV_gpu_shader5 : enable
 
 layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) uniform image2D output_image;
@@ -80,7 +79,6 @@ struct GPUBvh
 
 	int		index;
 	int		primitive_count;
-	
 };
 
 layout(std430, binding = 1) buffer ObjectBuffer
@@ -169,21 +167,28 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     {
         hitInfo hit = traceRay(ray);
         
-        float t_scatter = 0.0;
-        float scatter_valid = float(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
-        
+		#if 0
+			float t_scatter = 0.0;
+			bool scatter_valid = bool(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
+			if (scatter_valid)
+			{
+				calculateVolumetricLight(t_scatter, ray, color, light, transmittance, rng_state);
+				continue ;
+			}
+		#endif
+
         float miss_condition = float(hit.obj_index == -1);
         light += miss_condition * transmittance * GetEnvironmentLight(ray);
         
         float p = max(color.r, max(color.g, color.b));
         float rr_continue = float(randomValue(rng_state) <= p);
-        color /= max(p, 0.001);
         
-        GPUMaterial mat = materials[hit.mat_index];
-
         float break_condition = miss_condition + (1.0 - rr_continue);
         if (break_condition > 0.0) break;
         
+		color /= max(p, 0.001);
+        
+        GPUMaterial mat = materials[hit.mat_index];
         calculateLightColor(mat, hit, color, light, rng_state);
         
 		if (mat.emission > 0.0)
@@ -198,8 +203,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 
 Ray initRay(vec2 uv, inout uint rng_state)
 {
-	float fov = camera.fov;
-	float focal_length = 1.0 / tan(radians(fov) / 2.0);
+	float focal_length = 1.0 / tan(radians(camera.fov) / 2.0);
 	
 	vec3 origin = camera.position;
 	vec3 view_space_ray = normalize(vec3(uv.x, uv.y, -focal_length));

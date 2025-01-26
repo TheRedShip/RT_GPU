@@ -45,9 +45,8 @@ float fresnel(vec3 incident, vec3 normal, float eta)
     float etai = 1.0, etat = eta;
     if (cosi > 0.0) swap(etai, etat);
     float sint = etai / etat * sqrt(max(0.0, 1.0 - cosi * cosi));
-    if (sint >= 1.0) {
-        return 1.0; // Total internal reflection
-    }
+    if (sint >= 1.0)
+        return (1.0); // Total internal reflection
     float cost = sqrt(max(0.0, 1.0 - sint * sint));
     cosi = abs(cosi);
     float Rs = ((etat * cosi) - (etai * cost)) / ((etat * cosi) + (etai * cost));
