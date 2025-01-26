@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/25 18:28:19 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/26 05:05:10 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,16 @@ void	Renderer::initRender(std::string filename)
 {
 	const AVCodec *codec;
 	
-
 	_destPathIndex = _path.size() - 1;
 	_curPathIndex = 0;
 	_frameCount = 0;
 	_curSamples = 0;
 	_curSplitStart = 0;
 	_testMode = 0;
+	_renderStartTime = glfwGetTime();
 	_scene->getCamera()->setPosition(_path[0].pos);
 	_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
+	_win->setFrameCount(-1);
 	avformat_alloc_output_context2(&_format, nullptr, nullptr, filename.c_str());
 	codec = avcodec_find_encoder(AV_CODEC_ID_H264);
 	if (!codec)
@@ -245,10 +246,13 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	}
 }
 
-void Renderer::renderImgui(void)
+int	Renderer::rendering(void) const
 {
-	ImGui::Begin("Renderer");
+	return(_destPathIndex != 0 && !_testMode);
+}
 
+void Renderer::imguiPathCreation(void)
+{
 	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
@@ -314,6 +318,105 @@ void Renderer::renderImgui(void)
 		}
 		ImGui::Separator();
 	}
+}
 
+std::string	Renderer::floatToTime(float timef)
+{
+	std::string res;
+	uint64_t time;
+	uint64_t values[7];
+	int firstValue;
+
+	time = timef;
+	values[0] = time / 3600 * 24 * 365;
+	time = time % (3600 * 24 * 365);
+	values[1] = time / 3600 * 24 * 30;
+	time = time % (3600 * 24 * 30);
+	values[2] = time / 3600 * 24 * 7;
+	time = time % (3600 * 24 * 7);
+	values[3] = time / 3600 * 24;
+	time = time % (3600 * 24);
+	values[4] = time / 3600;
+	time = time % 3600;
+	values[5] = time / 60;
+	time = time % 60;
+	values[6] = time;
+
+	firstValue = 0;
+	while(firstValue < 6 && values[firstValue] == 0 )
+		firstValue++;
+
+	res = "";
+	switch(firstValue)
+	{
+		case 0:
+			res += std::to_string(values[0]);
+			res += "Y";
+		case 1:
+			res += std::to_string(values[1]);
+			res += "M";
+		case 2:
+			res += std::to_string(values[2]);
+			res += "W";
+		case 3:
+			res += std::to_string(values[3]);
+			res += "d";
+		case 4:
+			res += std::to_string(values[4]);
+			res += "h";
+		case 5:
+			res += std::to_string(values[5]);
+			res += "m";
+		case 6:
+			res += std::to_string(values[6]);
+			res += "s";
+	}
+	return(res);
+}
+
+void Renderer::imguiRenderInfo(void)
+{
+	long int totalFrames;
+	float renderTime;
+	float progress;
+	float timeElapsed;
+	float timeEst;
+
+	totalFrames = (_path[_destPathIndex].time - _path[0].time) * 60 * _fps;
+	renderTime = ((float)_frameCount / _fps) / 60;
+
+	timeElapsed = glfwGetTime() - _renderStartTime;
+	timeEst = timeElapsed / ((_frameCount * _samples) + _curSamples);
+	timeEst *= (totalFrames * _samples) - ((_frameCount * _samples) + _curSamples);
+	if(timeEst > 1e15)
+		timeEst = 0;
+	ImGui::Text("render in progress");
+	ImGui::Text("samples per frame : %d", _samples);
+	ImGui::Text("render fps : %d", _fps);
+	ImGui::Text("total render time : %s", floatToTime((_path[_destPathIndex].time - _path[0].time) * 60).c_str());
+	ImGui::Separator();
+	ImGui::Text("Frames : %ld / %ld", _frameCount, totalFrames);
+	ImGui::Text("Frames (with accumulation) : %ld / %ld", (_frameCount * _samples) + _curSamples, totalFrames * _samples);
+	ImGui::Text("Render time : %dm%f", (int)renderTime, (renderTime - (int)renderTime) * 60);
+	ImGui::Text("elapsed time : %s", floatToTime(timeElapsed).c_str());
+	ImGui::Text("estimated time remaining : %s", floatToTime(timeEst).c_str());
+	progress = ((float)_frameCount * _samples)  + _curSamples;
+	progress /= (float)totalFrames * _samples;
+	ImGui::ProgressBar(progress, ImVec2(0, 0));
+	if(ImGui::Button("stop"))
+	{
+		_destPathIndex = 0;
+		endRender();
+	}
+}
+
+void Renderer::renderImgui(void)
+{
+	ImGui::Begin("Renderer");
+
+	if(rendering())
+		imguiRenderInfo();
+	else
+		imguiPathCreation();
 	ImGui::End();
 }

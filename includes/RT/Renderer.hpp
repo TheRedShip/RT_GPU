@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/25 17:07:46 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/26 04:15:45 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_pathPoint
 {
 	glm::vec3	pos;
 	glm::vec2	dir;
-	float		time;
+	double		time;
 }	t_pathPoint;
 
 class Renderer
@@ -39,6 +39,7 @@ class Renderer
 		Renderer(Scene *scene, Window *win);
 		void	renderImgui(void);
 		void	update(Shader &shader);
+		int		rendering(void) const;
 
 	private:
 		void	addPoint(void);
@@ -46,6 +47,9 @@ class Renderer
 		void	initRender(std::string filename);
 		void	addImageToRender(Shader &shader);
 		void	endRender(void);
+		void	imguiPathCreation(void);
+		void	imguiRenderInfo(void); 
+		std::string	floatToTime(float timef);
 
 		int							_min;
 		int							_sec;
@@ -62,6 +66,7 @@ class Renderer
 		int							_curSamples;
 		int							_testMode;
 		long int					_frameCount;
+		float						_renderStartTime;
 
 		AVFormatContext				*_format;
 		AVCodecContext				*_codec_context;
