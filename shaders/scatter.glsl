@@ -61,7 +61,7 @@ Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
     float eta = mat.refraction;
     vec3 refractedDir = refract(ray.direction, hit.normal, 1.0 / eta);
 
-    float kr = fresnel(ray.direction, hit.normal, eta);
+    // float kr = fresnel(ray.direction, hit.normal, eta);
 
     float randVal = randomValue(rng_state);
     if (randVal < mat.metallic || length(refractedDir) == 0.0)
