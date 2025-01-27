@@ -12,6 +12,9 @@
 
 #include "Scene.hpp"
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 Scene::Scene()
 {
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
@@ -204,13 +207,43 @@ void		Scene::addMaterial(Material *material)
 	gpu_mat.metallic = material->metallic;
 	gpu_mat.refraction = material->refraction;
 	gpu_mat.type = material->type;
+	gpu_mat.texture_index = material->texture_index;
 
 	_gpu_materials.push_back(gpu_mat);
 }
-
 void		Scene::addTexture(std::string path)
 {
-	(void) path;
+	_textures.push_back(path);
+}
+
+void		Scene::loadTextures()
+{
+	for (std::string &path : _textures)
+	{
+		int width, height, channels;
+		unsigned char* image = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+		
+		if (!image)
+			throw std::runtime_error("Failed to load texture");
+
+		std::cout << "Loaded texture: " << path << " (" << width << "x" << height << ")" << std::endl;
+
+		GLuint textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+
+		_gpu_textures.push_back(textureID);
+
+		stbi_image_free(image);
+	}
 }
 
 void		Scene::updateLightAndObjects(int mat_id)
@@ -247,6 +280,11 @@ const std::vector<GPUTriangle>	&Scene::getTriangleData() const
 std::vector<GPUMaterial>		&Scene::getMaterialData()
 {
 	return (_gpu_materials);
+}
+
+std::vector<GLuint>				&Scene::getTextureIDs()
+{
+	return (_gpu_textures);
 }
 
 GPUVolume						&Scene::getVolume()

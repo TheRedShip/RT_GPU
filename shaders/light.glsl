@@ -103,15 +103,18 @@ vec2 getSphereUV(vec3 surfacePoint)
 
 uniform sampler2D textures[16];
 
+vec3 getTextureColor(int texture_index, hitInfo hit)
+{
+    vec2 uv = getSphereUV(hit.normal);
+    return (texture(textures[texture_index], uv).rgb);
+}
+
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
-    if (objects[hit.obj_index].type == 0)
-    {
-        vec2 uv = getSphereUV(hit.normal);
-        color *= texture(textures[0], uv).rgb;
-    }
-    else
-        color *= mat.color;
+    if (mat.texture_index != -1)
+        color *= getTextureColor(mat.texture_index, hit);
+    
+    color *= mat.color;
     light += mat.emission * mat.color;
     // light += sampleLights(hit.position, rng_state);
 }

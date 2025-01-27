@@ -270,6 +270,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 	}
 	if(mat)
 	{
+		mat->texture_index = -1;
 		scene.addMaterial(mat);
 		_matNames[matName] = scene.getMaterialData().size() - 1;
 	}

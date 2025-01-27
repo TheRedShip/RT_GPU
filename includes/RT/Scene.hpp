@@ -51,6 +51,7 @@ struct GPUMaterial
 	float					metallic;
 	float					refraction;
 	int						type;
+	int						texture_index;
 };
 
 struct GPUVolume
@@ -107,6 +108,8 @@ class Scene
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
 		void							addTexture(std::string path);
+
+		void							loadTextures();
 		
 		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
@@ -117,6 +120,7 @@ class Scene
 		const std::vector<GPUTriangle>	&getTriangleData() const;
 		
 		std::vector<GPUMaterial>		&getMaterialData();
+		std::vector<GLuint>				&getTextureIDs();
 		
 		std::vector<GPUBvhData>			&getBvhData();
 		std::vector<GPUBvh>				&getBvh();
@@ -135,6 +139,9 @@ class Scene
 		std::vector<GPUTriangle>	_gpu_triangles;
 
 		std::vector<GPUMaterial>	_gpu_materials;
+
+		std::vector<std::string>	_textures;
+		std::vector<GLuint>			_gpu_textures;
 
 		std::set<int>				_gpu_lights;
 

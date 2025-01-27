@@ -39,19 +39,15 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 
 	if (!(line >> type))
 		type = "LAM";
-	
-	if (!(line >> texture_index))
-		texture_index = -1;
-
+		
 	mat = new Material;
-
 	mat->color = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
 	mat->emission = emission;
 	mat->roughness = rough_refrac;
 	mat->metallic = metallic;
 	mat->refraction = rough_refrac;
 	
-	mat->type = 0;
+	mat->type = -1;
 	if (type == "LAM")
 		mat->type = 0;
 	else if (type == "DIE")
@@ -59,8 +55,14 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	else if (type == "TRN")
 		mat->type = 2;
 	
-	mat->texture_index = texture_index;
+	texture_index = -1;
+	if (mat->type != -1)
+		line >> texture_index;
+	else
+		mat->type = 0;
 
+	mat->texture_index = texture_index;
+	std::cout << "Texture index: " << texture_index << std::endl;
 	_scene->addMaterial(mat);
 }
 
