@@ -12,8 +12,8 @@ ifeq ($(OS),Windows_NT)
 	RM          :=	del /S /Q
 	DIR_DUP     =	if not exist "$(@D)" mkdir "$(@D)"
 	CC          :=	g++ -O3
-	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui
-	LDFLAGS     :=  -L./lib -lglfw3 -lopengl32 -lgdi32 -lcglm
+	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui -I"D:/ffmpeg/include"
+	LDFLAGS     :=   -L./lib -L"D:/ffmpeg/lib" -lglfw3 -lopengl32 -lgdi32 -lcglm -lavformat -lavcodec -lavutil -lswscale -lswresample
 else
 	BLACK		=	\033[30;49;3m
 	RED			=	\033[31;49;3m
