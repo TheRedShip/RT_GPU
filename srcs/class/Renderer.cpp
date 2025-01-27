@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/26 05:05:10 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/27 16:31:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -315,6 +315,13 @@ void Renderer::imguiPathCreation(void)
 			_curPathIndex = i - 1;
 			_destPathIndex = i;
 			_testMode = 1;
+		}
+		if(i > 1 && ImGui::Button(("match prev speed##" + std::to_string(i)).c_str()))
+		{
+			float speed = glm::distance(_path[i - 2].pos, _path[i - 1].pos) / (_path[i - 1].time - _path[i - 2].time);
+			std::cout << "speed : " << speed << std::endl;
+			std::cout << "dist : " << glm::distance(_path[i - 1].pos, _path[i].pos) << std::endl;
+			_path[i].time = _path[i - 1].time + (glm::distance(_path[i - 1].pos, _path[i].pos) / speed);
 		}
 		ImGui::Separator();
 	}
