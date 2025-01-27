@@ -79,6 +79,11 @@ int main(int argc, char **argv)
 	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, lightSSBO);
 
+	GLuint textureSSBO;
+	glGenBuffers(1, &textureSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, textureSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, 1 * sizeof(int), nullptr, GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, textureSSBO);
 
 	GLuint cameraUBO;
 	glGenBuffers(1, &cameraUBO);

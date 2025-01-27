@@ -24,6 +24,7 @@ class SceneParser
 
 	private:
 		void		parseMaterial(std::stringstream &line);
+		void		parseTexture(std::stringstream &line);
 		void		parseCamera(std::stringstream &line);
 		void		parseObj(std::stringstream &line);
 

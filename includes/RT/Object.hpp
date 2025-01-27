@@ -23,6 +23,7 @@ typedef struct s_Material
 	float		metallic;
 	float		refraction;
 	int			type;
+	int			texture_index;
 }				Material;
 
 class Object

@@ -106,6 +106,7 @@ class Scene
 
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
+		void							addTexture(std::string path);
 		
 		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();

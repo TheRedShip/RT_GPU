@@ -208,6 +208,11 @@ void		Scene::addMaterial(Material *material)
 	_gpu_materials.push_back(gpu_mat);
 }
 
+void		Scene::addTexture(std::string path)
+{
+		
+}
+
 void		Scene::updateLightAndObjects(int mat_id)
 {
 	for (unsigned int i = 0; i < _gpu_objects.size(); i++)

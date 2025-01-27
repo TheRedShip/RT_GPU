@@ -30,6 +30,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	float		rough_refrac;
 	float		metallic;
 	std::string	type;
+	int			texture_index;
 
 	Material	*mat;
 
@@ -39,6 +40,9 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	if (!(line >> type))
 		type = "LAM";
 	
+	if (!(line >> texture_index))
+		texture_index = -1;
+
 	mat = new Material;
 
 	mat->color = glm::vec3(r / 255.0f, g / 255.0f, b / 255.0f);
@@ -54,6 +58,8 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		mat->type = 1;
 	else if (type == "TRN")
 		mat->type = 2;
+	
+	mat->texture_index = texture_index;
 
 	_scene->addMaterial(mat);
 }
@@ -122,6 +128,16 @@ void		SceneParser::parseObj(std::stringstream &line)
 	obj.parse(*_scene, glm::vec3(x, y, z), (1.0 / scale), transform);
 }
 
+void		SceneParser::parseTexture(std::stringstream &line)
+{
+	std::string	path;
+
+	if (!(line >> path))
+		throw std::runtime_error("Texture: Missing texture's path");
+
+	_scene->addTexture(path);
+}
+
 bool		SceneParser::parseLine(const std::string &line)
 {
 	if (line.empty() || line[0] == '#')
@@ -156,6 +172,8 @@ bool		SceneParser::parseLine(const std::string &line)
 			this->parseCamera(ss);
 		else if (identifier == "OBJ")
 			this->parseObj(ss);
+		else if (identifier == "TEX")
+			this->parseTexture(ss);
 	}
 	catch (const std::exception& e)
 	{
