@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/24 18:10:03 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/27 19:07:49 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,55 @@
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
+
+struct GPUTexture {
+    int width;
+    int height;
+    int channels;
+    int object_id;  // to map texture to specific objects
+};
+
+std::vector<GLuint> loadTextures(const std::vector<std::string>& texture_paths, std::vector<GPUTexture>& gpu_textures) {
+    std::vector<GLuint> textureIDs;
+    
+    for (size_t i = 0; i < texture_paths.size(); i++) {
+        int width, height, channels;
+        unsigned char* image = stbi_load(texture_paths[i].c_str(), &width, &height, &channels, STBI_rgb_alpha);
+        
+        if (!image) {
+            std::cerr << "Failed to load texture: " << texture_paths[i] << std::endl;
+            continue;
+        }
+
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+        glBindTexture(GL_TEXTURE_2D, textureID);
+
+        // Set texture parameters
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // Upload texture data
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        // Store texture info for GPU
+        GPUTexture tex_info = {
+            width,
+            height,
+            channels,
+            static_cast<int>(i)  // or map to specific object ID
+        };
+        gpu_textures.push_back(tex_info);
+        textureIDs.push_back(textureID);
+
+        stbi_image_free(image);
+    }
+    
+    return textureIDs;
+}
 
 int main(int argc, char **argv)
 {
@@ -104,29 +153,23 @@ int main(int argc, char **argv)
 	glBindBufferBase(GL_UNIFORM_BUFFER, 2, debugUBO);
 
 
-	shader.attach();
 
 	// texture
-	int width, height, channels;
-	unsigned char* image = stbi_load("texture.jpg", &width, &height, &channels, STBI_rgb_alpha);
+	
+	std::vector<std::string> texture_paths = {"texture.jpg", "texture2.jpg", "texture.jpg"};
+	std::vector<GPUTexture> gpu_textures;
+	std::vector<GLuint> textureIDs = loadTextures(texture_paths, gpu_textures);
 
-	GLuint textureID;
-	glGenTextures(1, &textureID);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	GLuint textureInfoSSBO;
+	glGenBuffers(1, &textureInfoSSBO);
+	glBindBuffer(GL_SHADER_STORAGE_BUFFER, textureInfoSSBO);
+	glBufferData(GL_SHADER_STORAGE_BUFFER, gpu_textures.size() * sizeof(GPUTexture), gpu_textures.data(), GL_STATIC_DRAW);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, textureInfoSSBO);  // Using binding point 7
 
-	// Set texture parameters
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	// Upload texture data
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// Free the image data
-	stbi_image_free(image);
 	//
+
+	shader.attach();
+
 
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
 	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
@@ -196,9 +239,14 @@ int main(int argc, char **argv)
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 
 		//texture
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, textureID);
-		glUniform1i(glGetUniformLocation(shader.getProgramCompute(), "sphereTexture"), 0);
+		// In your render loop
+		for (size_t i = 0; i < textureIDs.size(); i++) {
+			glActiveTexture(GL_TEXTURE0 + i);
+			glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+			// Set uniform for each texture
+			std::string uniform_name = "textures[" + std::to_string(i) + "]";
+			glUniform1i(glGetUniformLocation(shader.getProgramCompute(), uniform_name.c_str()), i);
+		}
 		//
 
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/23 18:31:52 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/27 18:55:18 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -210,7 +210,7 @@ void		Scene::addMaterial(Material *material)
 
 void		Scene::addTexture(std::string path)
 {
-		
+	(void) path;
 }
 
 void		Scene::updateLightAndObjects(int mat_id)
