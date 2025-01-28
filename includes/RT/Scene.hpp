@@ -40,10 +40,9 @@ struct GPUTriangle
 	alignas(16) glm::vec3	vertex2;
 	alignas(16) glm::vec3	normal;
 
-	glm::vec2				texture_vertex1;
-	glm::vec2				texture_vertex2;
-	glm::vec2				texture_vertex3;
-
+	alignas(8) glm::vec2	texture_vertex1;
+	alignas(8) glm::vec2	texture_vertex2;
+	alignas(8) glm::vec2	texture_vertex3;
 
 	int						mat_index;
 };

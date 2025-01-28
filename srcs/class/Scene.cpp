@@ -116,10 +116,6 @@ void		Scene::addObject(Object *obj)
 		gpu_triangle.vertex2 = triangle->getVertex3();
 		gpu_triangle.normal = triangle->getNormal();
 
-		gpu_triangle.texture_vertex1 = triangle->getTextureVertex1();
-		gpu_triangle.texture_vertex2 = triangle->getTextureVertex1();
-		gpu_triangle.texture_vertex3 = triangle->getTextureVertex1();
-
 		_gpu_triangles.push_back(gpu_triangle);
 
 		gpu_obj.vertex1 = triangle->getVertex2();

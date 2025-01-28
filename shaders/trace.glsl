@@ -146,6 +146,8 @@ hitInfo traverseBVHs(Ray ray)
 
 		if (temp_hit.t < hit.t)
 		{
+			hit.u = temp_hit.u;
+			hit.v = temp_hit.v;
 			hit.t = temp_hit.t;
 			hit.last_t = temp_hit.last_t / bvh_data.scale;
 			hit.obj_index = temp_hit.obj_index;

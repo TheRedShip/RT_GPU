@@ -118,7 +118,6 @@ layout(std430, binding = 6) buffer LightsBuffer
 
 
 
-
 layout(std140, binding = 0) uniform CameraData
 {
     GPUCamera camera;

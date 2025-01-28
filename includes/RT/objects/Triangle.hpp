@@ -83,7 +83,6 @@ class Triangle : public Object
 		glm::vec2	_texture_vertex2;
 		glm::vec2	_texture_vertex3;
 
-
 		glm::vec3	_normal;
 
 		glm::vec3	_centroid;
