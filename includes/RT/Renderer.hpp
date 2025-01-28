@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/26 04:15:45 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/28 01:20:39 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,14 @@ class Renderer
 		void	imguiPathCreation(void);
 		void	imguiRenderInfo(void); 
 		std::string	floatToTime(float timef);
+		glm::vec2 sphereInterpolate(glm::vec2 from, glm::vec2 to, float time);
 
 		int							_min;
 		int							_sec;
 		int							_samples;
 		int							_testSamples;
 		int							_fps;
+		bool						_mine;
 		std::vector<t_pathPoint>	_path;
 		Scene						*_scene;
 		Window						*_win;

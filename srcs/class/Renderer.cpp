@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/27 16:31:11 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/28 02:19:41 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,35 +208,119 @@ void Renderer::update(Shader &shader)
 	_curSamples = 0;
 }
 
+glm::vec3 hermiteInterpolate(glm::vec3 points[4], double alpha)
+{
+	double tension;
+	double bias;
+	glm::vec3 tang[2];
+	double alphaSqr[2];
+	glm::vec3 coef[4];
+	
+	tension = 0;
+	bias = 0;
+
+	alphaSqr[0] = alpha * alpha;
+	alphaSqr[1] = alphaSqr[0] * alpha;
+
+	tang[0]  = (points[1] - points[0]) * glm::vec3(1 + bias) * glm::vec3(1 - tension) / glm::vec3(2);
+	tang[0] += (points[2] - points[1]) * glm::vec3(1 - bias) * glm::vec3(1 - tension) / glm::vec3(2);
+	tang[1]  = (points[2] - points[1]) * glm::vec3(1 + bias) * glm::vec3(1 - tension) / glm::vec3(2);
+	tang[1] += (points[3] - points[2]) * glm::vec3(1 - bias) * glm::vec3(1 - tension) / glm::vec3(2);
+
+	coef[0] = glm::vec3(2 * alphaSqr[1] - 3 * alphaSqr[0] + 1);
+	coef[1] = glm::vec3(alphaSqr[1] - 2 * alphaSqr[0] + alpha);
+	coef[2] = glm::vec3(alphaSqr[1] -   alphaSqr[0]);
+	coef[3] = glm::vec3(-2 * alphaSqr[1] + 3 * alphaSqr[0]);
+	
+	return(coef[0] * points[1] + coef[1] * tang[0] + coef[2] * tang[1] + coef[3] * points[2]);
+}
+
+glm::quat eulerToQuaternion(float pitch, float yaw) {
+	std::cout << "input : " << pitch << ", " << yaw << std::endl;
+    glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
+    glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
+    
+    glm::quat result = qYaw* qPitch;
+	std::cout << "output : " << glm::to_string(result) << std::endl;
+    return(result);
+}
+
+glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time)
+{
+	glm::vec3	eulerRes;
+	glm::quat	qFrom;
+	glm::quat	qTo;
+	glm::quat	res;
+	float		angle;
+	float		dot;
+
+	qFrom = glm::normalize(eulerToQuaternion(from.y, from.x));
+	qTo = glm::normalize(eulerToQuaternion(to.y, to.x));
+	
+	dot = glm::dot(qFrom, qTo);
+	if(dot < 0)
+		to = -to;
+	angle = 2 * glm::acos(dot);
+	res = (glm::sin((1 - time) * angle / glm::sin(angle)) * qFrom) + ((glm::sin(time * angle) / glm::sin(angle)) * qTo);
+	eulerRes = glm::degrees(glm::eulerAngles(res));
+	return(glm::vec2(eulerRes.y, eulerRes.x));
+}
+
+
 void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 {
 	t_pathPoint		from;
 	t_pathPoint		to;
+	t_pathPoint		prev;
+	t_pathPoint		next;
 	float			pathTime;
 	Camera			*cam;
-	glm::vec3		posStep;
-	glm::vec2		dirStep;	
+	glm::vec3		pos;
+	glm::vec2		dir;	
+	float			normalTime;
 
 	from = _path[_curPathIndex];
 	to = _path[_curPathIndex + 1];
+	if(_curPathIndex)
+		prev = _path[_curPathIndex - 1];
+	else
+		prev = from;
+	if((size_t)_curPathIndex + 3 == _path.size())
+		next = _path[_curPathIndex + 2];
+	else
+		next = to;
+		
+
 	cam = _scene->getCamera();
 	pathTime = (to.time - from.time) * 60;
-
-	posStep.x = ((to.pos.x - from.pos.x) / pathTime) * timeFromStart;
-	posStep.y = ((to.pos.y - from.pos.y) / pathTime) * timeFromStart;
-	posStep.z = ((to.pos.z - from.pos.z) / pathTime) * timeFromStart;
-	dirStep.x = ((to.dir.x - from.dir.x) / pathTime) * timeFromStart;
-	dirStep.y = ((to.dir.y - from.dir.y) / pathTime) * timeFromStart;
-
+	normalTime = 1 - ((pathTime - timeFromStart) / pathTime);
+	
+	pos = hermiteInterpolate((glm::vec3 [4]){prev.pos, from.pos, to.pos, next.pos}, normalTime);
+	dir = sphereInterpolate(from.dir, to.dir, normalTime);
+	if(std::isnan(dir.x) || std::isnan(dir.y))
+		dir = from.dir;
+//	dir.x = hermiteInterpolate((glm::vec3 [4]){
+//			glm::vec3(prev.dir.x, prev.dir.y, 0),
+//			glm::vec3(from.dir.x, from.dir.y, 0),
+//			glm::vec3(to.dir.x, to.dir.y, 0),
+//			glm::vec3(next.dir.x, next.dir.y, 0)
+//			}, normalTime).x;
+//	dir.y = hermiteInterpolate((glm::vec3 [4]){
+//			glm::vec3(prev.dir.x, prev.dir.y, 0),
+//			glm::vec3(from.dir.x, from.dir.y, 0),
+//			glm::vec3(to.dir.x, to.dir.y, 0),
+//			glm::vec3(next.dir.x, next.dir.y, 0)
+//			}, normalTime).y;
 	if(timeFromStart >= pathTime)
 	{
-		posStep = to.pos - from.pos;
-		dirStep = to.dir - from.dir;
+		pos = to.pos;
+		dir = to.dir;
 		_curSplitStart = curSplitTimeReset;
 		_curPathIndex++;
 	}
-	cam->setPosition(from.pos + posStep);
-	cam->setDirection(from.dir.x + dirStep.x, from.dir.y + dirStep.y);
+	std::cout << glm::to_string(dir) << std::endl;
+	cam->setPosition(pos);
+	cam->setDirection(dir.x, dir.y);
 	_win->setFrameCount(0);
 	if(_curPathIndex == _destPathIndex)
 	{
@@ -256,6 +340,7 @@ void Renderer::imguiPathCreation(void)
 	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
+	ImGui::Checkbox("mine", &_mine);
 	if(_path.size() && ImGui::Button("try full path"))
 	{
 		_scene->getCamera()->setPosition(_path[0].pos);	
