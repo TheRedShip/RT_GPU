@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:49 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/24 18:49:57 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/28 18:53:37 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ class ObjParser
 		long int					checkVertexIndex(int index, size_t size);
 		void						parseMtl(std::stringstream &line, Scene &scene);
 		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv);
-		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec2 vt1, glm::vec2 vt2, glm::vec2 vt3);
+		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> textureVertices);
 		std::string					getFilePath(std::string &file);
 		int							pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices, size_t cur);
 		std::vector<std::string>	objSplit(std::string str, std::string delim);

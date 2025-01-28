@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/27 18:55:18 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/28 19:17:39 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,10 @@ void		Scene::addObject(Object *obj)
 		gpu_triangle.vertex2 = triangle->getVertex3();
 		gpu_triangle.normal = triangle->getNormal();
 
+		gpu_triangle.texture_vertex1 = triangle->getTextureVertex1();
+		gpu_triangle.texture_vertex2 = triangle->getTextureVertex1();
+		gpu_triangle.texture_vertex3 = triangle->getTextureVertex1();
+
 		_gpu_triangles.push_back(gpu_triangle);
 
 		gpu_obj.vertex1 = triangle->getVertex2();
@@ -184,7 +188,6 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 		gpu_triangle.texture_vertex1 = triangles[i].getTextureVertex1();
 		gpu_triangle.texture_vertex2 = triangles[i].getTextureVertex2();
 		gpu_triangle.texture_vertex3 = triangles[i].getTextureVertex3();
-
 
 		_gpu_triangles.push_back(gpu_triangle);
 	}

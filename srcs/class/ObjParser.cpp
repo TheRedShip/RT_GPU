@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/28 18:30:33 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/28 19:18:37 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,7 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv
 		if(pointInTriangle(triangleVertices, vertices, i))
 			continue;
 		vertices.erase(vertices.begin() + i);
-		addTriangle(v1, v2, v3, glm::vec2(0.), glm::vec2(0.), glm::vec2(0.));
+		addTriangle(v1, v2, v3, std::vector<glm::vec2>(0));
 		return(1);
 	}
 	return(0);
@@ -153,7 +153,9 @@ void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vecto
 			std::runtime_error("OBJ : too many values in an element of a face");
 		if(sp.size() == 0)
 			std::runtime_error("OBJ : wtf ?");
-		textureVertices.push_back(_textureVertices[checkVertexIndex(std::stoi(sp[1]), _textureVertices.size())]);
+		
+		if (sp.size() > 1 && sp[1].length())
+			textureVertices.push_back(_textureVertices[checkVertexIndex(std::stoi(sp[1]), _textureVertices.size())]);
 		faceVertices.push_back(_vertices[checkVertexIndex(std::stoi(sp[0]), _vertices.size())]);
 	}
 }
@@ -176,11 +178,22 @@ void ObjParser::addFace(std::stringstream &line)
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], textureVertices[0], textureVertices[1], textureVertices[2]);
+	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], textureVertices);
 }
 
-void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec2 vt1, glm::vec2 vt2, glm::vec2 vt3)
+void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> texture_vertices)
 {
+	glm::vec2 vt1 = glm::vec2(0.);
+	glm::vec2 vt2 = glm::vec2(0.);
+	glm::vec2 vt3 = glm::vec2(0.);
+
+	if (texture_vertices.size() == 3)
+	{
+		vt1 = texture_vertices[0];
+		vt2 = texture_vertices[1];
+		vt3 = texture_vertices[2];
+	}
+
 	_triangles.push_back(Triangle(v1, v2, v3, vt1, vt2, vt3, _mat));
 }
 

@@ -105,12 +105,15 @@ uniform sampler2D textures[16];
 
 vec3 getTextureColor(int texture_index, hitInfo hit)
 {
-    vec2 uv = getSphereUV(hit.normal);
+    GPUTriangle tri = triangles[hit.obj_index];
+    vec2 uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
+    return vec3(uv, 0.);
     return (texture(textures[texture_index], uv).rgb);
 }
 
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
+    color *= mat.texture_index;
     if (mat.texture_index != -1)
         color *= getTextureColor(mat.texture_index, hit);
     

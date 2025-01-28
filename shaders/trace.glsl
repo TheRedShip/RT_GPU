@@ -80,6 +80,8 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 				hitInfo temp_hit;
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
+					hit.u = temp_hit.u;
+					hit.v = temp_hit.v;
 					hit.t = temp_hit.t;
 					hit.last_t = temp_hit.last_t;
 					hit.obj_index = bvh_data.triangle_start_index + node.index + i;
