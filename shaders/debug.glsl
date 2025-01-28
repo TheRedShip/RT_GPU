@@ -60,6 +60,10 @@ struct GPUTriangle
 	vec3	vertex2;
 	vec3	normal;
 
+	vec2	texture_vertex1;
+	vec2	texture_vertex2;
+	vec2	texture_vertex3;
+
 	int		mat_index;
 };
 layout(std430, binding = 2) buffer TriangleBuffer

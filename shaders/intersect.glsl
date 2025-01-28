@@ -89,8 +89,8 @@ bool intersectTriangle(Ray ray, GPUTriangle obj, out hitInfo hit)
 	
 	hit.t = t;
 	hit.position = ray.origin + ray.direction * t;
-	// hit.normal = vec3(u, v, 1 - (u + v)); //texture mapping
-	hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
+	hit.normal = vec3(u, v, 1 - (u + v)); //texture mapping
+	// hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
 	
 	return (valid);
 }
