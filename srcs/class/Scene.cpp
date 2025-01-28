@@ -228,7 +228,7 @@ void		Scene::loadTextures()
 		unsigned char* image = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 		
 		if (!image)
-			throw std::runtime_error("Failed to load texture");
+			throw std::runtime_error("Failed to load texture " + path);
 
 		std::cout << "Loaded texture: " << path << " (" << width << "x" << height << ")" << std::endl;
 

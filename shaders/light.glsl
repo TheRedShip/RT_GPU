@@ -105,9 +105,16 @@ uniform sampler2D textures[32];
 
 vec3 getTextureColor(int texture_index, hitInfo hit)
 {
-    GPUTriangle tri = triangles[hit.obj_index];
-    vec2 uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
-    
+    vec2 uv = vec2(0.0);
+
+    if (hit.obj_type == 0)
+        uv = getSphereUV(hit.normal);
+    else if (hit.obj_type == 3)
+    {
+        GPUTriangle tri = triangles[hit.obj_index];
+        uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
+    }
+
     return (texture(textures[texture_index], uv).rgb);
 }
 

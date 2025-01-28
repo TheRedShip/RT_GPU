@@ -45,6 +45,7 @@ hitInfo	traceScene(Ray ray)
 			hit.t = temp_hit.t;
 			hit.last_t = temp_hit.last_t;
 			hit.obj_index = i;
+			hit.obj_type = obj.type;
 			hit.mat_index = obj.mat_index;
 			hit.position = temp_hit.position;
 			hit.normal = temp_hit.normal;
@@ -152,6 +153,7 @@ hitInfo traverseBVHs(Ray ray)
 			hit.last_t = temp_hit.last_t / bvh_data.scale;
 			hit.obj_index = temp_hit.obj_index;
 			hit.mat_index = temp_hit.mat_index;
+			hit.obj_type = 3;
 			hit.position = inverseTransformMatrix * temp_hit.position + bvh_data.offset;
 			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
 		}

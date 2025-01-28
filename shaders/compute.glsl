@@ -150,8 +150,10 @@ struct hitInfo
 	float	last_t;
 	vec3	normal;
 	vec3	position;
+
 	int		obj_index;
 	int		mat_index;
+	int		obj_type;
 
 	float	u;
 	float	v;
