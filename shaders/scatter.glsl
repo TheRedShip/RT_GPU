@@ -80,10 +80,8 @@ Ray transparencyRay(hitInfo hit, Ray ray, GPUMaterial mat, inout uint rng_state)
 
 Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 {
-    GPUObject	obj;
 	GPUMaterial	mat;
 
-	obj = objects[hit.obj_index];
 	mat = materials[hit.mat_index];
 
     if (mat.type == 0)
