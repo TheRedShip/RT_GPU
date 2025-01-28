@@ -181,6 +181,11 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 		gpu_triangle.vertex2 = triangles[i].getVertex3();
 		gpu_triangle.normal = triangles[i].getNormal();
 
+		gpu_triangle.texture_vertex1 = triangles[i].getTextureVertex1();
+		gpu_triangle.texture_vertex2 = triangles[i].getTextureVertex2();
+		gpu_triangle.texture_vertex3 = triangles[i].getTextureVertex3();
+
+
 		_gpu_triangles.push_back(gpu_triangle);
 	}
 
@@ -285,6 +290,11 @@ std::vector<GPUMaterial>		&Scene::getMaterialData()
 std::vector<GLuint>				&Scene::getTextureIDs()
 {
 	return (_gpu_textures);
+}
+
+std::vector<std::string>		&Scene::getTextures()
+{
+	return (_textures);
 }
 
 GPUVolume						&Scene::getVolume()

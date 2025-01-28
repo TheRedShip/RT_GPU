@@ -87,14 +87,10 @@ struct GPUBvh
 	vec3	min;
 	vec3	max;
 
-	int		left_index;	
-	int		right_index;
-
-	int		is_leaf;
-	
-	int		first_primitive;
+	int		index;
 	int		primitive_count;
 };
+
 layout(std430, binding = 4) buffer BvhBuffer
 {
 	GPUBvh Bvh[];
@@ -165,26 +161,27 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
         int current_index = stack[stack_ptr--];
         GPUBvh node = Bvh[bvh_data.bvh_start_index + current_index];
 
-		if (node.is_leaf != 0)
+		if (node.primitive_count != 0)
 		{
 			for (int i = 0; i < node.primitive_count; i++)
 			{
-				GPUTriangle obj = triangles[bvh_data.triangle_start_index + node.first_primitive + i];
+				GPUTriangle obj = triangles[bvh_data.triangle_start_index + node.index + i];
+
+				stats.triangle_count += 1;
 				
 				hitInfo temp_hit;
 				if (intersectTriangle(ray, obj, temp_hit) && temp_hit.t < hit.t)
 				{
 					hit.t = temp_hit.t;
+					hit.obj_index = bvh_data.triangle_start_index + node.index + i;
 					hit.normal = temp_hit.normal;
-					hit.obj_index = bvh_data.triangle_start_index + node.first_primitive + i;
 				}
-				stats.triangle_count++;
 			}
 		}
 		else
 		{
-			GPUBvh left_node = Bvh[bvh_data.bvh_start_index + node.left_index];
-			GPUBvh right_node = Bvh[bvh_data.bvh_start_index + node.right_index];
+			GPUBvh left_node = Bvh[bvh_data.bvh_start_index + current_index + 1];
+			GPUBvh right_node = Bvh[bvh_data.bvh_start_index + node.index];
 
 			hitInfo left_hit;
 			hitInfo right_hit;
@@ -192,63 +189,25 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 			left_hit.t = 1e30;
 			right_hit.t = 1e30;
 
-			stats.box_count += 2;
-
 			bool left_bool = intersectRayBVH(ray, left_node, left_hit);
 			bool right_bool = intersectRayBVH(ray, right_node, right_hit);
+			
+			stats.box_count += 2;
 
 			if (left_hit.t > right_hit.t)
 			{
-				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
-				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = current_index + 1;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.index;
 			}
 			else
 			{
-				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.right_index;
-				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = node.left_index;
+				if (right_hit.t < hit.t && right_bool) stack[++stack_ptr] = node.index;
+				if (left_hit.t < hit.t && left_bool) stack[++stack_ptr] = current_index + 1;
 			}
 		}
     }
     
 	return (hit);
-}
-
-mat3 rotateX(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-        1.0, 0.0, 0.0,
-        0.0,   c,  -s,
-        0.0,   s,   c
-    );
-}
-
-mat3 rotateY(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-         c, 0.0,   s,
-        0.0, 1.0, 0.0,
-        -s, 0.0,   c
-    );
-}
-
-mat3 rotateZ(float angleRadians) {
-    float c = cos(angleRadians);
-    float s = sin(angleRadians);
-    return mat3(
-          c,  -s, 0.0,
-          s,   c, 0.0,
-        0.0, 0.0, 1.0
-    );
-}
-
-mat3 createTransformMatrix(vec3 rotationAngles, float scale) {
-    mat3 rotMatrix = rotateZ(rotationAngles.z) * 
-                    rotateY(rotationAngles.y) * 
-                    rotateX(rotationAngles.x);
-    
-    return rotMatrix * scale;
 }
 
 hitInfo traverseBVHs(Ray ray, inout Stats stats)
@@ -273,7 +232,7 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i], stats);
 
 		temp_hit.t = temp_hit.t / bvh_data.scale;
-		
+
 		if (temp_hit.t < hit.t)
 		{
 			hit.t = temp_hit.t;

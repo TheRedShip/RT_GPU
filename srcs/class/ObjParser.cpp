@@ -55,6 +55,7 @@ glm::vec2	ObjParser::getUV(std::stringstream &line)
 
 	if(!(line >> res.x) || (!(line >> res.y) && !line.eof()))
 		throw std::runtime_error("syntax error in obj file while parsing texture vertex");
+	// res = res - glm::floor(res);
 	return(res);
 }
 
@@ -121,7 +122,7 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv
 		if(pointInTriangle(triangleVertices, vertices, i))
 			continue;
 		vertices.erase(vertices.begin() + i);
-		addTriangle(v1, v2 ,v3);
+		addTriangle(v1, v2, v3, glm::vec2(0.), glm::vec2(0.), glm::vec2(0.));
 		return(1);
 	}
 	return(0);
@@ -140,7 +141,7 @@ std::vector<std::string> ObjParser::objSplit(std::string str, std::string delim)
 	return(res);
 }
 
-void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::stringstream &line)
+void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::stringstream &line)
 {
 	std::string el;
 	std::vector<std::string> sp;
@@ -152,6 +153,7 @@ void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::strin
 			std::runtime_error("OBJ : too many values in an element of a face");
 		if(sp.size() == 0)
 			std::runtime_error("OBJ : wtf ?");
+		textureVertices.push_back(_textureVertices[checkVertexIndex(std::stoi(sp[1]), _textureVertices.size())]);
 		faceVertices.push_back(_vertices[checkVertexIndex(std::stoi(sp[0]), _vertices.size())]);
 	}
 }
@@ -159,8 +161,9 @@ void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::strin
 void ObjParser::addFace(std::stringstream &line)
 {
 	std::vector<glm::vec3> faceVertices;
-
-	getFaceVertices(faceVertices, line);
+	std::vector<glm::vec2> textureVertices;
+	
+	getFaceVertices(faceVertices, textureVertices, line);
 	if(!line.eof())
 		throw std::runtime_error("OBJ : an error occured while paring face");
 	if(faceVertices.size() < 3)
@@ -173,12 +176,12 @@ void ObjParser::addFace(std::stringstream &line)
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2]);
+	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], textureVertices[0], textureVertices[1], textureVertices[2]);
 }
 
-void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3)
+void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec2 vt1, glm::vec2 vt2, glm::vec2 vt3)
 {
-	_triangles.push_back(Triangle(v1, v2, v3, _mat));
+	_triangles.push_back(Triangle(v1, v2, v3, vt1, vt2, vt3, _mat));
 }
 
 void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
@@ -214,6 +217,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 				throw std::runtime_error("OBJ: syntax error in material file, missing material name");
 			mat = new Material;
 			memset(mat, 0, sizeof(Material));
+			mat->texture_index = -1;
 			mat->refraction = 1.0f;
 			mat->roughness = 1.0f;
 			continue;
@@ -248,7 +252,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			float prob;
 
 			if(!(lineStream >> prob)) 
-				throw std::runtime_error("OBJ : syntax error wile getting material transparency");
+				throw std::runtime_error("OBJ : syntax error while getting material transparency");
 			if(prob == 0)
 				continue;
 			mat->metallic = 1 - prob;
@@ -259,18 +263,27 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			float prob;
 
 			if(!(lineStream >> prob)) 
-				throw std::runtime_error("OBJ : syntax error wile getting material transparency");
+				throw std::runtime_error("OBJ : syntax error while getting material transparency");
 			if(prob == 1)
 				continue;
 			mat->metallic = prob;
 			mat->type = 2;
+		}
+		else if (identifier == "map_Kd")
+		{
+			std::string path;
+
+			if (!(lineStream >> path))
+				throw std::runtime_error("OBJ: syntax error while getting material texture");
+
+			mat->texture_index = scene.getTextures().size();
+			scene.addTexture("scenes/obj/" + path);
 		}
 		else
 			std::cerr << "unsupported material setting : " << identifier << std::endl;
 	}
 	if(mat)
 	{
-		mat->texture_index = -1;
 		scene.addMaterial(mat);
 		_matNames[matName] = scene.getMaterialData().size() - 1;
 	}

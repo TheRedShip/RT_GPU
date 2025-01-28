@@ -62,7 +62,6 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		mat->type = 0;
 
 	mat->texture_index = texture_index;
-	std::cout << "Texture index: " << texture_index << std::endl;
 	_scene->addMaterial(mat);
 }
 

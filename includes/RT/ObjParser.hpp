@@ -30,11 +30,11 @@ class ObjParser
 		long int					checkVertexIndex(int index, size_t size);
 		void						parseMtl(std::stringstream &line, Scene &scene);
 		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv);
-		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3);
+		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, glm::vec2 vt1, glm::vec2 vt2, glm::vec2 vt3);
 		std::string					getFilePath(std::string &file);
 		int							pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices, size_t cur);
 		std::vector<std::string>	objSplit(std::string str, std::string delim);
-		void						getFaceVertices(std::vector<glm::vec3> &faceVertices, std::stringstream &line);
+		void						getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::stringstream &line);
 
 		std::string					_filename;
 		std::ifstream				_file;

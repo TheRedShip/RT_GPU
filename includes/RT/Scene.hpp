@@ -40,6 +40,11 @@ struct GPUTriangle
 	alignas(16) glm::vec3	vertex2;
 	alignas(16) glm::vec3	normal;
 
+	glm::vec2				texture_vertex1;
+	glm::vec2				texture_vertex2;
+	glm::vec2				texture_vertex3;
+
+
 	int						mat_index;
 };
 
@@ -121,6 +126,7 @@ class Scene
 		
 		std::vector<GPUMaterial>		&getMaterialData();
 		std::vector<GLuint>				&getTextureIDs();
+		std::vector<std::string>		&getTextures();
 		
 		std::vector<GPUBvhData>			&getBvhData();
 		std::vector<GPUBvh>				&getBvh();
