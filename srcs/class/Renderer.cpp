@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/28 02:19:41 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/29 02:43:55 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,17 +24,74 @@ Renderer::Renderer(Scene *scene, Window *win)
 	_curSamples = 0;
 	_destPathIndex = 0;
 	_frameCount = 0;
+	_outputFilename = "output.mp4";
+	memcpy(_filenameBuffer, _outputFilename.c_str(), _outputFilename.length());
+	_filenameBuffer[_outputFilename.length()] = 0;
 
 	_rgb_frame = 0;
 	_yuv_frame = 0;
 	_format = 0;
 	_codec_context = 0;
+	updateAvailableCodecs();
 }
 
-void	Renderer::initRender(std::string filename)
+void	Renderer::fillGoodCodecList(std::vector<AVCodecID> &lst)
+{
+	lst.push_back(AV_CODEC_ID_H264);
+	lst.push_back(AV_CODEC_ID_MPEG4);
+	lst.push_back(AV_CODEC_ID_H263);
+	lst.push_back(AV_CODEC_ID_MPEG2VIDEO);
+}
+
+void	Renderer::updateAvailableCodecs(void)
 {
 	const AVCodec *codec;
-	
+	AVCodecContext *ctx;
+	const AVOutputFormat *muxer;
+	const char *format;
+	std::vector<AVCodecID>	goodCodecList;
+
+	fillGoodCodecList(goodCodecList);
+	_codecList.clear();
+	_codecListStr.clear();
+	_codecIndex = 0;
+	av_log_set_level(AV_LOG_QUIET);
+	format = _outputFilename.c_str();
+	if(_outputFilename.find(".") != std::string::npos)
+		format += _outputFilename.find(".") + 1;
+
+	muxer = av_guess_format(format, 0, 0);
+	for(std::vector<AVCodecID>::iterator it = goodCodecList.begin(); it != goodCodecList.end(); it++)
+	{
+		codec = avcodec_find_encoder(*it);
+		if(!codec)
+			continue;
+		ctx = avcodec_alloc_context3(codec);
+		if(ctx)
+		{
+			if (avformat_query_codec(muxer, codec->id, FF_COMPLIANCE_STRICT) > 0)
+			{
+				ctx->width = WIDTH;
+				ctx->height = HEIGHT;
+				ctx->time_base = {1, _fps};
+				ctx->framerate = {_fps, 1};
+				ctx->pix_fmt = AV_PIX_FMT_YUV420P;
+				ctx->gop_size = 10;
+				ctx->max_b_frames = 1;
+				if (avcodec_open2(ctx, codec, NULL) == 0)
+					_codecList.push_back(codec);
+	        }
+			avcodec_free_context(&ctx);
+		}
+	}
+	for(auto it = _codecList.begin(); it != _codecList.end(); it++)
+	{
+		_codecListStr.push_back((*it)->name);
+	}
+}
+
+void	Renderer::initRender(void)
+{
 	_destPathIndex = _path.size() - 1;
 	_curPathIndex = 0;
 	_frameCount = 0;
@@ -45,12 +102,9 @@ void	Renderer::initRender(std::string filename)
 	_scene->getCamera()->setPosition(_path[0].pos);
 	_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
 	_win->setFrameCount(-1);
-	avformat_alloc_output_context2(&_format, nullptr, nullptr, filename.c_str());
-	codec = avcodec_find_encoder(AV_CODEC_ID_H264);
-	if (!codec)
-		throw std::runtime_error("unable to find H264 audio/video codec, glhf");
+	avformat_alloc_output_context2(&_format, nullptr, nullptr, _outputFilename.c_str());
 	
-	_codec_context = avcodec_alloc_context3(codec);
+	_codec_context = avcodec_alloc_context3(_codecList[_codecIndex]);
 	_codec_context->width = WIDTH;
 	_codec_context->height = HEIGHT;
 	_codec_context->time_base = {1, _fps};
@@ -62,10 +116,10 @@ void	Renderer::initRender(std::string filename)
 	if (_format->oformat->flags & AVFMT_GLOBALHEADER)
 		_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
-	if (avcodec_open2(_codec_context, codec, nullptr) < 0)
+	if (avcodec_open2(_codec_context, _codecList[_codecIndex], nullptr) < 0)
 		throw std::runtime_error("Failed to open codec");
 	
-	_stream = avformat_new_stream(_format, codec);
+	_stream = avformat_new_stream(_format, _codecList[_codecIndex]);
 	if (!_stream) 
 		throw std::runtime_error("Failed to create stream");
 	_stream->time_base = _codec_context->time_base;
@@ -73,8 +127,8 @@ void	Renderer::initRender(std::string filename)
 
 	if (!(_format->flags & AVFMT_NOFILE))
 	{
-		if (avio_open(&_format->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
-			throw std::runtime_error("couldn't open " + filename);
+		if (avio_open(&_format->pb, _outputFilename.c_str(), AVIO_FLAG_WRITE) < 0)
+			throw std::runtime_error("couldn't open " + _outputFilename);
 	}
 	(void)avformat_write_header(_format, nullptr);
 
@@ -236,12 +290,10 @@ glm::vec3 hermiteInterpolate(glm::vec3 points[4], double alpha)
 }
 
 glm::quat eulerToQuaternion(float pitch, float yaw) {
-	std::cout << "input : " << pitch << ", " << yaw << std::endl;
     glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
     glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
     
     glm::quat result = qYaw* qPitch;
-	std::cout << "output : " << glm::to_string(result) << std::endl;
     return(result);
 }
 
@@ -340,8 +392,14 @@ void Renderer::imguiPathCreation(void)
 	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
-	ImGui::Checkbox("mine", &_mine);
-	if(_path.size() && ImGui::Button("try full path"))
+	
+	ImGui::Combo("codec", &_codecIndex, _codecListStr.data(), _codecListStr.size());
+	if(ImGui::InputText("file name", _filenameBuffer, 512))
+	{
+		_outputFilename = _filenameBuffer;
+		updateAvailableCodecs();
+	}
+	if(_path.size() > 1 && ImGui::Button("try full path"))
 	{
 		_scene->getCamera()->setPosition(_path[0].pos);	
 		_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);	
@@ -351,16 +409,16 @@ void Renderer::imguiPathCreation(void)
 		_destPathIndex = _path.size() - 1;
 		_testMode = 1;
 	}
-	if(_path.size() && ImGui::Button("start render"))
-	{
-		initRender("output.mp4");
-	}
+	if(_path.size() > 1 && _codecList.size() && ImGui::Button("start render"))
+		initRender();
+
 	ImGui::Separator();
 
 	ImGui::SliderInt("minutes", &_min, 0, 2);
 	ImGui::SliderInt("seconds", &_sec, 0, 60);
 	if(ImGui::Button("add step"))
 		addPoint();
+
 	ImGui::Separator();
 
 	for(unsigned long i = 0; i < _path.size(); i++)

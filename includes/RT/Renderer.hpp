@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/28 01:20:39 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/29 02:34:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,38 +44,44 @@ class Renderer
 	private:
 		void	addPoint(void);
 		void	makeMovement(float timeFromStart, float curSplitTimeReset);
-		void	initRender(std::string filename);
+		void	initRender();
 		void	addImageToRender(Shader &shader);
 		void	endRender(void);
 		void	imguiPathCreation(void);
 		void	imguiRenderInfo(void); 
 		std::string	floatToTime(float timef);
 		glm::vec2 sphereInterpolate(glm::vec2 from, glm::vec2 to, float time);
+		void	updateAvailableCodecs(void);
+		void	fillGoodCodecList(std::vector<AVCodecID> &lst);
 
-		int							_min;
-		int							_sec;
-		int							_samples;
-		int							_testSamples;
-		int							_fps;
-		bool						_mine;
-		std::vector<t_pathPoint>	_path;
-		Scene						*_scene;
-		Window						*_win;
+		int								_min;
+		int								_sec;
+		int								_samples;
+		int								_testSamples;
+		int								_fps;
+		char							_filenameBuffer[512];
+		std::vector<t_pathPoint>		_path;
+		std::string						_outputFilename;
+		Scene							*_scene;
+		Window							*_win;
+		std::vector<const AVCodec *>	_codecList;
+		std::vector<const char *>		_codecListStr;
+		int								_codecIndex;
 
-		int							_curPathIndex;
-		int							_destPathIndex;
-		double						_curSplitStart;
-		int							_curSamples;
-		int							_testMode;
-		long int					_frameCount;
-		float						_renderStartTime;
+		int								_curPathIndex;
+		int								_destPathIndex;
+		double							_curSplitStart;
+		int								_curSamples;
+		int								_testMode;
+		long int						_frameCount;
+		float							_renderStartTime;
 
-		AVFormatContext				*_format;
-		AVCodecContext				*_codec_context;
-		AVFrame						*_rgb_frame;
-		AVFrame						*_yuv_frame;
-		SwsContext					*_sws_context;
-		AVStream					*_stream;
+		AVFormatContext					*_format;
+		AVCodecContext					*_codec_context;
+		AVFrame							*_rgb_frame;
+		AVFrame							*_yuv_frame;
+		SwsContext						*_sws_context;
+		AVStream						*_stream;
 
 };
 

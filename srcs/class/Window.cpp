@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/25 03:09:56 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/28 15:15:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void Window::process_input()
 	bool up = glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	bool down = glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
+	if(_renderer->rendering())
+		return ;
 	if (forward || backward || left || right || up || down)
 		_frameCount = 0;
 
