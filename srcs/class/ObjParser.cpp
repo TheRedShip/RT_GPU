@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/28 19:18:37 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/29 18:26:31 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ glm::vec2	ObjParser::getUV(std::stringstream &line)
 
 	if(!(line >> res.x) || (!(line >> res.y) && !line.eof()))
 		throw std::runtime_error("syntax error in obj file while parsing texture vertex");
-	// res = res - glm::floor(res);
 	return(res);
 }
 

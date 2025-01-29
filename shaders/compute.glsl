@@ -238,6 +238,11 @@ void main()
 	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
+	
+	// vec2 uv = ((vec2(pixel_coords)) / u_resolution);
+	// uv.x *= u_resolution.x / u_resolution.y;
+	// imageStore(output_image, pixel_coords, vec4(vec3(uv, 0.), 1.));
+	// return ;
 
 	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
 		return;

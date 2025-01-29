@@ -113,8 +113,8 @@ vec3 getTextureColor(int texture_index, hitInfo hit)
     {
         GPUTriangle tri = triangles[hit.obj_index];
         uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
+        uv = vec2(uv.x, 1-uv.y);
     }
-
     return (texture(textures[texture_index], uv).rgb);
 }
 
