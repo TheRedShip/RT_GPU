@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/29 02:34:11 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/29 23:58:48 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,6 +53,7 @@ class Renderer
 		glm::vec2 sphereInterpolate(glm::vec2 from, glm::vec2 to, float time);
 		void	updateAvailableCodecs(void);
 		void	fillGoodCodecList(std::vector<AVCodecID> &lst);
+		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
 
 		int								_min;
 		int								_sec;

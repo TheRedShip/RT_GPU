@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/29 02:43:55 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/29 23:57:21 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -262,7 +262,7 @@ void Renderer::update(Shader &shader)
 	_curSamples = 0;
 }
 
-glm::vec3 hermiteInterpolate(glm::vec3 points[4], double alpha)
+glm::vec3 Renderer::hermiteInterpolate(glm::vec3 points[4], double alpha)
 {
 	double tension;
 	double bias;
@@ -289,7 +289,8 @@ glm::vec3 hermiteInterpolate(glm::vec3 points[4], double alpha)
 	return(coef[0] * points[1] + coef[1] * tang[0] + coef[2] * tang[1] + coef[3] * points[2]);
 }
 
-glm::quat eulerToQuaternion(float pitch, float yaw) {
+glm::quat eulerToQuaternion(float pitch, float yaw)
+{
     glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
     glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
     
@@ -297,25 +298,63 @@ glm::quat eulerToQuaternion(float pitch, float yaw) {
     return(result);
 }
 
+//glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time) // gud but bad
+//{
+//	glm::vec3	eulerRes;
+//	glm::quat	qFrom;
+//	glm::quat	qTo;
+//	glm::quat	res;
+//	float		angle;
+//	float		dot;
+//
+//	qFrom = glm::normalize(eulerToQuaternion(from.y, from.x));
+//	qTo = glm::normalize(eulerToQuaternion(to.y, to.x));
+//	
+//	dot = glm::dot(qFrom, qTo);
+//	if(dot < 0)
+//		to = -to;
+//	angle = 2 * glm::acos(dot);
+//	res = (glm::sin((1 - time) * angle / glm::sin(angle)) * qFrom) + ((glm::sin(time * angle) / glm::sin(angle)) * qTo);
+//	eulerRes = glm::degrees(glm::eulerAngles(res));
+//	return(glm::vec2(eulerRes.y, eulerRes.x));
+//}
+
+
 glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time)
 {
-	glm::vec3	eulerRes;
-	glm::quat	qFrom;
-	glm::quat	qTo;
-	glm::quat	res;
-	float		angle;
-	float		dot;
+	glm::vec2 delta;
+	glm::vec2 p1, p2;
+	float t;
 
-	qFrom = glm::normalize(eulerToQuaternion(from.y, from.x));
-	qTo = glm::normalize(eulerToQuaternion(to.y, to.x));
-	
-	dot = glm::dot(qFrom, qTo);
-	if(dot < 0)
-		to = -to;
-	angle = 2 * glm::acos(dot);
-	res = (glm::sin((1 - time) * angle / glm::sin(angle)) * qFrom) + ((glm::sin(time * angle) / glm::sin(angle)) * qTo);
-	eulerRes = glm::degrees(glm::eulerAngles(res));
-	return(glm::vec2(eulerRes.y, eulerRes.x));
+	p1 = glm::vec2(0.20, 0);
+	p2 = glm::vec2(0.80, 1);
+	t = time;
+    for(int i = 0; i < 5; i++) {
+        float currentX = 3.0f * ((1 - t) * (1 - t)) * t * p1.x + 3.0f * (1 - t) * (t * t) * p2.x + (t * t * t);
+        
+        if(abs(currentX - time) < 0.00001f) {
+            break;
+        }
+        
+        glm::vec2 derivative = glm::vec2(
+	        3.0f * (1 - t) * (1 - t) * p1.x +
+	        6.0f * (1.0f - t) * t * (p2.x - p1.x) +
+	        3.0f * t * t * (1.0f - p2.x),
+	        
+	        3.0f * (1 - t) * (1 - t) * p1.y +
+	        6.0f * (1.0f - t) * t * (p2.y - p1.y) +
+	        3.0f * t * t * (1.0f - p2.y)
+	    );
+        
+        if(abs(derivative.x) > 0.00001f){
+            t = t - (currentX - time) / derivative.x;
+            t = glm::clamp(t, 0.0f, 1.0f);
+        }
+    }
+	t = 3.0f * ((1 - t) * (1 - t)) * t * p1.y + 3.0f * (1 - t) * (t * t) * p2.y + (t * t * t);
+
+	delta = to - from;
+	return(from + glm::vec2(delta.x * t, delta.y * t));
 }
 
 
@@ -351,18 +390,6 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	dir = sphereInterpolate(from.dir, to.dir, normalTime);
 	if(std::isnan(dir.x) || std::isnan(dir.y))
 		dir = from.dir;
-//	dir.x = hermiteInterpolate((glm::vec3 [4]){
-//			glm::vec3(prev.dir.x, prev.dir.y, 0),
-//			glm::vec3(from.dir.x, from.dir.y, 0),
-//			glm::vec3(to.dir.x, to.dir.y, 0),
-//			glm::vec3(next.dir.x, next.dir.y, 0)
-//			}, normalTime).x;
-//	dir.y = hermiteInterpolate((glm::vec3 [4]){
-//			glm::vec3(prev.dir.x, prev.dir.y, 0),
-//			glm::vec3(from.dir.x, from.dir.y, 0),
-//			glm::vec3(to.dir.x, to.dir.y, 0),
-//			glm::vec3(next.dir.x, next.dir.y, 0)
-//			}, normalTime).y;
 	if(timeFromStart >= pathTime)
 	{
 		pos = to.pos;
@@ -370,7 +397,6 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 		_curSplitStart = curSplitTimeReset;
 		_curPathIndex++;
 	}
-	std::cout << glm::to_string(dir) << std::endl;
 	cam->setPosition(pos);
 	cam->setDirection(dir.x, dir.y);
 	_win->setFrameCount(0);
@@ -462,8 +488,6 @@ void Renderer::imguiPathCreation(void)
 		if(i > 1 && ImGui::Button(("match prev speed##" + std::to_string(i)).c_str()))
 		{
 			float speed = glm::distance(_path[i - 2].pos, _path[i - 1].pos) / (_path[i - 1].time - _path[i - 2].time);
-			std::cout << "speed : " << speed << std::endl;
-			std::cout << "dist : " << glm::distance(_path[i - 1].pos, _path[i].pos) << std::endl;
 			_path[i].time = _path[i - 1].time + (glm::distance(_path[i - 1].pos, _path[i].pos) / speed);
 		}
 		ImGui::Separator();
