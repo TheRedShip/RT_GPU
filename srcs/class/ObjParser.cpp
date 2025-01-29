@@ -98,19 +98,30 @@ int ObjParser::pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices
 	return(0);
 }
 
-bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv)
+bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, int inv)
 {
-	glm::vec3 v1, v2 ,v3;
+	glm::vec3 v1, v2, v3;
+	glm::vec2 vt1, vt2, vt3;
+
 	float dot;
 
 	for (size_t i = 0; i < vertices.size(); i++)
 	{
 		if(!i)
+		{
 			v1 = vertices.back();
+			vt1 = textureVertices.back();
+		}
 		else
+		{
 			v1 = vertices[i - 1];
+			vt1 = textureVertices[i - 1];
+		}
 		v2 = vertices[i];
 		v3 = vertices[(i + 1) % vertices.size()];
+
+		vt2 = textureVertices[i];
+		vt3 = textureVertices[(i + 1) % textureVertices.size()];
 
 		if (inv)
 			dot = glm::cross(v2 - v1, v2 - v3).z;
@@ -122,7 +133,15 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv
 		if(pointInTriangle(triangleVertices, vertices, i))
 			continue;
 		vertices.erase(vertices.begin() + i);
-		addTriangle(v1, v2, v3, std::vector<glm::vec2>(0));
+		textureVertices.erase(textureVertices.begin() + i);
+
+
+		std::vector<glm::vec2> texture;
+		texture.push_back(vt1);
+		texture.push_back(vt2);
+		texture.push_back(vt3);
+
+		addTriangle(v1, v2, v3, texture);
 		return(1);
 	}
 	return(0);
@@ -172,8 +191,8 @@ void ObjParser::addFace(std::stringstream &line)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
 	while(faceVertices.size() > 3)
-		if (!addTriangleFromPolygon(faceVertices, 0))
-			if(!addTriangleFromPolygon(faceVertices, 1))
+		if (!addTriangleFromPolygon(faceVertices, textureVertices, 0))
+			if(!addTriangleFromPolygon(faceVertices, textureVertices, 1))
 				return ;
 
 	if(!line.eof())

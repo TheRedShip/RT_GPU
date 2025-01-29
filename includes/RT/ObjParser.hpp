@@ -29,7 +29,7 @@ class ObjParser
 		void 						addFace(std::stringstream &line);
 		long int					checkVertexIndex(int index, size_t size);
 		void						parseMtl(std::stringstream &line, Scene &scene);
-		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, int inv);
+		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, int inv);
 		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> textureVertices);
 		std::string					getFilePath(std::string &file);
 		int							pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices, size_t cur);
