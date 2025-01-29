@@ -1,9 +1,0 @@
-v 0 0 0
-v 0 50 0
-v 50 50 0
-v 50 0 0
-
-mtllib obj/test.mtl
-
-usemtl patate
-f 1 2 3 4

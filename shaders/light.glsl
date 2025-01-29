@@ -2,7 +2,7 @@ hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    // return vec3(0.);
+    return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -41,7 +41,7 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
         return vec3(0.0);
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
-    return mat.emission * mat.color / (light_dist * light_dist) * cos_theta / (4.0 * M_PI * (obj.radius / 2.0) * (obj.radius / 2.0));
+    return mat.emission * mat.color / (light_dist); // * cos_theta / (4.0 * M_PI * (obj.radius / 2.0) * (obj.radius / 2.0));
 }
 
 vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial mat, inout uint rng_state)
@@ -65,7 +65,7 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
 
     vec3 normal = normalize(crossQuad);
     float cos_theta = max(0.0, dot(normal, -light_dir));
-    return mat.emission * mat.color / (light_dist * light_dist) * cos_theta / pdf;
+    return mat.emission * mat.color / (light_dist); // * cos_theta / pdf;
 }
 
 vec3 sampleLights(vec3 position, inout uint rng_state)
@@ -112,8 +112,9 @@ vec3 getTextureColor(int texture_index, hitInfo hit)
     else if (hit.obj_type == 3)
     {
         GPUTriangle tri = triangles[hit.obj_index];
+
         uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
-        uv = vec2(uv.x, 1-uv.y);
+        uv = vec2(uv.x, 1 - uv.y);
     }
     return (texture(textures[texture_index], uv).rgb);
 }
