@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/18 19:24:04 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/28 15:15:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,10 @@
 Window::Window(Scene *scene, int width, int height, const char *title, int sleep)
 {
 	_scene = scene;
+	_fps = 0;
 	_frameCount = 0;
 	_pixelisation = 0;
+	_renderer = new Renderer(scene, this);
 	
 	if (!glfwInit())
 	{
@@ -69,6 +71,8 @@ void Window::process_input()
 	bool up = glfwGetKey(_window, GLFW_KEY_SPACE) == GLFW_PRESS;
 	bool down = glfwGetKey(_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS;
 
+	if(_renderer->rendering())
+		return ;
 	if (forward || backward || left || right || up || down)
 		_frameCount = 0;
 
@@ -158,6 +162,11 @@ void Window::pollEvents()
 bool Window::shouldClose()
 {
     return glfwWindowShouldClose(_window);
+}
+
+void		Window::rendererUpdate(Shader &shader)
+{
+	_renderer->update(shader);
 }
 
 void Window::imGuiNewFrame()
@@ -258,8 +267,11 @@ void Window::imGuiRender()
 
 	ImGui::End();
 
+	_renderer->renderImgui();;
+
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 
 	if (has_changed)
 		_frameCount = (accumulate == 0) - 1;
@@ -278,6 +290,11 @@ float		Window::getFps(void) const
 int			Window::getFrameCount(void) const
 {
 	return (_frameCount);
+}
+
+void		Window::setFrameCount(int nb)
+{
+	_frameCount = nb;
 }
 
 bool		&Window::getAccumulate(void)
