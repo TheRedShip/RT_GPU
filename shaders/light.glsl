@@ -2,7 +2,7 @@ hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    return vec3(0.);
+    // return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -121,7 +121,7 @@ vec3 getTextureColor(int texture_index, hitInfo hit)
 
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
-    color *= mat.texture_index == -1 ? vec3(1.0) : getTextureColor(mat.texture_index, hit);
+    // color *= mat.texture_index == -1 ? vec3(1.0) : getTextureColor(mat.texture_index, hit);
     color *= mat.color;
     light += mat.emission * mat.color;
     // light += sampleLights(hit.position, rng_state);

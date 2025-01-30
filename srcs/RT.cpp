@@ -21,8 +21,8 @@ int main(int argc, char **argv)
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
-	
 	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
@@ -179,18 +179,7 @@ int main(int argc, char **argv)
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 
-		//texture
-		// In your render loop
-		std::vector<GLuint> textureIDs = scene.getTextureIDs();
-		for (size_t i = 0; i < textureIDs.size(); i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
-
-			std::string uniform_name = "textures[" + std::to_string(i) + "]";
-			glUniform1i(glGetUniformLocation(shader.getProgramCompute(), uniform_name.c_str()), i);
-		}
-		//
+		shader.set_textures(scene.getTextureIDs());
 
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

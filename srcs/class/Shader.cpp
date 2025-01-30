@@ -204,6 +204,18 @@ void	Shader::set_mat4(const std::string &name, const glm::mat4 &value) const
 	glUniformMatrix4fv(glGetUniformLocation(_program_compute, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
+void	Shader::set_textures(const std::vector<GLuint> textureIDs)
+{
+	for (size_t i = 0; i < textureIDs.size(); i++)
+	{
+		glActiveTexture(GL_TEXTURE0 + i);
+		glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+
+		std::string uniform_name = "textures[" + std::to_string(i) + "]";
+		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), i);
+	}
+}
+
 GLuint	Shader::getProgram(void) const
 {
 	return (_program);

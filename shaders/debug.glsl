@@ -121,6 +121,9 @@ struct hitInfo
 	vec3	position;
 	int		obj_index;
 	int		mat_index;
+
+	float	u;
+	float	v;
 };
 
 struct Stats

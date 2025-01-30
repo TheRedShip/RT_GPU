@@ -1,0 +1,7 @@
+CAM	15.6252 30.089 20.0977	-46.6002 -103.601 	0 1 90	5
+
+MAT 50 50 50    0.  0. 0.   // 0 gray
+pl	0 0 0		0 1 0		0 // floor
+
+# OBJ obj/jinx.obj 0 1.5 0
+OBJ obj/sponza.obj 0 5 0     0.01
