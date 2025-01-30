@@ -112,15 +112,10 @@ int main(int argc, char **argv)
 
 	shader.attach();
 
-	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
-	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
-	shader.setupVertexBuffer(vertices, size);
-
-	std::vector<int>	recorded_fps;
+	shader.setupVertexBuffer();
 
 	while (!window.shouldClose())
 	{
-
 		glUseProgram(shader.getProgramCompute());
 		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
@@ -131,37 +126,7 @@ int main(int argc, char **argv)
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
 		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
 
-		Camera *camera = scene.getCamera();
-
-		// performance profiling
-		if (false)
-		{
-			float time = (float)(glfwGetTime()) ;
-
-			recorded_fps.push_back((int)window.getFps());
-
-			float y_offset = 35;
-			float dist_to_obj = 55;
-			float speed = 0.5;
-
-			camera->setPosition(glm::vec3(
-								cos((time + 6.28) * speed) * dist_to_obj,
-								y_offset,
-								sin((time + 6.28) * speed) * dist_to_obj
-								));
-
-			glm::vec3 direction = glm::normalize(camera->getPosition());
-			float yaw = glm::degrees(atan2(direction.z, direction.x));
-			
-			if ((int)yaw == 179)
-				break;
-
-			camera->setDirection(0, yaw - 180);
-			camera->updateCameraVectors();
-		}
-		//
-
-		GPUCamera camera_data = camera->getGPUData();
+		GPUCamera camera_data = scene.getCamera()->getGPUData();
 		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
 
@@ -200,13 +165,6 @@ int main(int argc, char **argv)
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui_ImplGlfw_Shutdown();
 	ImGui::DestroyContext();
-	
-	// performance profiling
-	std::ofstream file("fps.txt");
-	for (int i = 0; i < (int) recorded_fps.size(); i++)
-		file << recorded_fps[i] << std::endl;
-	file.close();
-	//
 
 	return (0);
 }

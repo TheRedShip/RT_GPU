@@ -168,21 +168,24 @@ hitInfo traceRay(Ray ray)
 	hitInfo hitScene;
 	hitInfo hit;
 
+	#if 0
 	for (int i = 0; i < 10; i++) // portal ray
 	{
 		hitBVH = traverseBVHs(ray);
 		hitScene = traceScene(ray);
 		
 		hit = hitBVH.t < hitScene.t ? hitBVH : hitScene;
-		#if 1
-			if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
-				break ;
-			ray = portalRay(ray, hit);
-			ray.inv_direction = (1.0 / ray.direction);
-		#else
-			return (hit);
-		#endif
+		if (hit.obj_index == -1 || objects[hit.obj_index].type != 5)
+			break ;
+		ray = portalRay(ray, hit);
+		ray.inv_direction = (1.0 / ray.direction);
+		return (hit);
 	}
+	#else 
+		hitBVH = traverseBVHs(ray);
+		hitScene = traceScene(ray);
+		return (hitBVH.t < hitScene.t ? hitBVH : hitScene);
+	#endif
 
 	return (hit);
 }

@@ -151,8 +151,12 @@ void Shader::checkCompileErrors(GLuint shader)
 	}
 }
 
-void Shader::setupVertexBuffer(const Vertex* vertices, size_t size)
+void Shader::setupVertexBuffer()
 {
+
+	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
+	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
+
     glGenVertexArrays(1, &_screen_VAO);
     glGenBuffers(1, &_screen_VBO);
     

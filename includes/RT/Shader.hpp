@@ -22,7 +22,7 @@ class Shader
 		~Shader(void);
 
 		void	attach(void);
-		void	setupVertexBuffer(const Vertex* vertices, size_t size);
+		void	setupVertexBuffer();
 		void	drawTriangles(size_t size);
 
 		// void	setBool(const std::string &name, bool value) const;
