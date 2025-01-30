@@ -168,7 +168,7 @@ hitInfo traceRay(Ray ray)
 	hitInfo hitScene;
 	hitInfo hit;
 
-	#if 0
+	#if 1
 	for (int i = 0; i < 10; i++) // portal ray
 	{
 		hitBVH = traverseBVHs(ray);
@@ -179,7 +179,6 @@ hitInfo traceRay(Ray ray)
 			break ;
 		ray = portalRay(ray, hit);
 		ray.inv_direction = (1.0 / ray.direction);
-		return (hit);
 	}
 	#else 
 		hitBVH = traverseBVHs(ray);

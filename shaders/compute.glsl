@@ -186,9 +186,10 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 			}
 		#endif
 
+
         float miss_condition = float(hit.obj_index == -1);
         light += miss_condition * transmittance * GetEnvironmentLight(ray);
-        
+
         float p = max(color.r, max(color.g, color.b));
         float rr_continue = float(randomValue(rng_state) <= p);
         

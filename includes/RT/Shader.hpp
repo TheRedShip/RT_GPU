@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2024/10/14 19:51:46 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/30 17:52:20 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ class Shader
 
 		void	attach(void);
 		void	setupVertexBuffer();
-		void	drawTriangles(size_t size);
+		void	drawTriangles();
 
 		// void	setBool(const std::string &name, bool value) const;
 		void	set_int(const std::string &name, int value) const;
@@ -51,6 +51,8 @@ class Shader
 		GLuint	_vertex;
 		GLuint	_fragment;
 		GLuint	_compute;
+
+		size_t	_size;
 
 		void	checkCompileErrors(unsigned int shader);
 };

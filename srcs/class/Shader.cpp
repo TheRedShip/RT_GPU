@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 20:21:13 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/24 19:13:13 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/30 17:52:32 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,7 +155,7 @@ void Shader::setupVertexBuffer()
 {
 
 	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
-	size_t size = sizeof(vertices) / sizeof(Vertex) / 3;
+	_size = sizeof(vertices) / sizeof(Vertex) / 3;
 
     glGenVertexArrays(1, &_screen_VAO);
     glGenBuffers(1, &_screen_VBO);
@@ -163,7 +163,7 @@ void Shader::setupVertexBuffer()
     glBindVertexArray(_screen_VAO);
 
     glBindBuffer(GL_ARRAY_BUFFER, _screen_VBO);
-    glBufferData(GL_ARRAY_BUFFER, size * 3 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, _size * 3 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
 
     // Position attribute
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
@@ -177,14 +177,14 @@ void Shader::setupVertexBuffer()
     glBindVertexArray(0);
 }
 
-void	Shader::drawTriangles(size_t size)
+void	Shader::drawTriangles()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, _output_texture);
 	glUniform1i(glGetUniformLocation(_program, "screenTexture"), 0);
 	
 	glBindVertexArray(_screen_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, size * 3);
+	glDrawArrays(GL_TRIANGLES, 0, _size * 3);
 }
 
 void	Shader::set_int(const std::string &name, int value) const

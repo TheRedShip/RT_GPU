@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/28 19:01:09 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/30 18:02:33 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -154,7 +154,7 @@ int main(int argc, char **argv)
 		window.imGuiNewFrame();
 
 		glUseProgram(shader.getProgram());
-		shader.drawTriangles(size);
+		shader.drawTriangles();
 
 		window.imGuiRender();
 
