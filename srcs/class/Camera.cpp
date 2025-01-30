@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/15 19:32:41 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/28 02:15:41 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,10 @@ void		Camera::processMouse(float xoffset, float yoffset, bool constraint_pitch =
 	_yaw   += xoffset * _sensitivity;
 	_pitch += yoffset * _sensitivity;
 
+//	while(_yaw < 0)
+//		_yaw += 360;
+//	while(_yaw > 360)
+//		_yaw -= 360;
 	if (constraint_pitch)
 	{
 		if (_pitch > 89.0f) _pitch = 89.0f;
@@ -150,6 +154,7 @@ void		Camera::setDirection(float pitch, float yaw)
 {
 	_pitch = pitch;
 	_yaw = yaw;
+	updateCameraVectors();
 }
 
 void		Camera::setDOV(float aperture, float focus)
