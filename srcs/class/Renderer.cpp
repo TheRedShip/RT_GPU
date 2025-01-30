@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/29 23:57:21 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/30 18:34:15 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -320,14 +320,14 @@ glm::quat eulerToQuaternion(float pitch, float yaw)
 //}
 
 
-glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time)
+glm::vec2 Renderer::bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time)
 {
 	glm::vec2 delta;
 	glm::vec2 p1, p2;
 	float t;
 
-	p1 = glm::vec2(0.20, 0);
-	p2 = glm::vec2(0.80, 1);
+	p1 = glm::vec2(control.x, control.y);
+	p2 = glm::vec2(control.z, control.w);
 	t = time;
     for(int i = 0; i < 5; i++) {
         float currentX = 3.0f * ((1 - t) * (1 - t)) * t * p1.x + 3.0f * (1 - t) * (t * t) * p2.x + (t * t * t);
@@ -369,6 +369,9 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	glm::vec3		pos;
 	glm::vec2		dir;	
 	float			normalTime;
+	bool			smallDistPrev;
+	bool			smallDistNext;
+	glm::vec4		bezierControl;
 
 	from = _path[_curPathIndex];
 	to = _path[_curPathIndex + 1];
@@ -376,18 +379,24 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 		prev = _path[_curPathIndex - 1];
 	else
 		prev = from;
-	if((size_t)_curPathIndex + 3 == _path.size())
+	if((size_t)_curPathIndex + 2 < _path.size())
 		next = _path[_curPathIndex + 2];
 	else
 		next = to;
-		
 
 	cam = _scene->getCamera();
 	pathTime = (to.time - from.time) * 60;
 	normalTime = 1 - ((pathTime - timeFromStart) / pathTime);
 	
 	pos = hermiteInterpolate((glm::vec3 [4]){prev.pos, from.pos, to.pos, next.pos}, normalTime);
-	dir = sphereInterpolate(from.dir, to.dir, normalTime);
+
+	smallDistPrev = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (from.dir - prev.dir) / glm::vec2((from.time - prev.time) * 60)) < 40;
+	smallDistNext = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (next.dir - to.dir) / glm::vec2((next.time - to.time) * 60)) < 40;
+	bezierControl.x = 0.2f;
+	bezierControl.y = !_curPathIndex || smallDistPrev ? .1f : .0f;
+	bezierControl.z = 0.8f;
+	bezierControl.w = (size_t)_curPathIndex + 2 >= _path.size() ||  smallDistNext ? .9f : 1.0f;
+	dir = bezierSphereInterpolate(bezierControl, from.dir, to.dir, normalTime);
 	if(std::isnan(dir.x) || std::isnan(dir.y))
 		dir = from.dir;
 	if(timeFromStart >= pathTime)

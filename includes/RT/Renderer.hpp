@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/29 23:58:48 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/30 17:12:58 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ class Renderer
 		void	imguiPathCreation(void);
 		void	imguiRenderInfo(void); 
 		std::string	floatToTime(float timef);
-		glm::vec2 sphereInterpolate(glm::vec2 from, glm::vec2 to, float time);
+		glm::vec2 bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
 		void	updateAvailableCodecs(void);
 		void	fillGoodCodecList(std::vector<AVCodecID> &lst);
 		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
