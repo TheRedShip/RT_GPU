@@ -176,7 +176,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     {
         hitInfo hit = traceRay(ray);
         
-		#if 0
+		#if 1
 			float t_scatter = 0.0;
 			bool scatter_valid = bool(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
 			if (scatter_valid)
@@ -240,11 +240,6 @@ void main()
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 	
-	// vec2 uv = ((vec2(pixel_coords)) / u_resolution);
-	// uv.x *= u_resolution.x / u_resolution.y;
-	// imageStore(output_image, pixel_coords, vec4(vec3(uv, 0.), 1.));
-	// return ;
-
 	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
 		return;
 

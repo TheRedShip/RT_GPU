@@ -251,6 +251,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			mat->texture_index = -1;
 			mat->refraction = 1.0f;
 			mat->roughness = 1.0f;
+			mat->metallic = 1.0f;
 			continue;
 		}
 		if(!mat)
@@ -265,6 +266,18 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			if(!(lineStream >> mat->roughness) || mat->roughness > 1000 || mat->roughness < 0)
 				throw std::runtime_error("OBJ: syntax error while getting material softness");
 			mat->roughness /= 1000;
+		}
+		else if (identifier == "Pr")
+		{
+			if (!(lineStream >> mat->roughness) || mat->roughness > 1 || mat->roughness < 0)
+				throw std::runtime_error("OBJ: syntax error while getting material softness");
+			
+			mat->roughness = 1 - mat->roughness;
+		}
+		else if (identifier == "Pm")
+		{
+			if (!(lineStream >> mat->metallic) || mat->metallic > 1 || mat->metallic < 0)
+				throw std::runtime_error("OBJ: syntax error while getting material metallic");
 		}
 		else if(identifier == "Ke")
 		{

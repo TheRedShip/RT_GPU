@@ -1,0 +1,873 @@
+# Aspose.3D Wavefront OBJ Exporter
+# Copyright 2004-2024 Aspose Pty Ltd.
+# File created: 01/30/2025 21:13:10
+
+newmtl Material.009
+	illum 2
+	Kd 0.071498476 0.071498476 0.071498476
+	Ke 0 0 0
+	Pr 0.
+	Pm 0.5
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Material.006
+	illum 2
+	Kd 0.187314 0.187314 0.187314
+	Ke 0 0 0
+	Pr 0.092912644
+	Pm 0.6766093
+	d 1
+	Tr 0
+newmtl Material.007
+	illum 2
+	Kd 0.5122416 0.4812513 0.4077952
+	Ke 0 0 0
+	Pr 0.28139803
+	Pm 0.9015757
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Material.011
+	illum 2
+	Kd 0.0817625 0.0817625 0.0817625
+	Ke 0 0 0
+	Pr 0.5
+	Pm 0
+	d 1
+	Tr 0
+newmtl Spot
+	illum 2
+	Kd 0 0 0
+	Ke 1 1 1
+	Pr 0
+	Pm 0
+	d 1
+	Tr 0
+newmtl Material.001
+	illum 2
+	Kd 0.10048 0.10048 0.10048
+	Ke 0 0 0
+	Pr 0.20235576
+	Pm 0.51816
+	d 1
+	Tr 0
+newmtl Material.001
+	illum 2
+	Kd 0.10048 0.10048 0.10048
+	Ke 0 0 0
+	Pr 0.20235576
+	Pm 0.51816
+	d 1
+	Tr 0
+newmtl Material.002
+	illum 2
+	Kd 0.00853981 0.00853981 0.00853981
+	Ke 0 0 0
+	Pr 0.5
+	Pm 0.49420407
+	d 1
+	Tr 0
+newmtl Material.003
+	illum 2
+	Kd 0.8 0.39626 0
+	Ke 2 2 2
+	Pr 0.5
+	Pm 0.6218877
+	d 1
+	Tr 0
+newmtl Jantes_I
+	illum 2
+	Kd 0.14758262 0.14758262 0.14758262
+	Ke 0 0 0
+	Pr 0.26923767
+	Pm 0.70092994
+	d 1
+	Tr 0
+newmtl Lumire_Orange
+	illum 2
+	Kd 1 0.64356357 0
+	Ke 1 0.21807635 0
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Pneux
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/Pneux_baseColor.jpeg
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Lumire_Orange
+	illum 2
+	Kd 1 0.64356357 0
+	Ke 1 0.21807635 0
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Pneux
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/Pneux_baseColor.jpeg
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Volant
+	illum 2
+	Kd 0.128241 0.128241 0.128241
+	Ke 0 0 0
+	Pr 0.5
+	Pm 0.416465
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl CARBONE
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.13547386
+	Pm 1
+	d 1
+	Tr 0
+	map_Kd textures/CARBONE_baseColor.jpeg
+	map_Pr CARBONE_metallicRoughness.png
+	map_Pm CARBONE_metallicRoughness.png
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Rouge
+	illum 2
+	Kd 0.8 0.00214631 0
+	Ke 0 0 0
+	Pr 0.36044025
+	Pm 0.63404804
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Orange
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0.5
+	Pm 0.615012
+	d 1
+	Tr 0
+newmtl Sige
+	illum 2
+	Kd 0.0173883 0.0173883 0.0173883
+	Ke 0 0 0
+	Pr 0.746973
+	Pm 0
+	d 1
+	Tr 0
+newmtl Vert
+	illum 2
+	Kd 0.00694344 0.8 0
+	Ke 0 0 0
+	Pr 0.5
+	Pm 0.600484
+	d 1
+	Tr 0
+newmtl Blanc
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.301453
+	Pm 0.31477
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Material
+	illum 2
+	Kd 0.8 0.8 0.8
+	Ke 0.4427126 0.4427126 0.4427126
+	Pr 0.5
+	Pm 0.164251
+	d 1
+	Tr 0
+newmtl Material.004
+	illum 2
+	Kd 1 0 0
+	Ke 1 0.20700414 0.20700414
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Lumire_rouge
+	illum 2
+	Kd 1 0 0
+	Ke 1 0.016764818 0
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl CARBONE
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.13547386
+	Pm 1
+	d 1
+	Tr 0
+	map_Kd textures/CARBONE_baseColor.jpeg
+	map_Pr CARBONE_metallicRoughness.png
+	map_Pm CARBONE_metallicRoughness.png
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Orange
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0.5
+	Pm 0.615012
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Orange
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0.5
+	Pm 0.615012
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl CARBONE
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.13547386
+	Pm 1
+	d 1
+	Tr 0
+	map_Kd textures/CARBONE_baseColor.jpeg
+	map_Pr CARBONE_metallicRoughness.png
+	map_Pm CARBONE_metallicRoughness.png
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl material_0
+	illum 2
+	Kd 0.75 1 1
+	Ke 1 1 1
+	Pr 0.4030015
+	Pm 0.5732463
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.17901507 0.17901507 0.17901507
+	Ke 0 0 0
+	Pr 0.38477966
+	Pm 1
+	d 1
+	Tr 0
+newmtl Vitres
+	illum 2
+	Kd 0 0 0
+	Ke 0 0 0
+	Pr 0.0807523
+	Pm 0
+	d 0.40910155
+	Tr 0.59089845
+newmtl Lumire_blanche
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0
+	Pm 0
+	d 1
+	Tr 0
+newmtl Lumire_rouge
+	illum 2
+	Kd 1 0 0
+	Ke 2 2 2
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Vitres
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.0807523
+	Pm 0
+	d 0.05
+
+newmtl Jantes_I
+	illum 2
+	Kd 0.14758262 0.14758262 0.14758262
+	Ke 0 0 0
+	Pr 0.26923767
+	Pm 0.70092994
+	d 1
+	Tr 0
+newmtl Lumire_Orange
+	illum 2
+	Kd 1 0.64356357 0
+	Ke 1 0.21807635 0
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Pneux
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/Pneux_baseColor.jpeg
+newmtl Jantes_I
+	illum 2
+	Kd 0.14758262 0.14758262 0.14758262
+	Ke 0 0 0
+	Pr 0.26923767
+	Pm 0.70092994
+	d 1
+	Tr 0
+newmtl Lumire_Orange
+	illum 2
+	Kd 1 0.34356357 0
+	Ke 1 1 1
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl Jantes
+	illum 2
+	Kd 0.0469627 0.0469627 0.0469627
+	Ke 0 0 0
+	Pr 0.664649
+	Pm 0.687651
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Pneux
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/Pneux_baseColor.jpeg
+newmtl Orange
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0.5
+	Pm 0.615012
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Orange
+	illum 2
+	Kd 1 1 1
+	Ke 1 1 1
+	Pr 0.5
+	Pm 0.615012
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Carosserie
+	illum 2
+	Kd 0.05 0.05 0.05
+	Ke 0 0 0
+	Pr 0.35
+	Pm 0.75
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.032829706 0.032829706 0.032829706
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Material.008
+	illum 2
+	Kd 0.8 0.159026 0
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl material
+	illum 2
+	Kd 0.030152377 0.029904576 0.029904576
+	Ke 0 0 0
+	Pr 0.10507299
+	Pm 0.8833352
+	d 1
+	Tr 0
+newmtl Blanck
+	illum 2
+	Kd 0.1 0.1 0.1
+	Ke 0 0 0
+	Pr 0.33611956
+	Pm 0.65228856
+	d 1
+	Tr 0
+newmtl Spot
+	illum 2
+	Kd 1 1 1 
+	Ke 1 1 1
+	Pr 0
+	Pm 0
+	d 1
+	Tr 0
