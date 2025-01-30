@@ -396,7 +396,8 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	pathTime = (to.time - from.time) * 60;
 	normalTime = 1 - ((pathTime - timeFromStart) / pathTime);
 	
-	pos = hermiteInterpolate((glm::vec3 [4]){prev.pos, from.pos, to.pos, next.pos}, normalTime);
+	glm::vec3 points[4] = {prev.pos, from.pos, to.pos, next.pos};
+	pos = hermiteInterpolate(points, normalTime);
 
 	smallDistPrev = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (from.dir - prev.dir) / glm::vec2((from.time - prev.time) * 60)) < 40;
 	smallDistNext = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (next.dir - to.dir) / glm::vec2((next.time - to.time) * 60)) < 40;
