@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/30 17:12:58 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/30 22:15:55 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Renderer
 		int		rendering(void) const;
 
 	private:
-		void	addPoint(void);
+		void	addPoint(float time);
 		void	makeMovement(float timeFromStart, float curSplitTimeReset);
 		void	initRender();
 		void	addImageToRender(Shader &shader);
@@ -59,6 +59,7 @@ class Renderer
 		int								_sec;
 		int								_samples;
 		int								_testSamples;
+		bool							_autoTime;
 		int								_fps;
 		char							_filenameBuffer[512];
 		std::vector<t_pathPoint>		_path;
@@ -83,6 +84,7 @@ class Renderer
 		AVFrame							*_yuv_frame;
 		SwsContext						*_sws_context;
 		AVStream						*_stream;
+		AVDictionary					*_codecOptions;
 
 };
 

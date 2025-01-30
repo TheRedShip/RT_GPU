@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/30 18:34:15 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/30 22:22:07 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,13 @@ Renderer::Renderer(Scene *scene, Window *win)
 	_min = 0;
 	_sec = 0;
 	_fps = 30;
+	_autoTime = 0;
 	_samples = 1;
 	_testSamples = 1;
 	_curSamples = 0;
 	_destPathIndex = 0;
 	_frameCount = 0;
-	_outputFilename = "output.mp4";
+	_outputFilename = "output.avi";
 	memcpy(_filenameBuffer, _outputFilename.c_str(), _outputFilename.length());
 	_filenameBuffer[_outputFilename.length()] = 0;
 
@@ -37,10 +38,12 @@ Renderer::Renderer(Scene *scene, Window *win)
 
 void	Renderer::fillGoodCodecList(std::vector<AVCodecID> &lst)
 {
+	lst.push_back(AV_CODEC_ID_FFV1);
 	lst.push_back(AV_CODEC_ID_H264);
-	lst.push_back(AV_CODEC_ID_MPEG4);
-	lst.push_back(AV_CODEC_ID_H263);
-	lst.push_back(AV_CODEC_ID_MPEG2VIDEO);
+	lst.push_back(AV_CODEC_ID_HUFFYUV);
+	lst.push_back(AV_CODEC_ID_UTVIDEO);
+	lst.push_back(AV_CODEC_ID_PRORES);
+	lst.push_back(AV_CODEC_ID_V210);
 }
 
 void	Renderer::updateAvailableCodecs(void)
@@ -92,6 +95,8 @@ void	Renderer::updateAvailableCodecs(void)
 
 void	Renderer::initRender(void)
 {
+
+	_codecOptions = 0;
 	_destPathIndex = _path.size() - 1;
 	_curPathIndex = 0;
 	_frameCount = 0;
@@ -112,11 +117,13 @@ void	Renderer::initRender(void)
 	_codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
 	_codec_context->gop_size = 10;
 	_codec_context->max_b_frames = 1;
+	if(_codecList[_codecIndex]->id == AV_CODEC_ID_H264 || _codecList[_codecIndex]->id == AV_CODEC_ID_HEVC)
+		av_dict_set(&_codecOptions, "crf", "0", 0);
 
 	if (_format->oformat->flags & AVFMT_GLOBALHEADER)
 		_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
-	if (avcodec_open2(_codec_context, _codecList[_codecIndex], nullptr) < 0)
+	if (avcodec_open2(_codec_context, _codecList[_codecIndex], &_codecOptions) < 0)
 		throw std::runtime_error("Failed to open codec");
 	
 	_stream = avformat_new_stream(_format, _codecList[_codecIndex]);
@@ -213,6 +220,7 @@ void	Renderer::endRender(void)
     avcodec_free_context(&_codec_context);
     avio_close(_format->pb);
     avformat_free_context(_format);
+	av_dict_free(&_codecOptions);
 
 	_format = 0;
 	_rgb_frame = 0;
@@ -220,7 +228,7 @@ void	Renderer::endRender(void)
 	_codec_context = 0;
 }
 
-void	Renderer::addPoint(void)
+void	Renderer::addPoint(float time)
 {
 	t_pathPoint newPoint;
 	Camera		*cam;
@@ -229,7 +237,7 @@ void	Renderer::addPoint(void)
 	cam = _scene->getCamera();
 	newPoint.pos = cam->getPosition();	
 	newPoint.dir = cam->getDirection();
-	newPoint.time = _min + ((float)_sec / 60);
+	newPoint.time = time; 
 	pos = _path.begin();
 	while(pos != _path.end() && pos->time <= newPoint.time)
 		pos++;
@@ -289,14 +297,14 @@ glm::vec3 Renderer::hermiteInterpolate(glm::vec3 points[4], double alpha)
 	return(coef[0] * points[1] + coef[1] * tang[0] + coef[2] * tang[1] + coef[3] * points[2]);
 }
 
-glm::quat eulerToQuaternion(float pitch, float yaw)
-{
-    glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
-    glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
-    
-    glm::quat result = qYaw* qPitch;
-    return(result);
-}
+//glm::quat eulerToQuaternion(float pitch, float yaw)
+//{
+//    glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
+//    glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
+//    
+//    glm::quat result = qYaw* qPitch;
+//    return(result);
+//}
 
 //glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time) // gud but bad
 //{
@@ -424,6 +432,14 @@ int	Renderer::rendering(void) const
 
 void Renderer::imguiPathCreation(void)
 {
+	float prevSpeed;
+	float time;
+
+	if(_path.size() > 1)
+		prevSpeed = glm::distance(_path[_path.size() - 2].pos, _path[_path.size() - 1].pos) / (_path[_path.size() - 1].time - _path[_path.size() - 2].time);
+	else
+		prevSpeed = 0;
+
 	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
@@ -449,10 +465,24 @@ void Renderer::imguiPathCreation(void)
 
 	ImGui::Separator();
 
-	ImGui::SliderInt("minutes", &_min, 0, 2);
-	ImGui::SliderInt("seconds", &_sec, 0, 60);
+	if(ImGui::SliderInt("minutes", &_min, 0, 2)) 
+			_autoTime = 0;
+	if(ImGui::SliderInt("seconds", &_sec, 0, 60))
+			_autoTime = 0;
+	if(_autoTime)
+	{
+		if(_path.size() > 1)
+			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, _scene->getCamera()->getPosition()) / prevSpeed);
+		else
+			time = (float)_path.size() / 60;
+		_min = time;
+		_sec = (time - (int)time) * 60;
+	}
+	else
+		time = (float)_min + ((float)_sec / 60);
+	ImGui::Checkbox("guess time automatically", &_autoTime);
 	if(ImGui::Button("add step"))
-		addPoint();
+		addPoint(time);
 
 	ImGui::Separator();
 
@@ -493,11 +523,6 @@ void Renderer::imguiPathCreation(void)
 			_curPathIndex = i - 1;
 			_destPathIndex = i;
 			_testMode = 1;
-		}
-		if(i > 1 && ImGui::Button(("match prev speed##" + std::to_string(i)).c_str()))
-		{
-			float speed = glm::distance(_path[i - 2].pos, _path[i - 1].pos) / (_path[i - 1].time - _path[i - 2].time);
-			_path[i].time = _path[i - 1].time + (glm::distance(_path[i - 1].pos, _path[i].pos) / speed);
 		}
 		ImGui::Separator();
 	}
