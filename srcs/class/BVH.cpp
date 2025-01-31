@@ -78,7 +78,7 @@ void	BVH::subdivide(std::vector<Triangle> &triangles)
 	if (_primitive_count <= 4)
 		return ;
 
-	const int num_test_per_axis = 5;
+	const int num_test_per_axis = 10;
 
 	int best_axis = 0;
 	float best_pos = 0;
@@ -207,37 +207,56 @@ int	BVH::getLeaves()
 	return (count);
 }
 
-//get tri per leaf min max and average
-BVHStats	BVH::analyzeBVHLeaves(BVH *root)
+BVHStats BVH::analyzeBVHLeaves(BVH *root, int current_depth)
 {
     if (!root)
-        return {0, 0, 0.0f};
-    // If this is a leaf node, return its stats
+        return {0, 0, 0.0f, INT_MAX, 0, 0.0f, 0};
 
+    // If this is a leaf node, return its stats
     if (root->_is_leaf)
         return {
-            root->_primitive_count,  // min
-            root->_primitive_count,  // max
-            (float)root->_primitive_count  // average
+            root->_primitive_count, // min triangles
+            root->_primitive_count, // max triangles
+            (float)root->_primitive_count, // average triangles
+            current_depth, // min depth
+            current_depth, // max depth
+            (float)current_depth, // depth sum (will be averaged later)
+            1 // this leaf counts as 1 towards total leaves
         };
 
     // Get stats from left and right subtrees
-    BVHStats left = analyzeBVHLeaves(root->_left);
-    BVHStats right = analyzeBVHLeaves(root->_right);
+    BVHStats left = analyzeBVHLeaves(root->_left, current_depth + 1);
+    BVHStats right = analyzeBVHLeaves(root->_right, current_depth + 1);
 
     // Combine the results
-    int min_count = std::min(left.min_triangles, right.min_triangles);
-    int max_count = std::max(left.max_triangles, right.max_triangles);
+    BVHStats combined;
     
-    // Calculate weighted average based on number of leaves in each subtree
-    float left_leaf_count = (left.average_triangles > 0) ? 1.0f : 0.0f;
-    float right_leaf_count = (right.average_triangles > 0) ? 1.0f : 0.0f;
-    float total_leaf_count = left_leaf_count + right_leaf_count;
-    
-    float avg_count = 0.0f;
-    if (total_leaf_count > 0)
-        avg_count = (left.average_triangles * left_leaf_count + 
-                    right.average_triangles * right_leaf_count) / total_leaf_count;
+    // Triangle statistics
+    combined.min_triangles = std::min(left.min_triangles, right.min_triangles);
+    combined.max_triangles = std::max(left.max_triangles, right.max_triangles);
 
-    return {min_count, max_count, avg_count};
+    // Depth statistics
+    combined.min_depth = std::min(left.min_depth, right.min_depth);
+    combined.max_depth = std::max(left.max_depth, right.max_depth);
+    
+    // Count total leaves
+    combined.total_leaves = left.total_leaves + right.total_leaves;
+
+    // Calculate weighted averages
+    if (combined.total_leaves > 0) {
+        // Average triangles
+        combined.average_triangles = 
+            (left.average_triangles * left.total_leaves + 
+             right.average_triangles * right.total_leaves) / combined.total_leaves;
+        
+        // Average depth
+        combined.average_depth = 
+            (left.average_depth * left.total_leaves + 
+             right.average_depth * right.total_leaves) / combined.total_leaves;
+    } else {
+        combined.average_triangles = 0.0f;
+        combined.average_depth = 0.0f;
+    }
+
+    return combined;
 }

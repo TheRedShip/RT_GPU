@@ -194,10 +194,15 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 	std::cout << "\tBVH size: " << bvh->getSize() << std::endl;
 	std::cout << "\tBVH leaves: " << bvh->getLeaves() << std::endl << std::endl;
 
-	BVHStats stats = bvh->analyzeBVHLeaves(bvh);
+	BVHStats stats = bvh->analyzeBVHLeaves(bvh, 0);
 	std::cout << "\tMin triangles per leaf: " << stats.min_triangles << std::endl;
 	std::cout << "\tMax triangles per leaf: " << stats.max_triangles << std::endl;
 	std::cout << "\tAverage triangles per leaf: " << stats.average_triangles << std::endl << std::endl;
+
+	std::cout << "\n\tMin depth: " << stats.min_depth << std::endl;
+	std::cout << "\tMax depth: " << stats.max_depth << std::endl;
+	std::cout << "\tAverage depth: " << stats.average_depth << std::endl;
+
 	
 }
 
@@ -220,7 +225,7 @@ void		Scene::addTexture(std::string path)
 	_textures.push_back(path);
 }
 
-void		Scene::loadTextures()
+bool		Scene::loadTextures()
 {
 	for (std::string &path : _textures)
 	{
@@ -228,7 +233,10 @@ void		Scene::loadTextures()
 		unsigned char* image = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
 		
 		if (!image)
-			throw std::runtime_error("Failed to load texture " + path);
+		{
+			std::cout << "Failed to load texture " << path << std::endl;
+			return (false);
+		}
 
 		std::cout << "Loaded texture: " << path << " (" << width << "x" << height << ")" << std::endl;
 
@@ -248,6 +256,8 @@ void		Scene::loadTextures()
 
 		stbi_image_free(image);
 	}
+
+	return (true);
 }
 
 void		Scene::updateLightAndObjects(int mat_id)

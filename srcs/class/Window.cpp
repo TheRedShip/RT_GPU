@@ -180,94 +180,103 @@ void Window::imGuiRender()
 {
 	bool has_changed = false;
 	
-	ImGui::Begin("Camera");
+	ImGui::Begin("Settings");
 
 	ImGui::Text("Fps: %d", int(_fps));
 	ImGui::Text("Frame: %d", _frameCount);
 	ImGui::Text("Objects: %lu", _scene->getObjectData().size() + _scene->getTriangleData().size());
 	
-	ImGui::Separator();
-	if (ImGui::Checkbox("Accumulate", &accumulate))
-		_frameCount = 0;
+	ImGui::Spacing();
 
-	has_changed |= ImGui::SliderInt("Bounce", &_scene->getCamera()->getBounce(), 0, 20);
-	has_changed |= ImGui::SliderFloat("FOV", &_scene->getCamera()->getFov(), 1.0f, 180.0f);
-	has_changed |= ImGui::SliderFloat("Aperture", &_scene->getCamera()->getAperture(), 0.0f, 1.0f);
-	has_changed |= ImGui::SliderFloat("Focus", &_scene->getCamera()->getFocus(), 0.0f, 150.0f);
-
-	ImGui::End();
-
-	ImGui::Begin("Material");
-
-	for (unsigned int i = 0; i < _scene->getMaterialData().size(); i++)
+	if (ImGui::CollapsingHeader("Camera"))
 	{
-		GPUMaterial &mat = _scene->getMaterialData()[i];
 
-		ImGui::PushID(i);
-		
-		ImGui::Text("Material %d", i);
-		has_changed |= ImGui::ColorEdit3("Color", &mat.color[0]);
-		if (ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f))
-		{
-			has_changed = 1;
-			_scene->updateLightAndObjects(i);
-		}
-		
-		if (mat.type == 0)
-		{
-			has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 1.0f);
-			has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
-		}
-		else if (mat.type == 1)
-			has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 5.0f);
-		else if (mat.type == 2)
-		{
-			has_changed |= ImGui::SliderFloat("Transparency", &mat.roughness, 0.0f, 1.0f);
-			has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 2.0f);
-			has_changed |= ImGui::SliderFloat("Proba", &mat.metallic, 0., 1.);
-		}
-		has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 2);
+		if (ImGui::Checkbox("Accumulate", &accumulate))
+			_frameCount = 0;
 
-		ImGui::PopID();
+		has_changed |= ImGui::SliderInt("Bounce", &_scene->getCamera()->getBounce(), 0, 20);
+		has_changed |= ImGui::SliderFloat("FOV", &_scene->getCamera()->getFov(), 1.0f, 180.0f);
+		has_changed |= ImGui::SliderFloat("Aperture", &_scene->getCamera()->getAperture(), 0.0f, 1.0f);
+		has_changed |= ImGui::SliderFloat("Focus", &_scene->getCamera()->getFocus(), 0.0f, 150.0f);
+	}
 
+
+	if (ImGui::CollapsingHeader("Material"))
+	{
+
+		ImGui::BeginChild("Header", ImVec2(0, 400), true, 0);
+
+		for (unsigned int i = 0; i < _scene->getMaterialData().size(); i++)
+		{
+			GPUMaterial &mat = _scene->getMaterialData()[i];
+
+			ImGui::PushID(i);
+			
+			ImGui::Text("Material %d", i);
+			has_changed |= ImGui::ColorEdit3("Color", &mat.color[0]);
+			if (ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f))
+			{
+				has_changed = 1;
+				_scene->updateLightAndObjects(i);
+			}
+			
+			if (mat.type == 0)
+			{
+				has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 1.0f);
+				has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
+			}
+			else if (mat.type == 1)
+				has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 5.0f);
+			else if (mat.type == 2)
+			{
+				has_changed |= ImGui::SliderFloat("Transparency", &mat.roughness, 0.0f, 1.0f);
+				has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 2.0f);
+				has_changed |= ImGui::SliderFloat("Proba", &mat.metallic, 0., 1.);
+			}
+			has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 2);
+
+			ImGui::PopID();
+
+			ImGui::Separator();
+		}
+		ImGui::EndChild();
+
+	}
+	
+	if (ImGui::CollapsingHeader("Fog"))
+	{
+		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled));
 		ImGui::Separator();
+		
+		if (ImGui::SliderFloat("Absorption", &_scene->getVolume().sigma_a.x, 0., 0.1))
+		{
+			_scene->getVolume().sigma_a = glm::vec3(_scene->getVolume().sigma_a.x);
+			_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
+			has_changed = true;
+		}
+		if (ImGui::SliderFloat("Scattering", &_scene->getVolume().sigma_s.x, 0., 0.5))
+		{
+			_scene->getVolume().sigma_s = glm::vec3(_scene->getVolume().sigma_s.x);
+			_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
+			has_changed = true;
+		}
+		if (ImGui::SliderFloat("G", &_scene->getVolume().g, 0., 1.))
+			has_changed = true;
 	}
-	
-	ImGui::End();
 
-	ImGui::Begin("Fog settings");
-	
-	has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled));
-	ImGui::Separator();
-	
-	if (ImGui::SliderFloat("Absorption", &_scene->getVolume().sigma_a.x, 0., 0.1))
+
+	if (ImGui::CollapsingHeader("Debug"))
 	{
-		_scene->getVolume().sigma_a = glm::vec3(_scene->getVolume().sigma_a.x);
-		_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
-		has_changed = true;
+		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
+		ImGui::Separator();
+		has_changed |= ImGui::SliderInt("Debug mode", &_scene->getDebug().mode, 0, 2);
+		has_changed |= ImGui::SliderInt("Box treshold", &_scene->getDebug().box_treshold, 1, 2000);
+		has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
 	}
-	if (ImGui::SliderFloat("Scattering", &_scene->getVolume().sigma_s.x, 0., 0.5))
-	{
-		_scene->getVolume().sigma_s = glm::vec3(_scene->getVolume().sigma_s.x);
-		_scene->getVolume().sigma_t = _scene->getVolume().sigma_a + _scene->getVolume().sigma_s;
-		has_changed = true;
-	}
-	if (ImGui::SliderFloat("G", &_scene->getVolume().g, 0., 1.))
-		has_changed = true;
-
-	ImGui::End();
-
-	ImGui::Begin("Debug BVH");
-
-	has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
-	ImGui::Separator();
-	has_changed |= ImGui::SliderInt("Debug mode", &_scene->getDebug().mode, 0, 2);
-	has_changed |= ImGui::SliderInt("Box treshold", &_scene->getDebug().box_treshold, 1, 2000);
-	has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
-
-	ImGui::End();
 
 	_renderer->renderImgui();;
+	
+	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

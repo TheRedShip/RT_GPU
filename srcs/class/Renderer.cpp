@@ -621,11 +621,13 @@ void Renderer::imguiRenderInfo(void)
 
 void Renderer::renderImgui(void)
 {
-	ImGui::Begin("Renderer");
-
-	if(rendering())
-		imguiRenderInfo();
-	else
-		imguiPathCreation();
-	ImGui::End();
+	// ImGui::Begin("Renderer");
+	if (ImGui::CollapsingHeader("Renderer"))
+	{
+		if(rendering())
+			imguiRenderInfo();
+		else
+			imguiPathCreation();
+	}
+	// ImGui::End();
 }

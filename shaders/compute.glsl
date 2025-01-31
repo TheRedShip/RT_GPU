@@ -176,7 +176,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     {
         hitInfo hit = traceRay(ray);
         
-		#if 1
+		#if 0
 			float t_scatter = 0.0;
 			bool scatter_valid = bool(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
 			if (scatter_valid)

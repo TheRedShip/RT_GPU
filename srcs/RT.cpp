@@ -99,16 +99,9 @@ int main(int argc, char **argv)
 	glBindBuffer(GL_UNIFORM_BUFFER, debugUBO);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUDebug), nullptr, GL_STATIC_DRAW);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 2, debugUBO);
-
-	try
-	{
-		scene.loadTextures();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << std::endl;
+	
+	if (!scene.loadTextures())
 		return (1);
-	}
 
 	shader.attach();
 

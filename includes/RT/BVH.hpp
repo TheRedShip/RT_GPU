@@ -40,8 +40,11 @@ struct BVHStats
     int min_triangles;
     int max_triangles;
     float average_triangles;
+    int min_depth;
+    int max_depth;
+    float average_depth;
+    int total_leaves; // Helper to calculate average depth
 };
-
 class BVH
 {
 	public:
@@ -55,7 +58,7 @@ class BVH
 
 		int							getSize();
 		int							getLeaves();
-		BVHStats					analyzeBVHLeaves(BVH* root);
+		BVHStats					analyzeBVHLeaves(BVH* root, int current_depth);
 
 		void						flatten(std::vector<GPUBvh> &bvhs, int &currentIndex);
 		GPUBvh						toGPUBvh();
