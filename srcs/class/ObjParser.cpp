@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/29 18:26:31 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/01/31 19:53:44 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -321,7 +321,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 				throw std::runtime_error("OBJ: syntax error while getting material texture");
 
 			mat->texture_index = scene.getTextures().size();
-			scene.addTexture("scenes/obj/" + path);
+			scene.addTexture(getFilePath(_filename) + path);
 		}
 		else
 			std::cerr << "unsupported material setting : " << identifier << std::endl;

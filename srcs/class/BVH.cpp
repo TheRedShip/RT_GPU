@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 21:48:48 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/25 14:25:57 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/01/31 19:30:54 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	BVH::subdivide(std::vector<Triangle> &triangles)
 	if (_primitive_count <= 4)
 		return ;
 
-	const int num_test_per_axis = 10;
+	const int num_test_per_axis = 5;
 
 	int best_axis = 0;
 	float best_pos = 0;
