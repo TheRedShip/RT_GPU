@@ -284,9 +284,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			float x, y, z;
 			if(!(lineStream >> x >> y >> z))
 				throw std::runtime_error("OBJ: syntax error while getting material emission");
-			mat->emission = (x + y + z);
-			// if (mat->emission > 0.0)
-			// 	mat->color = glm::vec3(x, y, z);
+			mat->emission = (x + y + z) / 3;
 		}
 		else if(identifier == "Ni")
 		{
