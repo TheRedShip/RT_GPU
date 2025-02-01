@@ -217,12 +217,18 @@ void		Scene::addMaterial(Material *material)
 	gpu_mat.refraction = material->refraction;
 	gpu_mat.type = material->type;
 	gpu_mat.texture_index = material->texture_index;
+	gpu_mat.emission_texture_index = material->emission_texture_index;
 
 	_gpu_materials.push_back(gpu_mat);
 }
 void		Scene::addTexture(std::string path)
 {
 	_textures.push_back(path);
+}
+
+void		Scene::addEmissionTexture(std::string path)
+{
+	_emission_textures.push_back(path);
 }
 
 bool		Scene::loadTextures()
@@ -301,9 +307,19 @@ std::vector<GLuint>				&Scene::getTextureIDs()
 	return (_gpu_textures);
 }
 
+std::vector<GLuint>				&Scene::getEmissionTextureIDs()
+{
+	return (_gpu_emission_textures);
+}
+
 std::vector<std::string>		&Scene::getTextures()
 {
 	return (_textures);
+}
+
+std::vector<std::string>		&Scene::getEmissionTextures()
+{
+	return (_emission_textures);
 }
 
 GPUVolume						&Scene::getVolume()

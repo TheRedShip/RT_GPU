@@ -43,6 +43,7 @@ struct GPUMaterial
 	float	refraction;		// 4
 	int		type;			// 4
 	int		texture_index;	// 4
+	int		emission_texture_index;	// 4
 };
 
 struct GPUCamera

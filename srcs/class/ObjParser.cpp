@@ -249,6 +249,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			mat = new Material;
 			memset(mat, 0, sizeof(Material));
 			mat->texture_index = -1;
+			mat->emission_texture_index = -1;
 			mat->refraction = 1.0f;
 			mat->roughness = 1.0f;
 			mat->metallic = 1.0f;
@@ -323,6 +324,16 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 
 			mat->texture_index = scene.getTextures().size();
 			scene.addTexture(getFilePath(_filename) + path);
+		}
+		else if (identifier == "map_Ke")
+		{
+			std::string path;
+
+			if (!(lineStream >> path))
+				throw std::runtime_error("OBJ: syntax error while getting material texture");
+
+			mat->emission_texture_index = scene.getEmissionTextures().size();
+			scene.addEmissionTexture(getFilePath(_filename) + path);
 		}
 		else
 			std::cerr << "unsupported material setting : " << identifier << std::endl;

@@ -2,7 +2,7 @@ hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    // return vec3(0.);
+    return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -102,8 +102,9 @@ vec2 getSphereUV(vec3 surfacePoint)
 }
 
 uniform sampler2D textures[32];
+uniform sampler2D emission_textures[32];
 
-vec3 getTextureColor(int texture_index, hitInfo hit)
+vec2 getTextureColor(hitInfo hit)
 {
     vec2 uv = vec2(0.0);
 
@@ -116,13 +117,24 @@ vec3 getTextureColor(int texture_index, hitInfo hit)
         uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
         uv = vec2(uv.x, 1 - uv.y);
     }
-    return (texture(textures[texture_index], uv).rgb);
+    return (uv);
 }
 
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
-    color *= mat.texture_index == -1 ? vec3(1.0) : getTextureColor(mat.texture_index, hit);
+    if (mat.texture_index != -1)
+    {
+        vec2 uv = getTextureColor(hit);
+        color *= texture(textures[mat.texture_index], uv).rgb;
+    }
+    if (mat.emission_texture_index != -1)
+    {
+        vec2 uv = getTextureColor(hit);
+        light += mat.emission * texture(emission_textures[mat.emission_texture_index], uv).rgb;
+    }
+    else
+        light += mat.emission * mat.color;
+
     color *= mat.color;
-    light += mat.emission * mat.color;
     // light += sampleLights(hit.position, rng_state);
 }
