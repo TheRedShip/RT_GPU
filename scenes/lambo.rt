@@ -19,7 +19,7 @@ cu  0 10 0      5 5 5   3
 sp  0 10 0    1       4   
 
 
-OBJ obj/lambo.obj 0 1.5 0 	1 	0 0 0
+OBJ scenes/obj/lambo.obj 0 1.5 0 	1 	0 0 0
 
 
 

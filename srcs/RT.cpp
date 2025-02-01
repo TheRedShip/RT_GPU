@@ -142,6 +142,7 @@ int main(int argc, char **argv)
 		shader.set_textures(scene.getTextureIDs());
 
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+		
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		
 		glClear(GL_COLOR_BUFFER_BIT);
