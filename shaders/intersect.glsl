@@ -81,20 +81,17 @@ bool intersectTriangle(Ray ray, GPUTriangle obj, out hitInfo hit)
 	vec3 tvec = ray.origin - obj.position;
 	
 	float invDet = 1.0 / det;
-	float u = dot(tvec, pvec) * invDet;
+	hit.u = dot(tvec, pvec) * invDet;
 	vec3 qvec = cross(tvec, vertex1);
-	float v = dot(ray.direction, qvec) * invDet;
-	float t = dot(vertex2, qvec) * invDet;
+	hit.v = dot(ray.direction, qvec) * invDet;
+	hit.t = dot(vertex2, qvec) * invDet;
 	
-	bool valid = u >= 0.0 && u <= 1.0 &&
-				v >= 0.0 && (u + v) <= 1.0 &&
-				t > 0.0;
+	bool valid = hit.u >= 0.0 && hit.u <= 1.0 &&
+				hit.v >= 0.0 && (hit.u + hit.v) <= 1.0 &&
+				hit.t > 0.0;
 	
-	hit.u = u;
-	hit.v = v;
-	hit.t = t;
-	hit.position = ray.origin + ray.direction * t;
-	hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
+	// hit.position = ray.origin + ray.direction * t;
+	// hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
 	// hit.normal = vec3(u, v, 1 - (u + v)); //texture mapping
 	
 	return (valid);

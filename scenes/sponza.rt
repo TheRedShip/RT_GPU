@@ -1,4 +1,4 @@
-CAM     18.9143 1.24843 -5.48951        8.60003 -200.801        0 2 45  5
+CAM     18.9143 1.24843 -5.48951        8.5 -200        0.04 14.829 45 4
 
 MAT	255 255 255		0.0		1.0 0.5 // dragon 0 
 MAT	255 220 50		0.0		1.0 0.5 // dragon 1 
@@ -9,6 +9,9 @@ sp 0 50 0	25	2
 
 OBJ	scenes/obj/sponza.obj	0 0 0	0.025
 
-OBJ scenes/obj/Dragon_80K.obj 7 2.5 0		9	0 140 0		0
+# OBJ scenes/obj/Dragon_80K.obj 7 2.5 0		9	0 140 0		0
 OBJ scenes/obj/Dragon_80K.obj 9 1.35 -3.5	5	0 40 0		1
+
+OBJ scenes/obj/Dragon_800K.obj 10 3.35 -3.5		45	0 230 0		0
+# OBJ scenes/obj/Dragon_80K.obj 9 1.35 -3.5	5	0 40 0		1
 

@@ -43,7 +43,6 @@ hitInfo	traceScene(Ray ray)
 		if (intersect(ray, obj, temp_hit) && temp_hit.t < hit.t)
 		{
 			hit.t = temp_hit.t;
-			hit.last_t = temp_hit.last_t;
 			hit.obj_index = i;
 			hit.obj_type = obj.type;
 			hit.mat_index = obj.mat_index;
@@ -84,11 +83,10 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data)
 					hit.u = temp_hit.u;
 					hit.v = temp_hit.v;
 					hit.t = temp_hit.t;
-					hit.last_t = temp_hit.last_t;
 					hit.obj_index = bvh_data.triangle_start_index + node.index + i;
-					hit.mat_index = obj.mat_index;
-					hit.position = temp_hit.position;
-					hit.normal = temp_hit.normal;
+					// hit.mat_index = obj.mat_index;
+					// hit.position = temp_hit.position;
+					// hit.normal = temp_hit.normal;
 				}
 			}
 		}
@@ -143,21 +141,27 @@ hitInfo traverseBVHs(Ray ray)
 		
 		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i]);
 
-		temp_hit.t = temp_hit.t / bvh_data.scale;
-
-		if (temp_hit.t < hit.t)
+		
+		float transformed_t = temp_hit.t / bvh_data.scale;
+		if (transformed_t < hit.t)
 		{
+		GPUTriangle triangle = triangles[temp_hit.obj_index];
+
 			hit.u = temp_hit.u;
 			hit.v = temp_hit.v;
-			hit.t = temp_hit.t;
-			hit.last_t = temp_hit.last_t / bvh_data.scale;
+			hit.t = transformed_t;
 			hit.obj_index = temp_hit.obj_index;
-			hit.mat_index = temp_hit.mat_index;
-			hit.obj_type = 3;
-			hit.position = inverseTransformMatrix * temp_hit.position + bvh_data.offset;
-			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
+			hit.mat_index = triangle.mat_index;
+			
+			vec3 position = transformedRay.origin + transformedRay.direction * temp_hit.t;
+			hit.position = inverseTransformMatrix * position + bvh_data.offset;
+			
+			vec3 based_normal = triangle.normal; // * sign(-dot(transformedRay.direction, triangle.normal));
+			hit.normal = normalize(inverseTransformMatrix * based_normal);
 		}
 	}
+
+	hit.obj_type = 3;
 
 	return (hit);
 }

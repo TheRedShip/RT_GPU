@@ -1,6 +1,6 @@
-CAM 0 0 -5
+CAM     -0.181956 1.3733 2.83437        -16 -87.8001    0 1 90  5
 
 MAT	255 255 255		10.0		1.0 0.0	//white
 # sp 0 0 0			1				0
 
-OBJ	scenes/obj/room.obj	0 0 0	1
+OBJ	scenes/obj/jinx.obj	0 0 0	1
