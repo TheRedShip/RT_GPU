@@ -1,27 +1,28 @@
 bool intersectSphere(Ray ray, GPUObject obj, out hitInfo hit)
 {
 	vec3 oc = ray.origin - obj.position;
-	
 	float b = dot(oc, ray.direction);
 	float c = dot(oc, oc) - obj.radius * obj.radius;
-	float h = b * b - c;
-	
-	float t = -b - sqrt(h);
-	float last_t = -b + sqrt(h);
+	float discriminant = b * b - c;
 
-	if (t > last_t)
-	{
-		float temp = t;
-		t = last_t;
-		last_t = temp;
-	}
+	float sqrtD = sqrt(max(0.0, discriminant));
+	float t0 = -b - sqrtD;
+	float t1 = -b + sqrtD;
 
-	hit.t = t;
-	hit.last_t = last_t;
-	hit.position = ray.origin + ray.direction * t;
+	float temp = min(t0, t1);
+	t1 = max(t0, t1);
+	t0 = temp;
+
+	bool isInside = c < 0.0;
+	t0 = isInside ? t1 : t0;
+
+	hit.t = t0;
+	hit.last_t = t1;
+	hit.position = ray.origin + ray.direction * t0;
 	hit.normal = normalize(hit.position - obj.position);
-	
-	return (h >= 0.0 && t > 0.0);
+	hit.normal *= (isInside ? -1.0 : 1.0);
+
+	return (discriminant >= 0.0) && (t0 > 0.0);
 }
 
 bool intersectPlane(Ray ray, GPUObject obj, out hitInfo hit)

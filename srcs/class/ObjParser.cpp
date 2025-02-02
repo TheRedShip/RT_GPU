@@ -333,11 +333,13 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 				throw std::runtime_error("OBJ: syntax error while getting material texture");
 
 			mat->emission_texture_index = scene.getEmissionTextures().size();
-			std::cout << "path " << mat->emission_texture_index << " : " << getFilePath(_filename) + path << std::endl;
 			scene.addEmissionTexture(getFilePath(_filename) + path);
+			
+			if (mat->emission == 0)
+				mat->emission = 1;
 		}
-		else
-			std::cerr << "unsupported material setting : " << identifier << std::endl;
+		// else
+			// std::cerr << "unsupported material setting : " << identifier << std::endl;
 	}
 	if(mat)
 	{

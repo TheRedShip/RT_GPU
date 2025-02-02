@@ -90,11 +90,9 @@ vec3 sampleLights(vec3 position, inout uint rng_state)
 
 vec2 getSphereUV(vec3 surfacePoint)
 {
-    // Convert 3D point to spherical coordinates
     float phi = atan(surfacePoint.z, surfacePoint.x);
     float theta = acos(surfacePoint.y);
     
-    // Map to [0, 1] UV space
     float u = (phi + M_PI) / (2.0 * M_PI);
     float v = theta / M_PI;
     
@@ -113,11 +111,9 @@ vec2 getTextureColor(hitInfo hit)
     else if (hit.obj_type == 3)
     {
         GPUTriangle tri = triangles[hit.obj_index];
-
         uv = hit.u * tri.texture_vertex2 + hit.v * tri.texture_vertex3 + (1 - (hit.u + hit.v)) * tri.texture_vertex1;
-        uv = vec2(uv.x, 1 - uv.y);
     }
-    return (uv);
+    return (vec2(uv.x, 1 - uv.y));
 }
 
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
@@ -136,8 +132,8 @@ void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inou
     }
     else
     {
-        light += mat.emission * mat.color;
         color *= mat.color;
+        light += mat.emission * mat.color;
     }
     // light += sampleLights(hit.position, rng_state);
 }
