@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/30 22:27:43 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/02 19:42:13 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ class Shader
 
 		GLuint	_output_texture;
 		GLuint	_accumulation_texture;
+		GLuint	_denoising_texture;
 
 		GLuint	_vertex;
 		GLuint	_fragment;
