@@ -133,11 +133,9 @@ int main(int argc, char **argv)
 		shader.set_float("u_time", (float)(glfwGetTime()));
 		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
 
-		shader.set_textures(scene.getTextureIDs());
-		shader.set_emission_textures(scene.getEmissionTextureIDs());
+		shader.set_textures(scene.getTextureIDs(), scene.getEmissionTextureIDs());
 
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
-		
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		
 		glClear(GL_COLOR_BUFFER_BIT);

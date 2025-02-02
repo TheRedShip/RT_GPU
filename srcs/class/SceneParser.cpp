@@ -62,6 +62,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		mat->type = 0;
 
 	mat->texture_index = texture_index;
+	mat->emission_texture_index = -1;
 	_scene->addMaterial(mat);
 }
 

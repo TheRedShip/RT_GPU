@@ -33,7 +33,7 @@ class Shader
 		// void	setVec4(const std::string &name, const RT::Vec4f &value) const;
 		void	set_mat4(const std::string &name, const glm::mat4 &value) const;
 
-		void	set_textures(std::vector<GLuint> textureIDs);
+		void	set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> emissive_texture_ids);
 
 		GLuint	getProgram(void) const;
 		GLuint	getProgramCompute(void) const;

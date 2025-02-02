@@ -56,6 +56,7 @@ struct GPUMaterial
 	float					refraction;
 	int						type;
 	int						texture_index;
+	int						emission_texture_index;
 };
 
 struct GPUVolume
@@ -112,6 +113,7 @@ class Scene
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
 		void							addTexture(std::string path);
+		void							addEmissionTexture(std::string path);
 
 		bool							loadTextures();
 		
@@ -125,8 +127,11 @@ class Scene
 		
 		std::vector<GPUMaterial>		&getMaterialData();
 		std::vector<GLuint>				&getTextureIDs();
+		std::vector<GLuint>				&getEmissionTextureIDs();
+
 		std::vector<std::string>		&getTextures();
-		
+		std::vector<std::string>		&getEmissionTextures();
+
 		std::vector<GPUBvhData>			&getBvhData();
 		std::vector<GPUBvh>				&getBvh();
 
@@ -146,7 +151,10 @@ class Scene
 		std::vector<GPUMaterial>	_gpu_materials;
 
 		std::vector<std::string>	_textures;
+		std::vector<std::string>	_emissive_textures;
+
 		std::vector<GLuint>			_gpu_textures;
+		std::vector<GLuint>			_gpu_emissive_textures;
 
 		std::set<int>				_gpu_lights;
 

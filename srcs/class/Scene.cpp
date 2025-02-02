@@ -228,7 +228,7 @@ void		Scene::addTexture(std::string path)
 
 void		Scene::addEmissionTexture(std::string path)
 {
-	_emission_textures.push_back(path);
+	_emissive_textures.push_back(path);
 }
 
 bool		Scene::loadTextures()
@@ -259,6 +259,35 @@ bool		Scene::loadTextures()
 		glGenerateMipmap(GL_TEXTURE_2D);
 
 		_gpu_textures.push_back(textureID);
+
+		stbi_image_free(image);
+	}
+
+	for (std::string &path : _emissive_textures)
+	{
+		int width, height, channels;
+		unsigned char* image = stbi_load(path.c_str(), &width, &height, &channels, STBI_rgb_alpha);
+		
+		if (!image)
+		{
+			std::cout << "Failed to load texture " << path << std::endl;
+			return (false);
+		}
+
+		std::cout << "Loaded emissive texture: " << path << " (" << width << "x" << height << ")" << std::endl;
+
+		GLuint textureID;
+		glGenTextures(1, &textureID);
+		glBindTexture(GL_TEXTURE_2D, textureID);
+
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, image);
+		glGenerateMipmap(GL_TEXTURE_2D);
+		_gpu_emissive_textures.push_back(textureID);
 
 		stbi_image_free(image);
 	}
@@ -309,7 +338,7 @@ std::vector<GLuint>				&Scene::getTextureIDs()
 
 std::vector<GLuint>				&Scene::getEmissionTextureIDs()
 {
-	return (_gpu_emission_textures);
+	return (_gpu_emissive_textures);
 }
 
 std::vector<std::string>		&Scene::getTextures()
@@ -319,7 +348,7 @@ std::vector<std::string>		&Scene::getTextures()
 
 std::vector<std::string>		&Scene::getEmissionTextures()
 {
-	return (_emission_textures);
+	return (_emissive_textures);
 }
 
 GPUVolume						&Scene::getVolume()

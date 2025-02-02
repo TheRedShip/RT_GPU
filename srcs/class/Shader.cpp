@@ -67,7 +67,7 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string com
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
 
-	printWithLineNumbers(computeCode);
+	// printWithLineNumbers(computeCode);
 
 	_vertex = glCreateShader(GL_VERTEX_SHADER);
 	
@@ -208,29 +208,30 @@ void	Shader::set_mat4(const std::string &name, const glm::mat4 &value) const
 	glUniformMatrix4fv(glGetUniformLocation(_program_compute, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
 }
 
-void	Shader::set_textures(std::vector<GLuint> textureIDs)
+void	Shader::set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> emissive_texture_ids)
 {
-	for (size_t i = 0; i < textureIDs.size(); i++)
+	for (size_t i = 0; i < texture_ids.size(); i++)
 	{
 		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+		glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
 
 		std::string uniform_name = "textures[" + std::to_string(i) + "]";
 		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), i);
 	}
-}
 
-void	Shader::set_emission_textures(std::vector<GLuint> textureIDs)
-{
-	for (size_t i = 0; i < textureIDs.size(); i++)
+	size_t start_texture = texture_ids.size() + 1;
+
+	for (size_t i = 0; i < emissive_texture_ids.size(); i++)
 	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, textureIDs[i]);
+		GLuint currentUnit = start_texture + i;
 
-		std::string uniform_name = "emission_textures[" + std::to_string(i) + "]";
-		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), i);
+		glActiveTexture(GL_TEXTURE0 + currentUnit);
+		glBindTexture(GL_TEXTURE_2D, emissive_texture_ids[i]);
+		std::string uniform_name = "emissive_textures[" + std::to_string(i) + "]";
+		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), currentUnit);
 	}
 }
+
 
 GLuint	Shader::getProgram(void) const
 {

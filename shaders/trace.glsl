@@ -141,22 +141,21 @@ hitInfo traverseBVHs(Ray ray)
 		
 		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i]);
 
-		
 		float transformed_t = temp_hit.t / bvh_data.scale;
 		if (transformed_t < hit.t)
 		{
-		GPUTriangle triangle = triangles[temp_hit.obj_index];
+			GPUTriangle triangle = triangles[temp_hit.obj_index];
 
 			hit.u = temp_hit.u;
 			hit.v = temp_hit.v;
 			hit.t = transformed_t;
 			hit.obj_index = temp_hit.obj_index;
 			hit.mat_index = triangle.mat_index;
-			
+		
 			vec3 position = transformedRay.origin + transformedRay.direction * temp_hit.t;
 			hit.position = inverseTransformMatrix * position + bvh_data.offset;
 			
-			vec3 based_normal = triangle.normal; // * sign(-dot(transformedRay.direction, triangle.normal));
+			vec3 based_normal = triangle.normal * sign(-dot(transformedRay.direction, triangle.normal));
 			hit.normal = normalize(inverseTransformMatrix * based_normal);
 		}
 	}
