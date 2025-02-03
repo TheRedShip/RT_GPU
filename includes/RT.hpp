@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/22 16:37:32 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/03 18:17:48 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@
 # include "imgui/imgui_impl_glfw.h"
 # include "imgui/imgui_impl_opengl3.h"
 
+# include <algorithm>
 # include <string.h>
 # include <iostream>
 # include <fstream>

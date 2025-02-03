@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/31 19:53:44 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/03 18:40:04 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -322,18 +322,38 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			if (!(lineStream >> path))
 				throw std::runtime_error("OBJ: syntax error while getting material texture");
 
-			mat->texture_index = scene.getTextures().size();
-			scene.addTexture(getFilePath(_filename) + path);
+			path = getFilePath(_filename) + path;
+
+			std::vector<std::string> previous_textures = scene.getTextures();
+			std::vector<std::string>::iterator it = std::find(previous_textures.begin(), previous_textures.end(), path);
+
+			if (it != previous_textures.end())
+				mat->texture_index = std::distance(previous_textures.begin(), it);
+			else
+			{
+				mat->texture_index = previous_textures.size();;
+				scene.addTexture(path);
+			}
 		}
 		else if (identifier == "map_Ke")
 		{
 			std::string path;
 
 			if (!(lineStream >> path))
-				throw std::runtime_error("OBJ: syntax error while getting material texture");
+				throw std::runtime_error("OBJ: syntax error while getting emissive texture");
 
-			mat->emission_texture_index = scene.getEmissionTextures().size();
-			scene.addEmissionTexture(getFilePath(_filename) + path);
+			path = getFilePath(_filename) + path;
+
+			std::vector<std::string> previous_textures = scene.getEmissionTextures();
+			std::vector<std::string>::iterator it = std::find(previous_textures.begin(), previous_textures.end(), path);
+
+			if (it != previous_textures.end())
+				mat->texture_index = std::distance(previous_textures.begin(), it);
+			else
+			{
+				mat->texture_index = previous_textures.size();;
+				scene.addEmissionTexture(path);
+			}
 			
 			if (mat->emission == 0)
 				mat->emission = 1;
@@ -347,11 +367,6 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 		_matNames[matName] = scene.getMaterialData().size() - 1;
 	}
 	file.close();
-	for(auto i = _matNames.begin(); i != _matNames.end(); i++)
-	{
-		std::cout << "key : " << i->first << std::endl;
-		std::cout << "value :" << i->second << std::endl;
-	}
 }
 
 void	ObjParser::parse(Scene &scene, glm::vec3 offset, float scale, glm::mat4 transform)
