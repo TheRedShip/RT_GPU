@@ -23,6 +23,7 @@ class Quad : public Object
 			float	x, y, z;
 			float	x1, y1, z1;
 			float	x2, y2, z2;
+			bool	double_face;
 			int		mat_index;
 
 			if (!(line >> x >> y >> z))
@@ -33,6 +34,9 @@ class Quad : public Object
 
 			if (!(line >> x2 >> y2 >> z2))
 				throw std::runtime_error("Missing quad's second edge");
+			
+			if (!(line >> _single_sided))
+				throw std::runtime_error("Missing double_face");
 
 			if (!(line >> mat_index))
 				throw std::runtime_error("Missing material properties");
@@ -41,18 +45,25 @@ class Quad : public Object
 			_up = glm::vec3(x1, y1, z1);
 			_right = glm::vec3(x2, y2, z2);
 
+			_normal = glm::normalize(glm::cross(_up, _right));
+
 			_mat_index = mat_index;
 		}
-		Quad(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const int mat_index)
-			: Object(position, mat_index), _up(edge1), _right(edge2) {}
+		Quad(const glm::vec3 &position, const glm::vec3 &edge1, const glm::vec3 &edge2, const glm::vec3 &normal, const int single_sided, const int mat_index)
+			: Object(position, mat_index), _up(edge1), _right(edge2), _normal(normal), _single_sided(single_sided) {}
 
 		glm::vec3	getUp() const { return (_up); }
 		glm::vec3	getRight() const { return (_right); }
+		glm::vec3	getNormal() const { return (_normal); }
+		int			getSingleSided() const { return (_single_sided); }
 		Type		getType() const override { return Type::QUAD; }
+
 
 	private:
 		glm::vec3	_up;
 		glm::vec3	_right;
+		glm::vec3	_normal;
+		int			_single_sided;
 };
 
 #endif

@@ -42,10 +42,10 @@ bool intersectPlane(Ray ray, GPUObject obj, out hitInfo hit)
 
 bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 {
-	vec3 normal = normalize(cross(obj.vertex1, obj.vertex2));
+	vec3 normal = obj.normal;
 	float d = dot(normal, ray.direction);
 
-	if (d == 0.0) return (false);
+	if (d == 0.0 || (obj.radius != 0.0 && d <= 0)) return (false); // double sided or not
 
 	float t = dot(obj.position - ray.origin, normal) / d;
 
@@ -64,6 +64,7 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 	hit.t = t;
 	hit.position = p + obj.position;
 	hit.normal = normal * -sign(d);
+	// hit.normal = normal;
 	
 	return (inside);
 }
