@@ -24,8 +24,6 @@ class Portal : public Object
 			float	x1, y1, z1;
 			float	x2, y2, z2;
 			
-			bool	invert_normal;
-
 			int		mat_index;
 
 			if (!(line >> x >> y >> z))
@@ -37,7 +35,7 @@ class Portal : public Object
 			if (!(line >> x2 >> y2 >> z2))
 				throw std::runtime_error("Missing Portal's second edge");
 			
-			if (!(line >> invert_normal))
+			if (!(line >> _invert_normal))
 				throw std::runtime_error("Missing invert_normal");
 
 			if (!(line >> mat_index))
@@ -47,14 +45,18 @@ class Portal : public Object
 			_up = glm::vec3(x1, y1, z1);
 			_right = glm::vec3(x2, y2, z2);
 
-			glm::vec3 up = glm::normalize(_up);
+			// glm::vec3 temp_right = _right;
+			// _right = _invert_normal ? _up : _right;
+			// _up = _invert_normal ? temp_right : _up;
+
 			glm::vec3 right = glm::normalize(_right);
+			glm::vec3 up = glm::normalize(_up);
 			glm::vec3 forward = glm::normalize(glm::cross(right, up));
 
-			up = normalize(glm::cross(forward, right));
+			// up = normalize(glm::cross(forward, right));
 
 			_rotation = glm::mat3(right, up, forward);
-			_normal = forward * (invert_normal ? -1.0f : 1.0f);
+			_normal = forward * (_invert_normal ? -1.0f : 1.0f);
 
 			_linked_portal = -1;
 
@@ -67,19 +69,23 @@ class Portal : public Object
 		{
 			float extension = 0.2f;
 			
-			glm::vec3 right_dir = glm::normalize(_up);
-			glm::vec3 up_dir = glm::normalize(_right);
+			glm::vec3 right_dir = glm::normalize(_right);
+			glm::vec3 up_dir = glm::normalize(_up);
 
-			float right_length = glm::length(_up) + extension;
-			float up_length = glm::length(_right) + extension;
+			// glm::vec3 temp_right = right_dir;
+			// right_dir = _invert_normal ? right_dir : up_dir;
+			// up_dir = _invert_normal ? up_dir : temp_right;
+
+			float right_length = glm::length(_right) + extension;
+			float up_length = glm::length(_up) + extension;
 
 			glm::vec3 center_offset = -(right_dir * (extension / 2.0f) + up_dir * (extension / 2.0f));
-			glm::vec3 position = _position + _normal * -0.001f + center_offset;
+			glm::vec3 position = _position + _normal * 0.001f + center_offset;
 
 			glm::vec3 right = right_dir * right_length;
 			glm::vec3 up = up_dir * up_length;
-
-			return (new Quad(position, right, up, _mat_index));
+			// position += 10;
+			return (new Quad(position, right, up, _normal, 1, _mat_index));
 		}
 
 		glm::vec3	getUp() const { return (_up); }
@@ -101,6 +107,7 @@ class Portal : public Object
 		glm::mat3	_rotation;
 
 		int			_linked_portal;
+		int			_invert_normal;
 };
 
 #endif

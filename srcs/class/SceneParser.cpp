@@ -132,7 +132,7 @@ void		SceneParser::parseObj(std::stringstream &line)
 void		SceneParser::parseTexture(std::stringstream &line)
 {
 	std::string	path;
-
+	
 	if (!(line >> path))
 		throw std::runtime_error("Texture: Missing texture's path");
 

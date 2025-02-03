@@ -91,6 +91,8 @@ void		Scene::addObject(Object *obj)
 		auto quad = static_cast<Quad *>(obj);
 		gpu_obj.vertex1 = quad->getUp();
 		gpu_obj.vertex2 = quad->getRight();
+		gpu_obj.normal = quad->getNormal();
+		gpu_obj.radius = quad->getSingleSided();
 	}
 	else if (obj->getType() == Object::Type::CUBE)
 	{
