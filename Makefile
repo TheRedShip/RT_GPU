@@ -74,7 +74,8 @@ $(NAME): $(OBJS) $(HEADERS)
 	@printf "$(LINE_CLR)$(WHITE) $(NAME): PROJECT COMPILED !$(RESET)\n\n"
 endif
 
-
+flags:
+	echo $(CFLAGS) $(IFLAGS) | tr " " "\n" > compile_flags.txt
 
 $(OBJS_DIR)/%.o: %.cpp
 	@$(DIR_DUP)
