@@ -1,5 +1,5 @@
 .vscode
 .objs
-RT
+/RT
 compile_flags.txt
 imgui.ini
