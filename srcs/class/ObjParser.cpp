@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/03 18:40:04 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/03 19:01:06 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -257,7 +257,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			continue;
 		}
 		if(!mat)
-			throw std::runtime_error("OBJ: error in material file, material name not defined");
+			throw std::runtime_error("OBJ: error in material file, material name not defined ");
 		if(identifier == "Kd")
 		{
 			if(!(lineStream >> mat->color.x >> mat->color.y >> mat->color.z))

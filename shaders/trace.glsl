@@ -171,7 +171,7 @@ hitInfo traceRay(Ray ray)
 	hitInfo hitScene;
 	hitInfo hit;
 
-	#if 1
+	#if 0
 	for (int i = 0; i < 10; i++) // portal ray
 	{
 		hitBVH = traverseBVHs(ray);
