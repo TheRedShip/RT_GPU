@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 21:56:58 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 23:19:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class Renderer
 		void	addImageToRender(Shader &shader);
 		void	endRender(void);
 		void	imguiPathCreation(void);
-		void	imguiRenderInfo(void); 
+		void	showRenderInfo(int isImgui); 
 		void	imguiRenderSettings(void);
 		std::string	floatToTime(double timef);
 		glm::vec2 bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);

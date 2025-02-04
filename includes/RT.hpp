@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 01:10:20 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 23:39:14 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # include <algorithm>
 # include <string.h>
 # include <iostream>
+# include <iomanip>
 # include <fstream>
 # include <sstream>
 # include <chrono>
