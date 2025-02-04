@@ -26,6 +26,8 @@ struct GPUCamera
 	int						bounce;
 };
 
+class Scene;
+
 class Camera
 {
 	public:
@@ -34,11 +36,13 @@ class Camera
 		~Camera(void);
 
 
-		void		update(float deltaTime);
+		void		update(Scene *scene, float deltaTime);
 		void		processMouse(float xoffset, float yoffset, bool constrainPitch);
 		void		processKeyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
 		
 		void		updateCameraVectors();
+
+		void		portalTeleport(Scene *scene);
 
 		glm::vec3	getPosition();
 		glm::vec2	getDirection();
