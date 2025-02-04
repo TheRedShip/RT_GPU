@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/30 22:29:00 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 22:10:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,15 +14,16 @@
 
 int main(int argc, char **argv)
 {
-	Scene		scene;
-
-	if (argc <= 1 || !scene.parseScene(argv[1]))
-		return (1);
-
-	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
+	Arguments	args(argc, argv);
+	if(args.error())
+		return(1);
+	Scene		scene(args.getSceneName());
+	if(scene.fail())
+		return(1);
+	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
-	
+
 
 	GLint max_gpu_size;
 	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);

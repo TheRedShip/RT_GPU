@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/03 18:17:48 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/04 23:39:14 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # include <algorithm>
 # include <string.h>
 # include <iostream>
+# include <iomanip>
 # include <fstream>
 # include <sstream>
 # include <chrono>
@@ -57,6 +58,7 @@ struct Vertex {
 # include "objects/Portal.hpp"
 # include "objects/Cylinder.hpp"
 
+# include "Arguments.hpp"
 # include "Camera.hpp"
 # include "Renderer.hpp"
 # include "Window.hpp"

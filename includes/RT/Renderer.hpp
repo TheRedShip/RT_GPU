@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/01/30 22:15:55 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 23:19:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,22 +36,28 @@ typedef struct s_pathPoint
 class Renderer
 {
 	public:
-		Renderer(Scene *scene, Window *win);
+		Renderer(Scene *scene, Window *win, Arguments &args);
 		void	renderImgui(void);
 		void	update(Shader &shader);
 		int		rendering(void) const;
+		bool	shouldClose(void) const;
 
 	private:
 		void	addPoint(float time);
+		void	init(Scene *scene, Window *win);
+		void	savePath(void);
+		void	rawRead(std::ifstream &file, void *buf, size_t len);
+		void	loadPath(std::string filename);
 		void	makeMovement(float timeFromStart, float curSplitTimeReset);
 		void	initRender();
 		void	addImageToRender(Shader &shader);
 		void	endRender(void);
 		void	imguiPathCreation(void);
-		void	imguiRenderInfo(void); 
-		std::string	floatToTime(float timef);
+		void	showRenderInfo(int isImgui); 
+		void	imguiRenderSettings(void);
+		std::string	floatToTime(double timef);
 		glm::vec2 bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
-		void	updateAvailableCodecs(void);
+		void	updateAvailableCodecs(int mode, AVCodecID id);
 		void	fillGoodCodecList(std::vector<AVCodecID> &lst);
 		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
 
@@ -69,6 +75,11 @@ class Renderer
 		std::vector<const AVCodec *>	_codecList;
 		std::vector<const char *>		_codecListStr;
 		int								_codecIndex;
+		bool							_renderSettings;
+		bool							_ignoreUnavailableCodec;
+		bool							_headless;
+		bool							_tp;
+		bool							_shouldClose;
 
 		int								_curPathIndex;
 		int								_destPathIndex;
