@@ -23,7 +23,6 @@ class Quad : public Object
 			float	x, y, z;
 			float	x1, y1, z1;
 			float	x2, y2, z2;
-			bool	double_face;
 			int		mat_index;
 
 			if (!(line >> x >> y >> z))
