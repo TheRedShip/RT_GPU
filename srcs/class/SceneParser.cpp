@@ -6,13 +6,13 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/30 22:29:15 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 01:21:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "SceneParser.hpp"
 
-SceneParser::SceneParser(Scene *scene, char *filename) : _scene(scene), _filename(filename)
+SceneParser::SceneParser(Scene *scene, std::string filename) : _scene(scene), _filename(filename)
 {
 	object_parsers["sp"] = [](std::stringstream &ss) -> Object * { return (new Sphere(ss)); };
 	object_parsers["pl"] = [](std::stringstream &ss) -> Object * { return (new Plane(ss)); };

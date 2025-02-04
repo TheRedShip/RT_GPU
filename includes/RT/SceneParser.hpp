@@ -6,7 +6,7 @@
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:37:37 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/21 15:15:13 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 01:21:28 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 class SceneParser
 {
 	public:
-		SceneParser(Scene *scene, char *filename);
+		SceneParser(Scene *scene, std::string filename);
 
 		bool		parseLine(const std::string &line);
 
