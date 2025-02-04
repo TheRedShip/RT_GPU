@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 21:56:44 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 23:42:00 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -414,6 +414,9 @@ void Renderer::update(Shader &shader)
 		return;
 
 	_curSamples++;
+	if(_headless)
+		showRenderInfo(0);
+
 	if((_testMode && _curSamples < _testSamples) || (!_testMode && _curSamples < _samples))
 		return;
 
@@ -429,6 +432,7 @@ void Renderer::update(Shader &shader)
 	}
 	makeMovement(curTime - _curSplitStart, curTime);
 	_curSamples = 0;
+
 }
 
 glm::vec3 Renderer::hermiteInterpolate(glm::vec3 points[4], double alpha)
@@ -760,8 +764,9 @@ std::string	Renderer::floatToTime(double timef)
 	return(res);
 }
 
-void Renderer::imguiRenderInfo(void)
+void Renderer::showRenderInfo(int isImgui)
 {
+	std::ostringstream oss;
 	long int totalFrames;
 	float renderTime;
 	float progress;
@@ -776,23 +781,54 @@ void Renderer::imguiRenderInfo(void)
 	timeEst *= (totalFrames * _samples) - ((_frameCount * _samples) + _curSamples);
 	if(timeEst > 1e15)
 		timeEst = 0;
-	ImGui::Text("render in progress");
-	ImGui::Text("samples per frame : %d", _samples);
-	ImGui::Text("render fps : %d", _fps);
-	ImGui::Text("total render time : %s", floatToTime((_path[_destPathIndex].time - _path[0].time) * 60).c_str());
-	ImGui::Separator();
-	ImGui::Text("Frames : %ld / %ld", _frameCount, totalFrames);
-	ImGui::Text("Frames (with accumulation) : %ld / %ld", (_frameCount * _samples) + _curSamples, totalFrames * _samples);
-	ImGui::Text("Render time : %dm%f", (int)renderTime, (renderTime - (int)renderTime) * 60);
-	ImGui::Text("elapsed time : %s", floatToTime(timeElapsed).c_str());
-	ImGui::Text("estimated time remaining : %s", floatToTime(timeEst).c_str());
+
+	oss << std::fixed << std::setprecision(2);
+
+	oss << "render in progress" << std::endl;
+	oss << "samples per frame : " << _samples << std::endl;
+	oss << "render fps : " << _fps << std::endl;
+	oss << "total render time : ";
+	oss << floatToTime((_path[_destPathIndex].time - _path[0].time) * 60).c_str();
+
+	if(isImgui)
+	{
+		ImGui::Text("%s",oss.str().c_str());
+		ImGui::Separator();
+	}
+	else
+	{
+		std::cout << "\033[2J\033[H";
+		std::cout << oss.str() << std::endl;
+		std::cout << "-----------------------" << std::endl;
+	}
+	oss.str("");
+	oss.clear();
+
+	oss << "Frames : " << _frameCount << " / " << totalFrames << std::endl;
+	oss << "Frames (with accumulation) : " << (_frameCount * _samples) + _curSamples;
+	oss << " / " << totalFrames * _samples << std::endl;
+	oss << "Render time : " << (int)renderTime << "m";
+	oss << (renderTime - (int)renderTime) * 60 << "s" << std::endl;
+	oss << "elapsed time : " << floatToTime(timeElapsed) << std::endl;
+	oss << "estimated time remaining :" <<  floatToTime(timeEst);
+
 	progress = ((float)_frameCount * _samples)  + _curSamples;
 	progress /= (float)totalFrames * _samples;
-	ImGui::ProgressBar(progress, ImVec2(0, 0));
-	if(ImGui::Button("stop"))
+
+	if(isImgui)
 	{
-		_destPathIndex = 0;
-		endRender();
+		ImGui::Text("%s",oss.str().c_str());
+		ImGui::ProgressBar(progress, ImVec2(0, 0));
+		if(ImGui::Button("stop"))
+		{
+			_destPathIndex = 0;
+			endRender();
+		}
+	}
+	else
+	{
+		oss << std::endl << progress * 100 << "%";
+		std::cout << oss.str() << std::endl;
 	}
 }
 
@@ -833,7 +869,7 @@ void Renderer::renderImgui(void)
 	if (ImGui::CollapsingHeader("Renderer"))
 	{
 		if(rendering())
-			imguiRenderInfo();
+			showRenderInfo(1);
 		else if(_renderSettings)
 			imguiRenderSettings();
 		else
