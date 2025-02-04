@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:05:44 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 17:10:24 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 22:17:04 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,10 +96,25 @@ void	Arguments::addArgument(char shortName, std::string longName, int isFlag)
 	_args.push_back(arg);
 }
 
+int	Arguments::setArg(t_arg arg, char **argv, int argc, int *i)
+{
+
+				if(arg.isFlag)
+					_values[arg.longName] = "yes";
+				else if(*i == argc - 1)
+				{
+					std::cerr << "missing option for " << arg.longName << std::endl;
+					return(0);
+				}
+				else
+					_values[arg.longName] = argv[++(*i)];
+				return(1);
+}
 
 int Arguments::handleArg(char **argv, int argc, int *i)
 {
 	std::string arg(argv[*i]);
+	std::vector<t_arg>::iterator it;
 
 	(void)i;
 	if(!arg.size())
@@ -109,18 +124,7 @@ int Arguments::handleArg(char **argv, int argc, int *i)
 		for(std::vector<t_arg>::iterator it = _args.begin(); it != _args.end(); it++)
 		{
 			if((*it).longName == arg.substr(2))
-			{
-				if((*it).isFlag)
-					_values[(*it).longName] = "yes";
-				else if(*i == argc - 1)
-				{
-					std::cerr << "missing option for --" << (*it).longName << std::endl;
-					return(0);
-				}
-				else
-					_values[(*it).longName] = argv[++(*i)];
-				return(1);
-			}
+				return(setArg((*it), argv, argc, i));
 		}
 		std::cerr<< "unrecognized option : " << arg << std::endl;
 		return(0);
@@ -129,24 +133,20 @@ int Arguments::handleArg(char **argv, int argc, int *i)
 	{
 		for(size_t j = 1; j < arg.size(); j++)
 		{
-			for(std::vector<t_arg>::iterator it = _args.begin(); it != _args.end(); it++)
+			for(it = _args.begin(); it != _args.end(); it++)
 			{
 				if((*it).shortName == arg[j])
 				{
-					if((*it).isFlag)
-						_values[(*it).longName] = "yes";
-					else if(*i == argc - 1)
-					{
-						std::cerr << "missing option for --" << (*it).longName << std::endl;
+					if(!setArg((*it), argv, argc, i))
 						return(0);
-					}
-					else
-						_values[(*it).longName] = argv[++(*i)];
-					return(1);
+					break;
 				}
 			}
-			std::cerr << "unrecognized option : -" << arg[j] << std::endl;
-			return(0);
+			if(it == _args.end())
+			{
+				std::cerr << "unrecognized option : -" << arg[j] << std::endl;
+				return(0);
+			}
 		}
 	}
 	else

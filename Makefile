@@ -28,7 +28,7 @@ else
 	RM          :=	rm -rf
 	DIR_DUP     =	mkdir -p $(@D)
 	CC          :=	clang++
-	CFLAGS      :=	-Wall -Wextra -Werror -g #-O3
+	CFLAGS      :=	-Wall -Wextra -Werror -g -O3
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui 
 	LDFLAGS		+=  -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lavformat -lavcodec -lavutil -lswscale -lswresample
 	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)

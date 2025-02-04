@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 16:45:30 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 22:10:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 int main(int argc, char **argv)
 {
 	Arguments	args(argc, argv);
-	args.show();
 	if(args.error())
 		return(1);
 	Scene		scene(args.getSceneName());
