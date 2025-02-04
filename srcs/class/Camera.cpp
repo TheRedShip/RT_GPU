@@ -36,7 +36,7 @@ void		Camera::updateCameraVectors()
 	_up = glm::normalize(glm::cross(_right, _forward));
 }
 
-void		Camera::update(float delta_time)
+void		Camera::update(Scene *scene, float delta_time)
 {
 	// delta_time = std::min(delta_time, 0.01f);
 
@@ -51,8 +51,46 @@ void		Camera::update(float delta_time)
     
     _position += _velocity * delta_time;
     _acceleration = glm::vec3(0.0f);
+
+	this->portalTeleport(scene);
 }
 
+void		Camera::portalTeleport(Scene *scene)
+{
+	for (const GPUObject &obj : scene->getObjectData())
+	{
+		if (obj.type != (int)Object::Type::PORTAL)
+			continue;
+
+		glm::vec3 portal_to_camera = _position - obj.position;
+		float distance_plane = glm::dot(portal_to_camera, obj.normal);
+		glm::vec3 point_projected = _position - distance_plane * obj.normal;
+
+		glm::mat2 A = glm::mat2(
+			glm::dot(obj.vertex1, obj.vertex1), glm::dot(obj.vertex1, obj.vertex2),
+			glm::dot(obj.vertex1, obj.vertex2), glm::dot(obj.vertex2, obj.vertex2)
+		);
+		glm::vec2 b = glm::vec2(
+			glm::dot(point_projected - obj.position, obj.vertex1),
+			glm::dot(point_projected - obj.position, obj.vertex2)
+		);
+    	glm::vec2 alphaBeta = glm::inverse(A) * b;
+
+		if (alphaBeta.x >= 0.0f && alphaBeta.x <= 1.0f && alphaBeta.y >= 0.0f && alphaBeta.y <= 1.0f)
+		{
+			float distance = glm::length(point_projected - _position);
+			if (distance < 0.1f)
+			{
+				GPUObject linked_portal = scene->getObjectData()[obj.radius];
+				std::cout << glm::to_string(point_projected) << std::endl;
+				_position = linked_portal.position + (_position - obj.position) - linked_portal.normal * 0.1f;
+				std::cout << "Teleporting to " << glm::to_string(_position) << std::endl;
+				
+				break ;
+			}
+		}
+	}
+}
 
 void		Camera::processMouse(float xoffset, float yoffset, bool constraint_pitch = true)
 {

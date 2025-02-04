@@ -155,7 +155,7 @@ void Window::display()
 void Window::pollEvents()
 {
 	this->process_input();
-	_scene->getCamera()->update(_delta);
+	_scene->getCamera()->update(_scene, _delta);
 	
     glfwPollEvents();
 }
