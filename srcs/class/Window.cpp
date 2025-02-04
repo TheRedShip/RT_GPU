@@ -6,19 +6,19 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 00:42:01 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 16:46:29 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Window.hpp"
 
-Window::Window(Scene *scene, int width, int height, const char *title, int sleep)
+Window::Window(Scene *scene, int width, int height, const char *title, int sleep, Arguments &args)
 {
 	_scene = scene;
 	_fps = 0;
 	_frameCount = 0;
 	_pixelisation = 0;
-	_renderer = new Renderer(scene, this);
+	_renderer = new Renderer(scene, this, args);
 	
 	if (!glfwInit())
 	{

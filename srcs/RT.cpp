@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 03:06:51 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 16:45:30 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,13 @@
 int main(int argc, char **argv)
 {
 	Arguments	args(argc, argv);
+	args.show();
 	if(args.error())
 		return(1);
 	Scene		scene(args.getSceneName());
 	if(scene.fail())
 		return(1);
-	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0);
+	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
 	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 

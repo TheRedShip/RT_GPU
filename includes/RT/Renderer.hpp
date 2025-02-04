@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 00:41:10 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 18:46:22 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,8 +36,7 @@ typedef struct s_pathPoint
 class Renderer
 {
 	public:
-		Renderer(Scene *scene, Window *win);
-		Renderer(Scene *scene, Window *win, std::string filename);
+		Renderer(Scene *scene, Window *win, Arguments &args);
 		void	renderImgui(void);
 		void	update(Shader &shader);
 		int		rendering(void) const;
