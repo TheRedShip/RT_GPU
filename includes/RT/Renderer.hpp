@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 23:19:37 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/05 17:24:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,50 +37,46 @@ class Renderer
 {
 	public:
 		Renderer(Scene *scene, Window *win, Arguments &args);
-		void	renderImgui(void);
-		void	update(Shader &shader);
-		int		rendering(void) const;
-		bool	shouldClose(void) const;
+
+		void		update(Shader &shader);
+		void		renderImgui(void);
+
+		int			rendering(void) const;
+		bool		shouldClose(void) const;
 
 	private:
-		void	addPoint(float time);
-		void	init(Scene *scene, Window *win);
-		void	savePath(void);
-		void	rawRead(std::ifstream &file, void *buf, size_t len);
-		void	loadPath(std::string filename);
-		void	makeMovement(float timeFromStart, float curSplitTimeReset);
-		void	initRender();
-		void	addImageToRender(Shader &shader);
-		void	endRender(void);
-		void	imguiPathCreation(void);
-		void	showRenderInfo(int isImgui); 
-		void	imguiRenderSettings(void);
+		void		init(Scene *scene, Window *win);
+
+		void		showRenderInfo(int isImgui); 
 		std::string	floatToTime(double timef);
-		glm::vec2 bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
-		void	updateAvailableCodecs(int mode, AVCodecID id);
-		void	fillGoodCodecList(std::vector<AVCodecID> &lst);
+		float		calcTime(void);
+
+		void		addPoint(float time);
+		void		imguiPathCreation(void);
+		void		imguiRenderSettings(void);
+
+		void		rawRead(std::ifstream &file, void *buf, size_t len);
+		void		savePath(void);
+		void		loadPath(std::string filename);
+
+		void		makeMovement(float timeFromStart, float curSplitTimeReset);
+		glm::vec2	bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
 		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
 
-		int								_min;
-		int								_sec;
-		int								_samples;
-		int								_testSamples;
-		bool							_autoTime;
-		int								_fps;
-		char							_filenameBuffer[512];
-		std::vector<t_pathPoint>		_path;
-		std::string						_outputFilename;
+		void		initRender();
+		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
+		void		updateAvailableCodecs(int mode, AVCodecID id);
+		void		addImageToRender(Shader &shader);
+		void		endRender(void);
+
+
 		Scene							*_scene;
 		Window							*_win;
-		std::vector<const AVCodec *>	_codecList;
-		std::vector<const char *>		_codecListStr;
-		int								_codecIndex;
-		bool							_renderSettings;
-		bool							_ignoreUnavailableCodec;
-		bool							_headless;
-		bool							_tp;
 		bool							_shouldClose;
+		bool							_headless;
+		std::string						_outputFilename;
 
+		std::vector<t_pathPoint>		_path;
 		int								_curPathIndex;
 		int								_destPathIndex;
 		double							_curSplitStart;
@@ -89,6 +85,22 @@ class Renderer
 		long int						_frameCount;
 		float							_renderStartTime;
 
+
+		int								_samples;
+		int								_testSamples;
+		int								_min;
+		int								_sec;
+		int								_fps;
+		char							_filenameBuffer[512];
+		bool							_ignoreUnavailableCodec;
+		bool							_tp;
+		bool							_autoTime;
+		std::vector<const char *>		_codecListStr;
+		int								_codecIndex;
+
+		bool							_renderSettings;
+
+
 		AVFormatContext					*_format;
 		AVCodecContext					*_codec_context;
 		AVFrame							*_rgb_frame;
@@ -96,7 +108,7 @@ class Renderer
 		SwsContext						*_sws_context;
 		AVStream						*_stream;
 		AVDictionary					*_codecOptions;
-
+		std::vector<const AVCodec *>	_codecList;
 };
 
 #endif

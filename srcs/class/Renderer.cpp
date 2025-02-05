@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 23:42:00 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/05 17:21:00 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 	init(scene, win);
 	_headless = args.getHeadless();
 	renderPath = args.getRenderPath();
+
 	if(renderPath)
 	{
 		try
@@ -101,9 +102,7 @@ void	Renderer::savePath(void)
 	outputFile.write((char *)&_samples, sizeof(_samples));
 	outputFile.write((char *)&_fps, sizeof(_fps));
 	for(std::vector<t_pathPoint>::iterator it = _path.begin(); it != _path.end(); it++)
-	{
 		outputFile.write((char *)&(*it), sizeof(t_pathPoint));
-	}
 	outputFile.close();
 }
 
@@ -153,11 +152,6 @@ void	Renderer::loadPath(std::string filename)
 	if(_path.size() < 2)
 		throw std::runtime_error("not enough path points provided in the path");
 	file.close();
-}
-
-bool	Renderer::shouldClose(void) const
-{
-	return(_shouldClose);
 }
 
 void	Renderer::fillGoodCodecList(std::vector<AVCodecID> &lst)
@@ -462,37 +456,6 @@ glm::vec3 Renderer::hermiteInterpolate(glm::vec3 points[4], double alpha)
 	return(coef[0] * points[1] + coef[1] * tang[0] + coef[2] * tang[1] + coef[3] * points[2]);
 }
 
-//glm::quat eulerToQuaternion(float pitch, float yaw)
-//{
-//    glm::quat qPitch = glm::angleAxis(glm::radians(pitch), glm::vec3(1, 0, 0));
-//    glm::quat qYaw = glm::angleAxis(glm::radians(yaw), glm::vec3(0, 1, 0));
-//    
-//    glm::quat result = qYaw* qPitch;
-//    return(result);
-//}
-
-//glm::vec2 Renderer::sphereInterpolate(glm::vec2 from, glm::vec2 to, float time) // gud but bad
-//{
-//	glm::vec3	eulerRes;
-//	glm::quat	qFrom;
-//	glm::quat	qTo;
-//	glm::quat	res;
-//	float		angle;
-//	float		dot;
-//
-//	qFrom = glm::normalize(eulerToQuaternion(from.y, from.x));
-//	qTo = glm::normalize(eulerToQuaternion(to.y, to.x));
-//	
-//	dot = glm::dot(qFrom, qTo);
-//	if(dot < 0)
-//		to = -to;
-//	angle = 2 * glm::acos(dot);
-//	res = (glm::sin((1 - time) * angle / glm::sin(angle)) * qFrom) + ((glm::sin(time * angle) / glm::sin(angle)) * qTo);
-//	eulerRes = glm::degrees(glm::eulerAngles(res));
-//	return(glm::vec2(eulerRes.y, eulerRes.x));
-//}
-
-
 glm::vec2 Renderer::bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time)
 {
 	glm::vec2 delta;
@@ -570,6 +533,7 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	bezierControl.y = !_curPathIndex || smallDistPrev ? .1f : .0f;
 	bezierControl.z = 0.8f;
 	bezierControl.w = (size_t)_curPathIndex + 2 >= _path.size() ||  smallDistNext ? .9f : 1.0f;
+
 	dir = bezierSphereInterpolate(bezierControl, from.dir, to.dir, normalTime);
 	if(std::isnan(dir.x) || std::isnan(dir.y))
 		dir = from.dir;
@@ -591,12 +555,7 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	}
 }
 
-int	Renderer::rendering(void) const
-{
-	return(_destPathIndex != 0 && !_testMode);
-}
-
-void Renderer::imguiPathCreation(void)
+float Renderer::calcTime(void)
 {
 	float prevSpeed;
 	float time;
@@ -605,6 +564,37 @@ void Renderer::imguiPathCreation(void)
 		prevSpeed = glm::distance(_path[_path.size() - 2].pos, _path[_path.size() - 1].pos) / (_path[_path.size() - 1].time - _path[_path.size() - 2].time);
 	else
 		prevSpeed = 0;
+
+	if(_autoTime)
+	{
+		_tp = 0;
+		if(_path.size() > 1)
+			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, _scene->getCamera()->getPosition()) / prevSpeed);
+		else
+			time = (float)_path.size() / 60;
+		if(std::isnan(time))
+			time = _path[_path.size() - 1].time + (1.0f / 60);
+		_min = time;
+		_sec = (time - (int)time) * 60;
+	}
+	else if(_tp)
+	{
+		_autoTime = 0;
+		if(!_path.size())
+			time = 0;
+		else
+			time = _path[_path.size() - 1].time;
+		_min = time;
+		_sec = (time - (int)time) * 60;
+	}
+	else
+		time = (float)_min + ((float)_sec / 60);
+	return time;
+}
+
+void Renderer::imguiPathCreation(void)
+{
+	float time;
 
 	ImGui::SliderInt("test spi", &_testSamples, 1, 10);
 	
@@ -633,35 +623,10 @@ void Renderer::imguiPathCreation(void)
 			_autoTime = 0;
 			_tp = 0;
 	}
-	if(_autoTime)
-	{
-		if(_path.size() > 1)
-			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, _scene->getCamera()->getPosition()) / prevSpeed);
-		else
-			time = (float)_path.size() / 60;
-		if(std::isnan(time))
-			time = _path[_path.size() - 1].time + (1.0f / 60);
-		_min = time;
-		_sec = (time - (int)time) * 60;
-	}
-	else if(_tp)
-	{
-		if(!_path.size())
-			time = 0;
-		else
-			time = _path[_path.size() - 1].time;
-		_min = time;
-		_sec = (time - (int)time) * 60;
-	}
-	else
-		time = (float)_min + ((float)_sec / 60);
+	time = calcTime();
 
 	ImGui::Checkbox("guess time automatically", &_autoTime);
-	if(_autoTime)
-		_tp = 0;
 	ImGui::Checkbox("tp", &_tp);
-	if(_tp)
-		_autoTime = 0;
 	if(ImGui::Button("add step"))
 		addPoint(time);
 
@@ -718,7 +683,7 @@ std::string	Renderer::floatToTime(double timef)
 	int firstValue;
 
 	time = timef;
-	values[0] = time / (3600 * 24 * 365);
+	values[0] = time / (3600 * 24 *365);
 	time = time % (3600 * 24 * 365);
 	values[1] = time / (3600 * 24 * 30);
 	time = time % (3600 * 24 * 30);
@@ -740,26 +705,19 @@ std::string	Renderer::floatToTime(double timef)
 	switch(firstValue)
 	{
 		case 0:
-			res += std::to_string(values[0]);
-			res += "Y";
+			res += std::to_string(values[0]) + "Y";
 		case 1:
-			res += std::to_string(values[1]);
-			res += "M";
+			res += std::to_string(values[1]) + "M";
 		case 2:
-			res += std::to_string(values[2]);
-			res += "W";
+			res += std::to_string(values[2]) + "W";
 		case 3:
-			res += std::to_string(values[3]);
-			res += "d";
+			res += std::to_string(values[3]) + "d";
 		case 4:
-			res += std::to_string(values[4]);
-			res += "h";
+			res += std::to_string(values[4]) + "h";
 		case 5:
-			res += std::to_string(values[5]);
-			res += "m";
+			res += std::to_string(values[5]) + "m";
 		case 6:
-			res += std::to_string(values[6]);
-			res += "s";
+			res += std::to_string(values[6]) + "s";
 	}
 	return(res);
 }
@@ -865,7 +823,6 @@ void	Renderer::imguiRenderSettings(void)
 
 void Renderer::renderImgui(void)
 {
-	// ImGui::Begin("Renderer");
 	if (ImGui::CollapsingHeader("Renderer"))
 	{
 		if(rendering())
@@ -875,5 +832,15 @@ void Renderer::renderImgui(void)
 		else
 			imguiPathCreation();
 	}
-	// ImGui::End();
+}
+
+
+bool	Renderer::shouldClose(void) const
+{
+	return(_shouldClose);
+}
+
+int	Renderer::rendering(void) const
+{
+	return(_destPathIndex != 0 && !_testMode);
 }
