@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/28 02:15:41 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/05 20:09:58 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,20 +42,20 @@ void		Camera::update(Scene *scene, float delta_time)
 
 	_velocity += _acceleration * delta_time;
 
-    if (glm::length(_acceleration) < 0.1f)
-        _velocity *= std::max(0.0f, 1.0f - _deceleration_rate * delta_time);
-    
-    float speed = glm::length(_velocity);
-    if (speed > _maxSpeed)
-        _velocity = glm::normalize(_velocity) * _maxSpeed;
-    
-    _position += _velocity * delta_time;
-    _acceleration = glm::vec3(0.0f);
+	if (glm::length(_acceleration) < 0.1f)
+		_velocity *= std::max(0.0f, 1.0f - _deceleration_rate * delta_time);
+	
+	float speed = glm::length(_velocity);
+	if (speed > _maxSpeed)
+		_velocity = glm::normalize(_velocity) * _maxSpeed;
+	
+	if (glm::length(_velocity) > 0.0f && !this->portalTeleport(scene, delta_time))
+		_position += _velocity * delta_time;
 
-	this->portalTeleport(scene);
+	_acceleration = glm::vec3(0.0f);
 }
 
-void		Camera::portalTeleport(Scene *scene)
+int	Camera::portalTeleport(Scene *scene, float delta_time)
 {
 	for (const GPUObject &obj : scene->getObjectData())
 	{
@@ -74,22 +74,26 @@ void		Camera::portalTeleport(Scene *scene)
 			glm::dot(point_projected - obj.position, obj.vertex1),
 			glm::dot(point_projected - obj.position, obj.vertex2)
 		);
-    	glm::vec2 alphaBeta = glm::inverse(A) * b;
+		glm::vec2 alphaBeta = glm::inverse(A) * b;
 
 		if (alphaBeta.x >= 0.0f && alphaBeta.x <= 1.0f && alphaBeta.y >= 0.0f && alphaBeta.y <= 1.0f)
 		{
-			float distance = glm::length(point_projected - _position);
-			if (distance < 0.1f)
+			glm::vec3 future_pos = _position + _velocity * delta_time;
+
+			float distance_future_pos = glm::length(future_pos - _position);
+			float distance_portal = glm::length(point_projected - _position);
+
+			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
 				GPUObject linked_portal = scene->getObjectData()[obj.radius];
-				std::cout << glm::to_string(point_projected) << std::endl;
-				_position = linked_portal.position + (_position - obj.position) - linked_portal.normal * 0.1f;
-				std::cout << "Teleporting to " << glm::to_string(_position) << std::endl;
+				_position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal)) * linked_portal.normal);
 				
-				break ;
+				return (1);
 			}
 		}
 	}
+
+	return (0);
 }
 
 void		Camera::processMouse(float xoffset, float yoffset, bool constraint_pitch = true)
@@ -115,16 +119,16 @@ void		Camera::processKeyboard(bool forward, bool backward, bool left, bool right
 	glm::vec3 acceleration(0.0f);
 
 	if (forward)  acceleration += _forward;
-    if (backward) acceleration -= _forward;
-    if (right)    acceleration += _right;
-    if (left)     acceleration -= _right;
-    if (up)       acceleration += _up;
-    if (down)     acceleration -= _up;
-    
-    if (glm::length(acceleration) > 0.1f)
-        acceleration = glm::normalize(acceleration) * _acceleration_rate;
-    
-    _acceleration = acceleration;
+	if (backward) acceleration -= _forward;
+	if (right)    acceleration += _right;
+	if (left)     acceleration -= _right;
+	if (up)       acceleration += _up;
+	if (down)     acceleration -= _up;
+	
+	if (glm::length(acceleration) > 0.1f)
+		acceleration = glm::normalize(acceleration) * _acceleration_rate;
+	
+	_acceleration = acceleration;
 }
 
 glm::mat4	Camera::getViewMatrix()
