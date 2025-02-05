@@ -104,6 +104,8 @@ int main(int argc, char **argv)
 
 	while (!window.shouldClose())
 	{
+		window.updateDeltaTime();
+		
 		glUseProgram(shader.getProgramCompute());
 		
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);

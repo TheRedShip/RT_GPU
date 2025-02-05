@@ -187,16 +187,14 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 			}
 		#endif
 
-
-        float miss_condition = float(hit.obj_index == -1);
-        light += miss_condition * transmittance * GetEnvironmentLight(ray);
+		if (hit.obj_index == -1)
+		{
+			light += transmittance * GetEnvironmentLight(ray);
+			break;
+		}
 
         float p = max(color.r, max(color.g, color.b));
-        float rr_continue = float(randomValue(rng_state) <= p);
-        
-        float break_condition = miss_condition + (1.0 - rr_continue);
-        if (break_condition > 0.0) break;
-        
+        if (randomValue(rng_state) >= p) break;
 		color /= max(p, 0.001);
         
         GPUMaterial mat = materials[hit.mat_index];

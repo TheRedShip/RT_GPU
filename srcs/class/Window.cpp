@@ -134,7 +134,7 @@ void Window::keyCallback(GLFWwindow *window, int key, int scancode, int action, 
 	}
 }
 
-void Window::display()
+void Window::updateDeltaTime()
 {
 	static double	lastTime = glfwGetTime();
 	double			currentTime = glfwGetTime();
@@ -144,6 +144,12 @@ void Window::display()
 	lastTime = currentTime;
 	_fps = 1.0f / _delta;
 
+	if (accumulate)
+		_frameCount++;
+}
+
+void Window::display()
+{
 	if (accumulate)
 		_frameCount++;
 
