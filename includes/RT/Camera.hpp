@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 13:59:57 by TheRed            #+#    #+#             */
-/*   Updated: 2024/12/23 17:42:18 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/05 19:05:45 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Camera
 		
 		void		updateCameraVectors();
 
-		void		portalTeleport(Scene *scene);
+		int			portalTeleport(Scene *scene, float delta_time);
 
 		glm::vec3	getPosition();
 		glm::vec2	getDirection();
