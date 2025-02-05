@@ -41,6 +41,7 @@ class Camera
 		void		processKeyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
 		
 		void		updateCameraVectors();
+		void		updateCameraDirections();
 
 		int			portalTeleport(Scene *scene, float delta_time);
 

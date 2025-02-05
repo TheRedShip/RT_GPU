@@ -36,6 +36,19 @@ void		Camera::updateCameraVectors()
 	_up = glm::normalize(glm::cross(_right, _forward));
 }
 
+void		Camera::updateCameraDirections()
+{
+	glm::vec3 forward_xz = glm::normalize(glm::vec3(_forward.x, 0.0f, _forward.z));
+    _pitch = glm::degrees(asin(_forward.y));
+    
+    _yaw = glm::degrees(atan2(-_forward.x, _forward.z));
+
+    _yaw = fmod(_yaw + 360.0f, 360.0f);
+    _pitch = glm::clamp(_pitch, -89.0f, 89.0f);
+	
+	_yaw += 90;
+}
+
 void		Camera::update(Scene *scene, float delta_time)
 {
 	// delta_time = std::min(delta_time, 0.01f);
@@ -83,11 +96,35 @@ int	Camera::portalTeleport(Scene *scene, float delta_time)
 			float distance_future_pos = glm::length(future_pos - _position);
 			float distance_portal = glm::length(point_projected - _position);
 
+			float imprecision = 0.1f;
+
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
 				GPUObject linked_portal = scene->getObjectData()[obj.radius];
-				_position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal)) * linked_portal.normal);
-				
+
+				glm::mat4 portal_transform = linked_portal.transform * glm::inverse(obj.transform);
+
+				//teleportation
+
+				glm::vec3 relative_pos = _position - obj.position;
+            	glm::vec3 transformed_relative_pos = glm::vec3(portal_transform * glm::vec4(relative_pos, 1.0f));
+	
+				float remaining_distance = distance_future_pos - distance_portal + imprecision;
+				glm::vec3 new_movement = remaining_distance * glm::vec3(portal_transform * glm::vec4(linked_portal.normal, 0.0f));
+            
+ 				_position = linked_portal.position + transformed_relative_pos - new_movement;
+				// _position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);
+
+				// view direction
+
+				_forward = glm::vec3(portal_transform * glm::vec4(_forward, 1.0f));
+				_up = glm::vec3(portal_transform * glm::vec4(_up, 1.0f));
+				_right = glm::vec3(portal_transform * glm::vec4(_right, 1.0f));
+
+				updateCameraDirections();
+
+				_velocity = glm::vec3(portal_transform * glm::vec4(_velocity, 0.0f));
+
 				return (1);
 			}
 		}

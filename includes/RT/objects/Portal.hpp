@@ -45,15 +45,9 @@ class Portal : public Object
 			_up = glm::vec3(x1, y1, z1);
 			_right = glm::vec3(x2, y2, z2);
 
-			// glm::vec3 temp_right = _right;
-			// _right = _invert_normal ? _up : _right;
-			// _up = _invert_normal ? temp_right : _up;
-
 			glm::vec3 right = glm::normalize(_right);
 			glm::vec3 up = glm::normalize(_up);
 			glm::vec3 forward = glm::normalize(glm::cross(right, up));
-
-			// up = normalize(glm::cross(forward, right));
 
 			_rotation = glm::mat3(right, up, forward);
 			_normal = forward * (_invert_normal ? -1.0f : 1.0f);
@@ -72,10 +66,6 @@ class Portal : public Object
 			glm::vec3 right_dir = glm::normalize(_right);
 			glm::vec3 up_dir = glm::normalize(_up);
 
-			// glm::vec3 temp_right = right_dir;
-			// right_dir = _invert_normal ? right_dir : up_dir;
-			// up_dir = _invert_normal ? up_dir : temp_right;
-
 			float right_length = glm::length(_right) + extension;
 			float up_length = glm::length(_up) + extension;
 
@@ -84,7 +74,7 @@ class Portal : public Object
 
 			glm::vec3 right = right_dir * right_length;
 			glm::vec3 up = up_dir * up_length;
-			// position += 10;
+
 			return (new Quad(position, right, up, _normal, 1, _mat_index));
 		}
 

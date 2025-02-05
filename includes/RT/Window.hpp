@@ -23,6 +23,7 @@ class Window
 		Window(Scene *scene, int width, int height, const char *title, int sleep, Arguments &args);
 		~Window(void);
 
+		void		updateDeltaTime();
 		void		display();
 		void		pollEvents();
 		bool		shouldClose();
