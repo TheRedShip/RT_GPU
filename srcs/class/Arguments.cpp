@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:05:44 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 03:16:25 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 17:10:24 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,13 +40,25 @@ Arguments::Arguments(int argc, char **argv)
 	}
 }
 
+void Arguments::initArguments()
+{
+	addArgument('r', "renderpath", 0);
+	addArgument('h', "headless", 1);
+}
+
 void	Arguments::printUsage(void)
 {
 	std::cerr << "usage : [options] <scene name> [options]" << std::endl;
 	std::cerr << R""""(options :
-	-r | --renderpath : filename for the renderer path
+	-r | --renderpath <file>: filename for the renderer path
 	-h | --headless : does the program need to start rendering as soon as it starts(and close automatically)
 )"""";	
+}
+
+void	Arguments::show(void)
+{
+	for(std::map<std::string, std::string>::iterator it = _values.begin();it != _values.end(); it++)
+		std::cout << (*it).first << ": " << (*it).second << std::endl;
 }
 
 bool	Arguments::error(void) const
@@ -54,10 +66,25 @@ bool	Arguments::error(void) const
 	return(_err);
 }
 
+
 std::string &Arguments::getSceneName(void) 
 {
 	return(_values["sceneName"]);
 }
+
+std::string *Arguments::getRenderPath(void)
+{
+	if(_values.find("renderpath") != _values.end())
+		return(&_values["renderpath"]);
+	else
+		return(0);
+}
+
+bool		Arguments::getHeadless(void)
+{
+	return(_values.find("headless") != _values.end());	
+}
+
 
 void	Arguments::addArgument(char shortName, std::string longName, int isFlag)
 {
@@ -69,11 +96,6 @@ void	Arguments::addArgument(char shortName, std::string longName, int isFlag)
 	_args.push_back(arg);
 }
 
-void Arguments::initArguments()
-{
-	addArgument('r', "renderPath", 0);
-	addArgument('h', "headless", 1);
-}
 
 int Arguments::handleArg(char **argv, int argc, int *i)
 {
@@ -92,7 +114,7 @@ int Arguments::handleArg(char **argv, int argc, int *i)
 					_values[(*it).longName] = "yes";
 				else if(*i == argc - 1)
 				{
-					std::cerr << "missing option" << std::endl;
+					std::cerr << "missing option for --" << (*it).longName << std::endl;
 					return(0);
 				}
 				else
@@ -115,7 +137,7 @@ int Arguments::handleArg(char **argv, int argc, int *i)
 						_values[(*it).longName] = "yes";
 					else if(*i == argc - 1)
 					{
-						std::cerr << "missing option" << std::endl;
+						std::cerr << "missing option for --" << (*it).longName << std::endl;
 						return(0);
 					}
 					else

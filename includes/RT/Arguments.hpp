@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:07:08 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 03:10:58 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 17:04:59 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,10 +26,14 @@ class Arguments
 {
 	public : 
 		Arguments(int argc, char **argv);
-		bool getHeadless(void) const;
-		std::string &getSceneName(void);
-		std::string getRenderPathName(void);
-		bool error(void) const;
+
+		bool		getHeadless(void) const;
+		bool		error(void) const;
+		void		show(void);
+
+		std::string	&getSceneName(void);
+		std::string *getRenderPath(void);
+		bool		getHeadless(void);
 
 	private:
 		void printUsage();

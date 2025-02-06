@@ -6,24 +6,33 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 00:43:18 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 19:06:00 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
-Renderer::Renderer(Scene *scene, Window *win)
+Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 {
-	init(scene, win);
-	_headless = 0;
-}
+	std::string *renderPath;
 
-Renderer::Renderer(Scene *scene, Window *win, std::string filename)
-{
 	init(scene, win);
-	_headless = 1;
-	loadPath(filename);
-	initRender();
+	_headless = args.getHeadless();
+	renderPath = args.getRenderPath();
+	if(renderPath)
+	{
+		try
+		{
+			loadPath(*renderPath);
+		}
+		catch (std::exception &e)
+		{
+			std::cout << e.what() << std::endl;
+			_shouldClose = 1;
+		}
+	}
+	if(_headless)
+		initRender();
 }
 
 void	Renderer::init(Scene *scene, Window *win)
@@ -71,15 +80,20 @@ void	Renderer::savePath(void)
 {
 	std::ofstream outputFile;
 	const AVCodec *codec;
+	(void)codec;
 
 	codec = _codecList[_codecIndex];
 	outputFile.open("output.path", std::ios::binary);
+	if(!outputFile.is_open())
+		std::cerr << "could open output.path for writing" << std::endl;
 	outputFile.write(_outputFilename.c_str(), _outputFilename.length() + 1);
 	outputFile.write((char *)&codec->id, sizeof(codec->id));
 	outputFile.write((char *)&_samples, sizeof(_samples));
 	outputFile.write((char *)&_fps, sizeof(_fps));
 	for(std::vector<t_pathPoint>::iterator it = _path.begin(); it != _path.end(); it++)
+	{
 		outputFile.write((char *)&(*it), sizeof(t_pathPoint));
+	}
 	outputFile.close();
 }
 
@@ -95,6 +109,8 @@ void	Renderer::loadPath(std::string filename)
 	_outputFilename = "";
 	_filenameBuffer[0] = 0;
 	file.open(filename);
+	if(!file.is_open())
+		std::cerr << "failed to open " << filename  << std::endl;
 	c = 1;
 	while(c)
 	{
@@ -104,15 +120,17 @@ void	Renderer::loadPath(std::string filename)
 		if(c)
 			_outputFilename += c;
 	}
+	memcpy(_filenameBuffer, _outputFilename.c_str(), _outputFilename.length());
+	_filenameBuffer[_outputFilename.length()] = 0;
 	rawRead(file, &codecId, sizeof(codecId));
 	updateAvailableCodecs(2, codecId);
 	if(_codecList.size() == 0)
 		throw std::runtime_error("codec not available");
 	rawRead(file, &_samples, sizeof(_samples));
 	rawRead(file, &_fps, sizeof(_fps));
-	if(_samples < 1 || _fps < 1)
+	if(_samples < 1 || _fps < 1 || _samples >= 1000 || _fps >= 120)
 		throw std::runtime_error("invalid value provided in fps or samples");
-	while(!file.eof())
+	while(file.peek() != EOF)
 	{
 		rawRead(file, &pathPoint, sizeof(t_pathPoint));
 		if(pathPoint.time < .0f)
@@ -201,7 +219,7 @@ void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
 
 void	Renderer::initRender(void)
 {
-
+	//TODO: check values
 	_codecOptions = 0;
 	_destPathIndex = _path.size() - 1;
 	_curPathIndex = 0;

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/01/25 03:09:23 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 16:46:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Scene;
 class Window
 {
 	public:
-		Window(Scene *scene, int width, int height, const char *title, int sleep);
+		Window(Scene *scene, int width, int height, const char *title, int sleep, Arguments &args);
 		~Window(void);
 
 		void		display();
