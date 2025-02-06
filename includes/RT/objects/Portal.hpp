@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 19:12:51 by ycontre           #+#    #+#             */
-/*   Updated: 2025/02/06 18:09:03 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/06 19:46:12 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ class Portal : public Object
 			_rotation = glm::mat3(right, up, forward);
 			_normal = forward * (_invert_normal ? -1.0f : 1.0f);
 
+			std::cout << glm::to_string(_normal) << std::endl;
 			_linked_portal = -1;
 
 			_mat_index = mat_index;

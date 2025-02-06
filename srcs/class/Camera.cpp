@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 18:02:23 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/06 19:45:46 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,20 +97,27 @@ int	Camera::portalTeleport(Scene *scene, float delta_time)
 			float distance_portal = glm::length(point_projected - _position);
 
 			float imprecision = 0.1f;
-
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
+				std::cout << "Teleport" << std::endl;
+				
 				GPUObject linked_portal = scene->getObjectData()[obj.radius];
 
-				glm::mat4 portal_transform = linked_portal.transform * glm::inverse(obj.transform);
+				glm::mat3 portal_transform = glm::mat3(linked_portal.transform) * glm::inverse(glm::mat3(obj.transform));
+
+				if (dot(obj.normal, linked_portal.normal) > 0.0)
+				{
+					glm::mat3 reflection = glm::mat3(1.0) - 2.0f * glm::outerProduct(linked_portal.normal, linked_portal.normal);
+					portal_transform *= reflection;
+				}
 
 				//teleportation
 
 				glm::vec3 relative_pos = _position - obj.position;
-            	glm::vec3 transformed_relative_pos = glm::vec3(portal_transform * glm::vec4(relative_pos, 1.0f));
+            	glm::vec3 transformed_relative_pos = portal_transform * relative_pos;
 	
 				float remaining_distance = distance_future_pos - distance_portal + imprecision;
-				glm::vec3 new_movement = remaining_distance * glm::vec3(portal_transform * glm::vec4(linked_portal.normal, 0.0f));
+				glm::vec3 new_movement = remaining_distance * portal_transform * linked_portal.normal;
             
  				_position = linked_portal.position + transformed_relative_pos - new_movement;
 				// _position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);

@@ -15,7 +15,7 @@ Ray	portalRay(Ray ray, hitInfo hit)
 
 	if (dot(portal_1.normal, portal_2.normal) > 0.0)
 	{
-		mat3 reflection = mat3(1.0) - 2.0 * outerProduct(portal_2.normal, portal_2.normal);
+		mat3 reflection = mat3(1.0) - 2.0 * outerProduct(portal_1.normal, portal_2.normal);
 		rotation *= reflection;
 	}
 
