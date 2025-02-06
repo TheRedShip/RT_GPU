@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/05 20:09:58 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/06 02:07:47 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void		Camera::updateCameraVectors()
 
 void		Camera::updateCameraDirections()
 {
-	glm::vec3 forward_xz = glm::normalize(glm::vec3(_forward.x, 0.0f, _forward.z));
+//	glm::vec3 forward_xz = glm::normalize(glm::vec3(_forward.x, 0.0f, _forward.z));
     _pitch = glm::degrees(asin(_forward.y));
     
     _yaw = glm::degrees(atan2(-_forward.x, _forward.z));
