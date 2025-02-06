@@ -56,6 +56,7 @@ ALL_SRCS	:=	$(IMGUI_SRCS)			\
 				class/ObjParser.cpp		\
 				class/BVH.cpp			\
 				class/Renderer.cpp		\
+				class/Arguments.cpp
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

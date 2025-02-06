@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/28 19:17:39 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/04 03:11:24 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
-Scene::Scene()
+Scene::Scene(std::string &name)
 {
+	std::cout << "name : " << name << std::endl;
+	std::ifstream	file(name);
+	std::string		line;
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
 	
 	_gpu_volume.enabled = 0;
+	_fail = 0;
 	_gpu_volume.sigma_a = glm::vec3(0.0000f);
 	_gpu_volume.sigma_s = glm::vec3(0.0800f);
 	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
@@ -29,23 +33,13 @@ Scene::Scene()
 	_gpu_debug.mode = 0;	
 	_gpu_debug.triangle_treshold = 1;
 	_gpu_debug.box_treshold = 1;
-}
 
-Scene::~Scene()
-{
-	delete (_camera);
-}
-
-bool		Scene::parseScene(char *name)
-{
-	std::ifstream	file(name);
-	std::string		line;
 
 	if (!file.is_open())
 	{
-		std::cout << "Error opening the file" << std::endl;
-		file.close();
-		return (false);
+		std::cerr << "Can't open scene file" << std::endl;
+		_fail = 1;
+		return ;
 	}
 
 	SceneParser		scene_parser(this, name);
@@ -54,19 +48,22 @@ bool		Scene::parseScene(char *name)
 	{
 		if (!scene_parser.parseLine(line))
 		{
-			std::cerr << line << std::endl;
 			file.close();
-			return (false);
+			std::cerr << line << std::endl;
+			_fail = 1;
+			return ;
 		}
 	}
 	file.close();
 
 
 	std::cout << "Parsing done" << std::endl;
-
-	return (true);
 }
 
+Scene::~Scene()
+{
+	delete (_camera);
+}
 
 void		Scene::addObject(Object *obj)
 {
@@ -311,6 +308,11 @@ void		Scene::updateLightAndObjects(int mat_id)
 		else
             ++it;
     }
+}
+
+bool		Scene::fail(void) const
+{
+	return(_fail);
 }
 
 std::set<int>					Scene::getGPULights()

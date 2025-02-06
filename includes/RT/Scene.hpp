@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/01/28 19:05:16 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/04 03:11:36 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,10 +105,8 @@ class Camera;
 class Scene
 {
 	public:
-		Scene();
+		Scene(std::string &name);
 		~Scene();
-
-		bool							parseScene(char *name);
 
 		void							addObject(Object *object);
 		void							addMaterial(Material *material);
@@ -141,7 +139,11 @@ class Scene
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
 		
+		bool							fail(void) const;
+		
 	private:
+
+		bool						_fail;
 		std::vector<GPUBvhData>		_gpu_bvh_data;
 		std::vector<GPUBvh>			_gpu_bvh;
 
