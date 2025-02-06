@@ -1,4 +1,4 @@
-hitInfo	traceRay(Ray ray);
+hitInfo	traceRay(inout Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {

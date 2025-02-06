@@ -165,7 +165,7 @@ hitInfo traverseBVHs(Ray ray)
 	return (hit);
 }
 
-hitInfo traceRay(Ray ray)
+hitInfo traceRay(inout Ray ray)
 {
 	hitInfo hitBVH;
 	hitInfo hitScene;
