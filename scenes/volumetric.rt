@@ -37,4 +37,4 @@ sp	0 2.5 0		0.5		5
 # sp  0 0 0       5       1
 # sp  0 0 0       15      2
 
-# OBJ	scenes/obj/jinx.obj	0 0 -15
+# OBJ	obj/jinx.obj	0 0 -15

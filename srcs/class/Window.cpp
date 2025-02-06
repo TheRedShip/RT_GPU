@@ -6,11 +6,16 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/05 20:01:29 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/06 02:57:16 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Window.hpp"
+
+void GLFWErrorCallback(int error, const char* description)
+{
+    fprintf(stderr, "GLFW Error (%d): %s\n", error, description);
+}
 
 Window::Window(Scene *scene, int width, int height, const char *title, int sleep, Arguments &args)
 {
@@ -19,7 +24,7 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 	_frameCount = 0;
 	_pixelisation = 0;
 	_renderer = new Renderer(scene, this, args);
-	
+	glfwSetErrorCallback(GLFWErrorCallback);
 	if (!glfwInit())
 	{
 		fprintf( stderr, "Failed to initialize GLFW\n" );
@@ -143,9 +148,6 @@ void Window::updateDeltaTime()
 
 	lastTime = currentTime;
 	_fps = 1.0f / _delta;
-
-	if (accumulate)
-		_frameCount++;
 }
 
 void Window::display()

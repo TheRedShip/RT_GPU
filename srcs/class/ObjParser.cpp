@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/03 19:01:06 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/06 02:19:50 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ std::string ObjParser::getFilePath(std::string &file)
 {
 	int index;
 
-	if(file.find("/") == std::string::npos)
+	if(file.find("/") == std::string::npos && file.find("\\") == std::string::npos)
 		return("");
 	index = file.length() - 1;
-	while(index && file[index] != '/')
+	while(index && file[index] != '/' && file[index] != '\\')
 		index--;
 	return(file.substr(0, index + 1));
 }
