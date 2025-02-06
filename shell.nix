@@ -1,9 +1,12 @@
 { pkgs ? import <nixpkgs> {} }:
   pkgs.mkShell {
     nativeBuildInputs = with pkgs; [ libGL xorg.libX11 libGLU glfw ffmpeg xorg.xvfb];
+
+    __NV_PRIME_RENDER_OFFLOAD="1";
+	__GLX_VENDOR_LIBRARY_NAME="nvidia";
 	shellHook=''
-	alias xdum="Xvfb :99 -screen 0 1920x1080x24 +extension GLX +render -noreset & export DISPLAY=:99";
-	alias xdumstop='pkill Xvfb'
+	alias xdum="sudo Xorg :99 -noreset & export DISPLAY=:99";
+	alias xdumstop='sudo pkill Xorg'
 	make -j;
 	'';
 }
