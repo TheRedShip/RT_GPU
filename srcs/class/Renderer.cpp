@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 19:06:00 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 21:56:44 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,17 @@ Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 			_shouldClose = 1;
 		}
 	}
-	if(_headless)
-		initRender();
+
+	try{
+		if(_headless)
+			initRender();
+	}
+	catch(std::exception &e)
+	{
+		std::cerr << "\033[31m" << e.what() << "\033[0m" << std::endl;
+		if(_headless)
+			_shouldClose = 1;
+	}
 }
 
 void	Renderer::init(Scene *scene, Window *win)
@@ -42,6 +51,7 @@ void	Renderer::init(Scene *scene, Window *win)
 	_min = 0;
 	_sec = 0;
 	_fps = 30;
+	_tp = 0;
 	_shouldClose = 0;
 	_autoTime = 0;
 	_samples = 1;
@@ -219,7 +229,13 @@ void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
 
 void	Renderer::initRender(void)
 {
-	//TODO: check values
+	if(_path.size() < 2)
+		throw std::runtime_error("render path doesn't have enough path points");
+	if(_path[0].time != 0)
+		throw std::runtime_error("render path does not start at 0, aborting");
+	if(_path[_path.size() - 1].time - _path[0].time <= 0)
+		throw std::runtime_error("render path is 0 seconds long, aborting");
+
 	_codecOptions = 0;
 	_destPathIndex = _path.size() - 1;
 	_curPathIndex = 0;
@@ -230,7 +246,7 @@ void	Renderer::initRender(void)
 	_renderStartTime = glfwGetTime();
 	_scene->getCamera()->setPosition(_path[0].pos);
 	_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
-	_win->setFrameCount(-1);
+	_win->setFrameCount(_headless ? 0 : -1);
 	avformat_alloc_output_context2(&_format, nullptr, nullptr, _outputFilename.c_str());
 	
 	_codec_context = avcodec_alloc_context3(_codecList[_codecIndex]);
@@ -248,18 +264,27 @@ void	Renderer::initRender(void)
 		_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
 	if (avcodec_open2(_codec_context, _codecList[_codecIndex], &_codecOptions) < 0)
+	{
+		endRender();
 		throw std::runtime_error("Failed to open codec");
+	}
 	
 	_stream = avformat_new_stream(_format, _codecList[_codecIndex]);
 	if (!_stream) 
+	{
+		endRender();
 		throw std::runtime_error("Failed to create stream");
+	}
 	_stream->time_base = _codec_context->time_base;
 	avcodec_parameters_from_context(_stream->codecpar, _codec_context);
 
 	if (!(_format->flags & AVFMT_NOFILE))
 	{
 		if (avio_open(&_format->pb, _outputFilename.c_str(), AVIO_FLAG_WRITE) < 0)
+		{
+			endRender();
 			throw std::runtime_error("couldn't open " + _outputFilename);
+		}
 	}
 	(void)avformat_write_header(_format, nullptr);
 
@@ -327,29 +352,40 @@ void	Renderer::endRender(void)
 {
 	AVPacket *pkt;
 
-	avcodec_send_frame(_codec_context, 0);
-	pkt = av_packet_alloc();
-	while (avcodec_receive_packet(_codec_context, pkt) == 0) {
-		pkt->stream_index = _stream->index;
-		pkt->pts = av_rescale_q(pkt->pts, _codec_context->time_base, _stream->time_base);
-		pkt->dts = av_rescale_q(pkt->dts, _codec_context->time_base, _stream->time_base);
-		av_interleaved_write_frame(_format, pkt);
-		av_packet_unref(pkt);
+	if(_codec_context)
+	{
+		avcodec_send_frame(_codec_context, 0);
+		pkt = av_packet_alloc();
+		while (avcodec_receive_packet(_codec_context, pkt) == 0) {
+			pkt->stream_index = _stream->index;
+			pkt->pts = av_rescale_q(pkt->pts, _codec_context->time_base, _stream->time_base);
+			pkt->dts = av_rescale_q(pkt->dts, _codec_context->time_base, _stream->time_base);
+			av_interleaved_write_frame(_format, pkt);
+			av_packet_unref(pkt);
+		}
 	}
 	av_packet_free(&pkt);
 
-	av_write_trailer(_format);
-    av_frame_free(&_rgb_frame);
-    av_frame_free(&_yuv_frame);
-    avcodec_free_context(&_codec_context);
-    avio_close(_format->pb);
-    avformat_free_context(_format);
-	av_dict_free(&_codecOptions);
+	if(_format)
+		av_write_trailer(_format);
+	if(_rgb_frame)
+	    av_frame_free(&_rgb_frame);
+	if(_yuv_frame)
+	    av_frame_free(&_yuv_frame);
+	if(_codec_context)
+	    avcodec_free_context(&_codec_context);
+	if(_format)
+	    avio_close(_format->pb);
+	if(_format)
+	    avformat_free_context(_format);
+	if(_codecOptions)
+		av_dict_free(&_codecOptions);
 
 	_format = 0;
 	_rgb_frame = 0;
 	_yuv_frame = 0;
 	_codec_context = 0;
+	_destPathIndex = 0;
 	if(_headless)
 		_shouldClose = 1;
 }
@@ -374,7 +410,6 @@ void Renderer::update(Shader &shader)
 {
 	double			curTime;
 
-	(void)shader;
 	if(!_destPathIndex)
 		return;
 
@@ -585,21 +620,44 @@ void Renderer::imguiPathCreation(void)
 	ImGui::Separator();
 
 	if(ImGui::SliderInt("minutes", &_min, 0, 2)) 
+	{
 			_autoTime = 0;
+			_tp = 0;
+	}
 	if(ImGui::SliderInt("seconds", &_sec, 0, 60))
+	{
 			_autoTime = 0;
+			_tp = 0;
+	}
 	if(_autoTime)
 	{
 		if(_path.size() > 1)
 			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, _scene->getCamera()->getPosition()) / prevSpeed);
 		else
 			time = (float)_path.size() / 60;
+		if(std::isnan(time))
+			time = _path[_path.size() - 1].time + (1.0f / 60);
+		_min = time;
+		_sec = (time - (int)time) * 60;
+	}
+	else if(_tp)
+	{
+		if(!_path.size())
+			time = 0;
+		else
+			time = _path[_path.size() - 1].time;
 		_min = time;
 		_sec = (time - (int)time) * 60;
 	}
 	else
 		time = (float)_min + ((float)_sec / 60);
+
 	ImGui::Checkbox("guess time automatically", &_autoTime);
+	if(_autoTime)
+		_tp = 0;
+	ImGui::Checkbox("tp", &_tp);
+	if(_tp)
+		_autoTime = 0;
 	if(ImGui::Button("add step"))
 		addPoint(time);
 
@@ -743,6 +801,8 @@ void	Renderer::imguiRenderSettings(void)
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
 	ImGui::Combo("codec", &_codecIndex, _codecListStr.data(), _codecListStr.size());
+	if(ImGui::Checkbox("show all codecs", &_ignoreUnavailableCodec))
+		updateAvailableCodecs(_ignoreUnavailableCodec, (AVCodecID)0);
 	if(ImGui::InputText("file name", _filenameBuffer, 512))
 	{
 		_outputFilename = _filenameBuffer;
@@ -750,11 +810,18 @@ void	Renderer::imguiRenderSettings(void)
 	}
 	if(_path.size() > 1 && _codecList.size())
 	{
-		if(ImGui::Button("start render"))
-			initRender();
-		ImGui::SameLine();
-		if(ImGui::Button("save path"))
-			savePath();
+		try
+		{
+			if(ImGui::Button("start render"))
+				initRender();
+			ImGui::SameLine();
+			if(ImGui::Button("save path"))
+				savePath();
+		}
+		catch(std::exception &e)
+		{
+			std::cerr << "\033[31m" << e.what() << "\033[0m" << std::endl;
+		}
 	}
 	if(ImGui::Button("go back"))
 		_renderSettings = 0;

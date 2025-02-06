@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 18:46:22 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 21:56:58 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,6 +78,7 @@ class Renderer
 		bool							_renderSettings;
 		bool							_ignoreUnavailableCodec;
 		bool							_headless;
+		bool							_tp;
 		bool							_shouldClose;
 
 		int								_curPathIndex;

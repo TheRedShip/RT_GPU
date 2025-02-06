@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:07:08 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 17:04:59 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/04 22:04:04 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ class Arguments
 		int		handleArg(char **argv, int argc, int *i);
 		void	initArguments(void);
 		void	addArgument(char shortName, std::string longName, int isFlag);
+		int		setArg(t_arg arg, char **argv, int argc, int *i);
 
 		void	parseRenderPathName(char * path);
 
