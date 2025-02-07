@@ -21,7 +21,7 @@ int main(int argc, char **argv)
 	if (scene.fail())
 		return (1);
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl");
+	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl", "shaders/denoising.glsl");
 	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
 
@@ -141,6 +141,20 @@ int main(int argc, char **argv)
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		
+		//
+		glUseProgram(shader.getProgramComputeDenoising());
+		glUniform2fv(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_resolution"), 1, glm::value_ptr(glm::vec2(WIDTH, HEIGHT)));
+		
+		for (int pass = 0; pass < 1; ++pass)
+		{
+			shader.flipOutputDenoising(pass % 2 == 0);
+			
+			glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+		}
+		shader.flipOutputDenoising(true);
+		//
+
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		window.imGuiNewFrame();

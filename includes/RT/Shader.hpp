@@ -18,12 +18,14 @@
 class Shader
 {
 	public:
-		Shader(std::string vertexPath, std::string fragmentPath, std::string computePath);
+		Shader(std::string vertexPath, std::string fragmentPath, std::string computePath, std::string denoisingPath);
 		~Shader(void);
 
 		void	attach(void);
 		void	setupVertexBuffer();
 		void	drawTriangles();
+
+		void	flipOutputDenoising(bool pass);
 
 		// void	setBool(const std::string &name, bool value) const;
 		void	set_int(const std::string &name, int value) const;
@@ -37,6 +39,7 @@ class Shader
 
 		GLuint	getProgram(void) const;
 		GLuint	getProgramCompute(void) const;
+		GLuint	getProgramComputeDenoising(void) const;
 
 		std::vector<float> getOutputImage(void);
 		
@@ -46,6 +49,7 @@ class Shader
 
 		GLuint	_program;
 		GLuint	_program_compute;
+		GLuint	_program_denoising;
 
 		GLuint	_output_texture;
 		GLuint	_accumulation_texture;
@@ -54,6 +58,7 @@ class Shader
 		GLuint	_vertex;
 		GLuint	_fragment;
 		GLuint	_compute;
+		GLuint	_denoising;
 
 		size_t	_size;
 
