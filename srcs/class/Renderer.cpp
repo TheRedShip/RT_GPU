@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/05 17:21:00 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/07 23:24:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -137,7 +137,7 @@ void	Renderer::loadPath(std::string filename)
 		throw std::runtime_error("codec not available");
 	rawRead(file, &_samples, sizeof(_samples));
 	rawRead(file, &_fps, sizeof(_fps));
-	if(_samples < 1 || _fps < 1 || _samples >= 1000 || _fps >= 120)
+	if(_samples < 1 || _fps < 1 || _samples > 1000 || _fps > 120)
 		throw std::runtime_error("invalid value provided in fps or samples");
 	while(file.peek() != EOF)
 	{
@@ -769,6 +769,8 @@ void Renderer::showRenderInfo(int isImgui)
 	oss << (renderTime - (int)renderTime) * 60 << "s" << std::endl;
 	oss << "elapsed time : " << floatToTime(timeElapsed) << std::endl;
 	oss << "estimated time remaining :" <<  floatToTime(timeEst);
+	if(_headless)
+		oss << std::endl << "fps : " << _win->getFps();
 
 	progress = ((float)_frameCount * _samples)  + _curSamples;
 	progress /= (float)totalFrames * _samples;
