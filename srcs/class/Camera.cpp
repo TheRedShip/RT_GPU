@@ -100,6 +100,7 @@ int	Camera::portalTeleport(Scene *scene, float delta_time)
 
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
+				std::cout << "Teleportation" << std::endl;
 				GPUObject linked_portal = scene->getObjectData()[obj.radius];
 
 				glm::mat4 portal_transform = linked_portal.transform * glm::inverse(obj.transform);

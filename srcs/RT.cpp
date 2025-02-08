@@ -141,21 +141,28 @@ int main(int argc, char **argv)
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		
-		//
-		glUseProgram(shader.getProgramComputeDenoising());
-		glUniform2fv(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_resolution"), 1, glm::value_ptr(glm::vec2(WIDTH, HEIGHT)));
-		
-		for (int pass = 0; pass < 4; ++pass)
+		GPUDenoise denoise = scene.getDenoise();
+		if (denoise.enabled)
 		{
-			shader.flipOutputDenoising(pass % 2 == 0);
+			glUseProgram(shader.getProgramComputeDenoising());
 			
-			glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_pass"), pass);
-			
-			glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
-			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+			glUniform2fv(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_resolution"), 1, glm::value_ptr(glm::vec2(WIDTH, HEIGHT)));
+			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_c_phi"), denoise.c_phi);
+			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_p_phi"), denoise.p_phi);
+			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_n_phi"), denoise.n_phi);
+
+			for (int pass = 0; pass < denoise.pass ; ++pass)
+			{
+				shader.flipOutputDenoising(pass % 2 == 0);
+				
+				glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_pass"), pass);
+				
+				glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+				glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
+			}
+			shader.flipOutputDenoising(true);
 		}
-		shader.flipOutputDenoising(true);
-		//
+
 
 		glClear(GL_COLOR_BUFFER_BIT);
 
@@ -168,6 +175,9 @@ int main(int argc, char **argv)
 
 		window.display();
 		window.pollEvents();
+
+		glClearTexImage(shader.getNormalTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glClearTexImage(shader.getPositionTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

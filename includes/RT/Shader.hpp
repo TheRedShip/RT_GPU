@@ -41,6 +41,9 @@ class Shader
 		GLuint	getProgramCompute(void) const;
 		GLuint	getProgramComputeDenoising(void) const;
 
+		GLuint	getNormalTexture(void) const;
+		GLuint	getPositionTexture(void) const;
+
 		std::vector<float> getOutputImage(void);
 		
 

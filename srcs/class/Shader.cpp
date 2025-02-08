@@ -300,6 +300,16 @@ GLuint	Shader::getProgramComputeDenoising(void) const
 	return (_program_denoising);
 }
 
+GLuint	Shader::getNormalTexture(void) const
+{
+	return (_normal_texture);
+}
+
+GLuint	Shader::getPositionTexture(void) const
+{
+	return (_position_texture);
+}
+
 std::vector<float> Shader::getOutputImage(void)
 {
 	std::vector<float>	res(WIDTH * HEIGHT * 4);

@@ -198,8 +198,8 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 
 		if (i == 0)
 		{
-			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(hit.normal, 1.0));
-			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(hit.position, 1.0));
+			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.normal), 1.0));
+			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.position), 1.0));
 		}
 
         float p = max(color.r, max(color.g, color.b));
@@ -248,10 +248,6 @@ void main()
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 
-	// if (pixel_coords.x % 50 == 0 || pixel_coords.y % 50 == 0)
-		// imageStore(output_image, pixel_coords, vec4(1.,0.,0., 0.));
-	// return ;
-
 	if (u_pixelisation != 1 && (uint(pixel_coords.x) % u_pixelisation != 0 || uint(pixel_coords.y) % u_pixelisation != 0))
 		return;
 
@@ -260,7 +256,7 @@ void main()
 
 	vec2 jitter = randomPointInCircle(rng_state) * 1;
 
-	vec2 uv = ((vec2(pixel_coords) + jitter) / u_resolution) * 2.0 - 1.0;;
+	vec2 uv = ((vec2(pixel_coords) + jitter) / u_resolution) * 2.0 - 1.0;
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	Ray ray = initRay(uv, rng_state);

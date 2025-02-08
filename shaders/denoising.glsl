@@ -11,15 +11,15 @@ layout(binding = 4, rgba32f) uniform image2D normal_texture;
 uniform vec2    u_resolution;
 uniform int     u_pass;
 
+uniform float   u_c_phi;
+uniform float   u_p_phi;
+uniform float   u_n_phi;
+
 void main()
 {
 	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
-
-	float c_phi = 1.0;
-	float p_phi = 1.0;
-	float n_phi = 1.0;
 	
 	int holes = int(pow(2, u_pass));
 
@@ -49,16 +49,15 @@ void main()
             
             // Color weight
             float colorDist = distance(color_center, color_sample);
-            float w_c = exp(-colorDist / c_phi);
+            float w_c = exp(-colorDist / u_c_phi);
             
             // Position weight
             float posDist = distance(position_center, position_sample);
-            float w_p = exp(-posDist / p_phi);
+            float w_p = exp(-posDist / u_p_phi);
 
             // Normal weight
             float normalDist = distance(normal_center, normal_sample);
-            float w_n = exp(-normalDist / n_phi);
-            
+            float w_n = exp(-normalDist / u_n_phi);
 
 			float weight = kernel[x+2] * kernel[y+2] * w_c * w_p * w_n;
 			

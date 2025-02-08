@@ -33,6 +33,11 @@ Scene::Scene(std::string &name)
 	_gpu_debug.triangle_treshold = 1;
 	_gpu_debug.box_treshold = 1;
 
+	_gpu_denoise.enabled = 0;
+	_gpu_denoise.pass = 0;
+	_gpu_denoise.c_phi = 0.1f;
+	_gpu_denoise.p_phi = 0.1f;
+	_gpu_denoise.n_phi = 0.1f;
 
 	if (!file.is_open())
 	{
@@ -362,6 +367,11 @@ GPUVolume						&Scene::getVolume()
 GPUDebug						&Scene::getDebug()
 {
 	return (_gpu_debug);
+}
+
+GPUDenoise						&Scene::getDenoise()
+{
+	return (_gpu_denoise);
 }
 
 std::vector<GPUBvhData>				&Scene::getBvhData()
