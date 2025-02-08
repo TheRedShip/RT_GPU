@@ -4,6 +4,9 @@ layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) uniform image2D output_image;
 layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
+layout(binding = 3, rgba32f) uniform image2D normal_texture;
+layout(binding = 4, rgba32f) uniform image2D position_texture;
+
 struct GPUObject {
 	mat4	rotation;
 
@@ -176,7 +179,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     for (int i = 0; i < camera.bounce; i++)
     {
         hitInfo hit = traceRay(ray);
-        
+
 		#if 0
 			float t_scatter = 0.0;
 			bool scatter_valid = bool(volume.enabled != 0 && atmosScatter(hit, t_scatter, rng_state));
@@ -191,6 +194,12 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 		{
 			light += transmittance * GetEnvironmentLight(ray);
 			break;
+		}
+
+		if (i == 0)
+		{
+			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(hit.normal, 1.0));
+			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(hit.position, 1.0));
 		}
 
         float p = max(color.r, max(color.g, color.b));

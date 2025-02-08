@@ -54,6 +54,8 @@ class Shader
 		GLuint	_output_texture;
 		GLuint	_accumulation_texture;
 		GLuint	_denoising_texture;
+		GLuint	_normal_texture;
+		GLuint	_position_texture;
 
 		GLuint	_vertex;
 		GLuint	_fragment;

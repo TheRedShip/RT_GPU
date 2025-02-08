@@ -2,7 +2,7 @@ hitInfo	traceRay(Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    // return vec3(0.);
+    return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -65,7 +65,7 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
 
     vec3 normal = normalize(crossQuad);
     float cos_theta = max(0.0, dot(normal, -light_dir));
-    return mat.emission * mat.color / (light_dist);
+    return mat.emission * mat.color / (light_dist * light_dist) * pdf;
 }
 
 vec3 sampleLights(vec3 position, inout uint rng_state)
@@ -134,6 +134,6 @@ void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inou
     {
         color *= mat.color;
         light += mat.emission * mat.color;
+        // light += sampleLights(hit.position, rng_state);
     }
-    // light += sampleLights(hit.position, rng_state);
 }

@@ -145,9 +145,11 @@ int main(int argc, char **argv)
 		glUseProgram(shader.getProgramComputeDenoising());
 		glUniform2fv(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_resolution"), 1, glm::value_ptr(glm::vec2(WIDTH, HEIGHT)));
 		
-		for (int pass = 0; pass < 1; ++pass)
+		for (int pass = 0; pass < 4; ++pass)
 		{
 			shader.flipOutputDenoising(pass % 2 == 0);
+			
+			glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_pass"), pass);
 			
 			glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 			glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

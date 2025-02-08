@@ -137,7 +137,7 @@ void Shader::attach(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 	glGenTextures(1, &_accumulation_texture);
     glBindTexture(GL_TEXTURE_2D, _accumulation_texture);
@@ -156,6 +156,24 @@ void Shader::attach(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glBindImageTexture(2, _denoising_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	glGenTextures(1, &_normal_texture);
+    glBindTexture(GL_TEXTURE_2D, _normal_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(3, _normal_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	glGenTextures(1, &_position_texture);
+    glBindTexture(GL_TEXTURE_2D, _position_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(4, _position_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 }
 
 void Shader::checkCompileErrors(GLuint shader)
