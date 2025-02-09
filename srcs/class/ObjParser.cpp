@@ -348,18 +348,16 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			std::vector<std::string>::iterator it = std::find(previous_textures.begin(), previous_textures.end(), path);
 
 			if (it != previous_textures.end())
-				mat->texture_index = std::distance(previous_textures.begin(), it);
+				mat->emission_texture_index = std::distance(previous_textures.begin(), it);
 			else
 			{
-				mat->texture_index = previous_textures.size();;
+				mat->emission_texture_index = previous_textures.size();;
 				scene.addEmissionTexture(path);
 			}
 			
 			if (mat->emission == 0)
 				mat->emission = 1;
 		}
-		// else
-			// std::cerr << "unsupported material setting : " << identifier << std::endl;
 	}
 	if(mat)
 	{

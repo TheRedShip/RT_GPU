@@ -242,11 +242,12 @@ bool		Scene::loadTextures()
 			return (false);
 		}
 
-		std::cout << "Loaded texture: " << path << " (" << width << "x" << height << ")" << std::endl;
-
+		
 		GLuint textureID;
 		glGenTextures(1, &textureID);
 		glBindTexture(GL_TEXTURE_2D, textureID);
+		
+		std::cout << "Loaded texture: (" << textureID << "): " << path << " (" << width << "x" << height << ")" << std::endl;
 
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -272,12 +273,13 @@ bool		Scene::loadTextures()
 			return (false);
 		}
 
-		std::cout << "Loaded emissive texture: " << path << " (" << width << "x" << height << ")" << std::endl;
-
+		
 		GLuint textureID;
 		glGenTextures(1, &textureID);
 		glBindTexture(GL_TEXTURE_2D, textureID);
-
+		
+		std::cout << "Loaded emissive texture (" << textureID << "): " << path << " (" << width << "x" << height << ")" << std::endl;
+		
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

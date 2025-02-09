@@ -216,10 +216,11 @@ void	Shader::set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> e
 		glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
 
 		std::string uniform_name = "textures[" + std::to_string(i) + "]";
+		// std::cout << "Loading texture " << uniform_name << " at unit " << i << std::endl;
 		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), i);
 	}
 
-	size_t start_texture = texture_ids.size() + 1;
+	size_t start_texture = texture_ids.size();
 
 	for (size_t i = 0; i < emissive_texture_ids.size(); i++)
 	{
@@ -228,6 +229,7 @@ void	Shader::set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> e
 		glActiveTexture(GL_TEXTURE0 + currentUnit);
 		glBindTexture(GL_TEXTURE_2D, emissive_texture_ids[i]);
 		std::string uniform_name = "emissive_textures[" + std::to_string(i) + "]";
+		// std::cout << "Loading emissive texture " << uniform_name << " (" << emissive_texture_ids[i] << ") at unit " << currentUnit << std::endl;
 		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), currentUnit);
 	}
 }
