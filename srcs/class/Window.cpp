@@ -272,17 +272,37 @@ void Window::imGuiRender()
 			has_changed = true;
 	}
 
+	if (ImGui::CollapsingHeader("Denoiser"))
+	{
+		ImGui::PushID(0);
+
+		ImGui::Checkbox("Enable", (bool *)(&_scene->getDenoise().enabled));
+		ImGui::Separator();
+		if (ImGui::SliderInt("Pass", &_scene->getDenoise().pass, 0, 8))
+			_scene->getDenoise().pass = (_scene->getDenoise().pass / 2) * 2; // make sure it's even
+		
+		ImGui::SliderFloat("Color diff", &_scene->getDenoise().c_phi, 0.0f, 1.0f);
+		ImGui::SliderFloat("Position diff", &_scene->getDenoise().p_phi, 0.0f, 1.0f);
+		ImGui::SliderFloat("Normal diff", &_scene->getDenoise().n_phi, 0.0f, 1.0f);
+
+		ImGui::PopID();
+	}
 
 	if (ImGui::CollapsingHeader("Debug"))
 	{
+		ImGui::PushID(0);
+
 		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
 		ImGui::Separator();
 		has_changed |= ImGui::SliderInt("Debug mode", &_scene->getDebug().mode, 0, 2);
 		has_changed |= ImGui::SliderInt("Box treshold", &_scene->getDebug().box_treshold, 1, 2000);
 		has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
+		
+		ImGui::PopID();
 	}
 
-	_renderer->renderImgui();;
+
+	_renderer->renderImgui();
 	
 	ImGui::End();
 

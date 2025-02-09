@@ -61,11 +61,12 @@ void printWithLineNumbers(const char *str)
         std::cout << lineNumber++ << ": " << line << std::endl;
 }
 
-Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath)
+Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath, std::string denoisingPath)
 {
 	const char *vertexCode = loadFileWithIncludes(vertexPath);
 	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
 	const char *computeCode = loadFileWithIncludes(computePath);
+	const char *denoisingCode = loadFileWithIncludes(denoisingPath);
 
 	// printWithLineNumbers(computeCode);
 
@@ -89,6 +90,13 @@ Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string com
 	glCompileShader(_compute);
 
 	checkCompileErrors(_compute);
+
+	_denoising = glCreateShader(GL_COMPUTE_SHADER);
+
+	glShaderSource(_denoising, 1, &denoisingCode, NULL);
+	glCompileShader(_denoising);
+
+	checkCompileErrors(_denoising);
 }
 
 Shader::~Shader(void)
@@ -98,15 +106,14 @@ Shader::~Shader(void)
 	glDeleteShader(_compute);
 	glDeleteProgram(_program);
 	glDeleteProgram(_program_compute);
+	glDeleteProgram(_denoising);
 }
 
 void Shader::attach(void)
 {
 	_program = glCreateProgram();
 	_program_compute = glCreateProgram();
-
-	glProgramParameteri(_program_compute, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
-	glProgramParameteri(_program, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+	_program_denoising = glCreateProgram();
 
 	glEnable(GL_DEBUG_OUTPUT);
 	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -114,10 +121,14 @@ void Shader::attach(void)
 
 	glAttachShader(_program, _vertex);
 	glAttachShader(_program, _fragment);
+
 	glAttachShader(_program_compute, _compute);
+
+	glAttachShader(_program_denoising, _denoising);
 
 	glLinkProgram(_program);
 	glLinkProgram(_program_compute);
+	glLinkProgram(_program_denoising);
 
 	glGenTextures(1, &_output_texture);
 	glBindTexture(GL_TEXTURE_2D, _output_texture);
@@ -126,7 +137,7 @@ void Shader::attach(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 
 	glGenTextures(1, &_accumulation_texture);
     glBindTexture(GL_TEXTURE_2D, _accumulation_texture);
@@ -136,6 +147,33 @@ void Shader::attach(void)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
     glBindImageTexture(1, _accumulation_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	glGenTextures(1, &_denoising_texture);
+    glBindTexture(GL_TEXTURE_2D, _denoising_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(2, _denoising_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	glGenTextures(1, &_normal_texture);
+    glBindTexture(GL_TEXTURE_2D, _normal_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(3, _normal_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+
+	glGenTextures(1, &_position_texture);
+    glBindTexture(GL_TEXTURE_2D, _position_texture);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glBindImageTexture(4, _position_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 }
 
 void Shader::checkCompileErrors(GLuint shader)
@@ -185,6 +223,20 @@ void	Shader::drawTriangles()
 	
 	glBindVertexArray(_screen_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, _size * 3);
+}
+
+void	Shader::flipOutputDenoising(bool pass)
+{
+	if (pass)
+	{
+		glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);   
+		glBindImageTexture(2, _denoising_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	}
+	else
+	{
+		glBindImageTexture(0, _denoising_texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
+    	glBindImageTexture(2, _output_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
+	}
 }
 
 void	Shader::set_int(const std::string &name, int value) const
@@ -243,6 +295,21 @@ GLuint	Shader::getProgram(void) const
 GLuint	Shader::getProgramCompute(void) const
 {
 	return (_program_compute);
+}
+
+GLuint	Shader::getProgramComputeDenoising(void) const
+{
+	return (_program_denoising);
+}
+
+GLuint	Shader::getNormalTexture(void) const
+{
+	return (_normal_texture);
+}
+
+GLuint	Shader::getPositionTexture(void) const
+{
+	return (_position_texture);
 }
 
 std::vector<float> Shader::getOutputImage(void)

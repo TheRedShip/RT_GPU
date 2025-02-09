@@ -78,6 +78,15 @@ struct GPUDebug
 	int	box_treshold;
 };
 
+struct GPUDenoise
+{
+	int		enabled;
+	int		pass;
+	float	c_phi;
+	float	p_phi;
+	float	n_phi;
+};
+
 struct GPUBvh
 {
 	alignas(16) glm::vec3	min;
@@ -135,6 +144,7 @@ class Scene
 
 		GPUVolume						&getVolume();
 		GPUDebug						&getDebug();
+		GPUDenoise						&getDenoise();
 
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
@@ -162,6 +172,7 @@ class Scene
 
 		GPUVolume					_gpu_volume;
 		GPUDebug					_gpu_debug;
+		GPUDenoise					_gpu_denoise;
 
 		Camera						*_camera;
 };
