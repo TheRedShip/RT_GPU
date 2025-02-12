@@ -6,6 +6,7 @@ layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
 layout(binding = 3, rgba32f) uniform image2D normal_texture;
 layout(binding = 4, rgba32f) uniform image2D position_texture;
+layout(binding = 5, rgba32f) uniform image2D color_texture;
 
 struct GPUObject {
 	mat4	rotation;
@@ -175,6 +176,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     vec3 color = vec3(1.0);
     vec3 light = vec3(0.0);
     vec3 transmittance = vec3(1.0);
+	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
     
     for (int i = 0; i < camera.bounce; i++)
     {
@@ -215,8 +217,13 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
         ray = newRay(hit, ray, rng_state);
         ray.inv_direction = 1.0 / ray.direction;
     }
-    
-    return color * light;
+	float blend = 1.0 / float(u_frameCount + 1);
+    vec4 accum = imageLoad(color_texture, pixel_coords);
+    accum.rgb = mix(accum.rgb, color, blend);
+	accum.a = 1.0;
+	imageStore(color_texture, ivec2(gl_GlobalInvocationID.xy), accum);
+    return light;
+//	return color;
 }
 
 Ray initRay(vec2 uv, inout uint rng_state)

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 18:02:18 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/12 03:28:54 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 		return (1);
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);
 	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl", "shaders/denoising.glsl");
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
+	 //Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl", "shades/denoising.glsl");
 
 
 	GLint max_gpu_size;
@@ -156,6 +156,7 @@ int main(int argc, char **argv)
 				shader.flipOutputDenoising(pass % 2 == 0);
 				
 				glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_pass"), pass);
+				glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_lst"), pass == denoise.pass - 1);
 				
 				glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 				glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);

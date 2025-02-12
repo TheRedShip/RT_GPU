@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/02 19:42:13 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/11 22:29:59 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,7 @@ class Shader
 		GLuint	_denoising_texture;
 		GLuint	_normal_texture;
 		GLuint	_position_texture;
+		GLuint	_color_texture;
 
 		GLuint	_vertex;
 		GLuint	_fragment;
