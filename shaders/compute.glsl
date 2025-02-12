@@ -141,6 +141,7 @@ uniform vec2    u_resolution;
 uniform int		u_pixelisation;
 uniform int		u_frameCount;
 uniform float	u_time;
+uniform int		u_denoise;
 
 struct Ray
 {
@@ -176,8 +177,11 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
     vec3 color = vec3(1.0);
     vec3 light = vec3(0.0);
     vec3 transmittance = vec3(1.0);
-	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
-    
+	float blend = 1.0 / float(u_frameCount + 1);
+	vec4 accum;
+
+	accum.a = 1.0;
+
     for (int i = 0; i < camera.bounce; i++)
     {
         hitInfo hit = traceRay(ray);
@@ -200,8 +204,12 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 
 		if (i == 0)
 		{
-			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.normal), 1.0));
-			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.position), 1.0));
+			accum = imageLoad(normal_texture, ivec2(gl_GlobalInvocationID.xy));
+    		accum.rgb = mix(accum.rgb, normalize(hit.normal), blend);
+			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), accum);
+			accum = imageLoad(position_texture, ivec2(gl_GlobalInvocationID.xy));
+    		accum.rgb = mix(accum.rgb, normalize(hit.normal), blend);
+			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), accum);
 		}
 
         float p = max(color.r, max(color.g, color.b));
@@ -217,13 +225,12 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
         ray = newRay(hit, ray, rng_state);
         ray.inv_direction = 1.0 / ray.direction;
     }
-	float blend = 1.0 / float(u_frameCount + 1);
-    vec4 accum = imageLoad(color_texture, pixel_coords);
+
+    accum = imageLoad(color_texture, ivec2(gl_GlobalInvocationID.xy));
     accum.rgb = mix(accum.rgb, color, blend);
-	accum.a = 1.0;
 	imageStore(color_texture, ivec2(gl_GlobalInvocationID.xy), accum);
+
     return light;
-//	return color;
 }
 
 Ray initRay(vec2 uv, inout uint rng_state)
@@ -276,6 +283,9 @@ void main()
 
     imageStore(accumulation_image, pixel_coords, accum);
     
+	if(u_denoise == 0)
+		accum *= imageLoad(color_texture, pixel_coords);
+
     vec4 final_color = vec4(sqrt(accum.r), sqrt(accum.g), sqrt(accum.b), accum.a);
 
 	for (int y = 0; y < u_pixelisation; y++)

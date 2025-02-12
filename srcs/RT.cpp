@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/12 03:28:54 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/12 09:45:03 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,11 @@ int main(int argc, char **argv)
 
 		shader.set_textures(scene.getTextureIDs(), scene.getEmissionTextureIDs());
 
+		GPUDenoise denoise = scene.getDenoise();
+		shader.set_int("u_denoise", denoise.enabled);
 		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		
-		GPUDenoise denoise = scene.getDenoise();
 		if (denoise.enabled)
 		{
 			glUseProgram(shader.getProgramComputeDenoising());
