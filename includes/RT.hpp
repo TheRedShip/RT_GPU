@@ -58,10 +58,12 @@ struct Vertex {
 # include "objects/Portal.hpp"
 # include "objects/Cylinder.hpp"
 
+# include "Buffer.hpp"
 # include "Arguments.hpp"
 # include "Camera.hpp"
 # include "Renderer.hpp"
 # include "Window.hpp"
+# include "ShaderProgram.hpp"
 # include "Shader.hpp"
 # include "Scene.hpp"
 # include "SceneParser.hpp"

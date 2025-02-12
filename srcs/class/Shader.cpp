@@ -61,52 +61,36 @@ void printWithLineNumbers(const char *str)
         std::cout << lineNumber++ << ": " << line << std::endl;
 }
 
-Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath, std::string denoisingPath)
+Shader::Shader(GLenum type, const std::string &file_path)
 {
-	const char *vertexCode = loadFileWithIncludes(vertexPath);
-	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
-	const char *computeCode = loadFileWithIncludes(computePath);
-	const char *denoisingCode = loadFileWithIncludes(denoisingPath);
+	_type = type;
+	_file_path = file_path;
+	_shader_id = 0;
 
-	// printWithLineNumbers(computeCode);
-
-	_vertex = glCreateShader(GL_VERTEX_SHADER);
-	
-	glShaderSource(_vertex, 1, &vertexCode, NULL);
-	glCompileShader(_vertex);
-
-	checkCompileErrors(_vertex);
-	
-	_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	
-	glShaderSource(_fragment, 1, &fragmentCode, NULL);
-	glCompileShader(_fragment);
-
-	checkCompileErrors(_fragment);
-
-	_compute = glCreateShader(GL_COMPUTE_SHADER);
-
-	glShaderSource(_compute, 1, &computeCode, NULL);
-	glCompileShader(_compute);
-
-	checkCompileErrors(_compute);
-
-	_denoising = glCreateShader(GL_COMPUTE_SHADER);
-
-	glShaderSource(_denoising, 1, &denoisingCode, NULL);
-	glCompileShader(_denoising);
-
-	checkCompileErrors(_denoising);
+	this->compile();
 }
 
 Shader::~Shader(void)
 {
-	glDeleteShader(_vertex);
-	glDeleteShader(_fragment);
-	glDeleteShader(_compute);
-	glDeleteProgram(_program);
-	glDeleteProgram(_program_compute);
-	glDeleteProgram(_denoising);
+}
+
+void	Shader::compile()
+{
+	_shader_id = glCreateShader(_type);
+	
+	const char *shader_code = loadFileWithIncludes(_file_path);
+	// printWithLineNumbers(shader_code);
+	
+	glShaderSource(_shader_id, 1, &shader_code, NULL);
+	glCompileShader(_shader_id);
+
+	this->checkCompileErrors();
+}
+
+void Shader::reload()
+{
+	glDeleteShader(_shader_id);
+	this->compile();
 }
 
 void Shader::attach(void)
@@ -176,15 +160,15 @@ void Shader::attach(void)
     glBindImageTexture(4, _position_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 }
 
-void Shader::checkCompileErrors(GLuint shader)
+void Shader::checkCompileErrors()
 {
 	GLint success;
 	GLchar infoLog[512];
 	
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(_shader_id, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		glGetShaderInfoLog(_shader_id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 }
@@ -287,29 +271,9 @@ void	Shader::set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> e
 }
 
 
-GLuint	Shader::getProgram(void) const
+GLuint	Shader::getShader(void) const
 {
-	return (_program);
-}
-
-GLuint	Shader::getProgramCompute(void) const
-{
-	return (_program_compute);
-}
-
-GLuint	Shader::getProgramComputeDenoising(void) const
-{
-	return (_program_denoising);
-}
-
-GLuint	Shader::getNormalTexture(void) const
-{
-	return (_normal_texture);
-}
-
-GLuint	Shader::getPositionTexture(void) const
-{
-	return (_position_texture);
+	return (_shader_id);
 }
 
 std::vector<float> Shader::getOutputImage(void)

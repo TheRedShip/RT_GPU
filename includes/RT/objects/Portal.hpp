@@ -52,7 +52,6 @@ class Portal : public Object
 			_rotation = glm::mat3(right, up, forward);
 			_normal = forward * (_invert_normal ? -1.0f : 1.0f);
 
-			std::cout << glm::to_string(_normal) << std::endl;
 			_linked_portal = -1;
 
 			_mat_index = mat_index;

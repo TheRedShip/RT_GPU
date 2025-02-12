@@ -18,8 +18,13 @@
 class Shader
 {
 	public:
-		Shader(std::string vertexPath, std::string fragmentPath, std::string computePath, std::string denoisingPath);
+		Shader(GLenum type, const std::string &file_path);
 		~Shader(void);
+
+		void	compile(void);
+		void	reload();
+		
+		GLuint	getShader(void) const;
 
 		void	attach(void);
 		void	setupVertexBuffer();
@@ -37,7 +42,6 @@ class Shader
 
 		void	set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> emissive_texture_ids);
 
-		GLuint	getProgram(void) const;
 		GLuint	getProgramCompute(void) const;
 		GLuint	getProgramComputeDenoising(void) const;
 
@@ -67,7 +71,12 @@ class Shader
 
 		size_t	_size;
 
-		void	checkCompileErrors(unsigned int shader);
+		void	checkCompileErrors();
+
+		//
+		GLenum		_type;
+		GLuint		_shader_id;
+		std::string	_file_path;
 };
 
 #endif
