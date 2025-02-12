@@ -207,8 +207,9 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 			accum = imageLoad(normal_texture, ivec2(gl_GlobalInvocationID.xy));
     		accum.rgb = mix(accum.rgb, normalize(hit.normal), blend);
 			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), accum);
+
 			accum = imageLoad(position_texture, ivec2(gl_GlobalInvocationID.xy));
-    		accum.rgb = mix(accum.rgb, normalize(hit.normal), blend);
+    		accum.rgb = mix(accum.rgb, normalize(hit.position), blend);
 			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), accum);
 		}
 
@@ -274,11 +275,11 @@ void main()
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	Ray ray = initRay(uv, rng_state);
-	vec3 color = pathtrace(ray, rng_state);
+	vec3 light = pathtrace(ray, rng_state);
 	
 	float blend = 1.0 / float(u_frameCount + 1);
     vec4 accum = imageLoad(accumulation_image, pixel_coords);
-    accum.rgb = mix(accum.rgb, color, blend);
+    accum.rgb = mix(accum.rgb, light, blend);
 	accum.a = 1.0;
 
     imageStore(accumulation_image, pixel_coords, accum);

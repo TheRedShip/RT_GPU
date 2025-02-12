@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/12 09:45:03 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/12 19:07:07 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,8 @@ int main(int argc, char **argv)
 				glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 				glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 			}
-			shader.flipOutputDenoising(true);
+			if (denoise.pass > 0)
+				shader.flipOutputDenoising(true);
 		}
 
 
@@ -178,8 +179,8 @@ int main(int argc, char **argv)
 		window.display();
 		window.pollEvents();
 
-		glClearTexImage(shader.getNormalTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		glClearTexImage(shader.getPositionTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		// glClearTexImage(shader.getNormalTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		// glClearTexImage(shader.getPositionTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

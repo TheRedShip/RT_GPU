@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/06 02:19:50 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/10 18:56:12 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -251,7 +251,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			mat->texture_index = -1;
 			mat->emission_texture_index = -1;
 			mat->refraction = 1.0f;
-			mat->roughness = 1.0f;
+			mat->roughness = 0.0f;
 			mat->metallic = 1.0f;
 			mat->color = glm::vec3(1.0f, 1.0f, 1.0f);
 			continue;

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 02:57:16 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/12 18:20:47 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,7 +290,7 @@ void Window::imGuiRender()
 
 	if (ImGui::CollapsingHeader("Debug"))
 	{
-		ImGui::PushID(0);
+		ImGui::PushID(1);
 
 		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
 		ImGui::Separator();
@@ -346,9 +346,9 @@ int			Window::getPixelisation(void)
 
 	if (mouse || movement)
 	{
-		if(_fps < 60 && _pixelisation < 16)	
+		if(_fps < 30 && _pixelisation < 16)	
 			_pixelisation++;
-		if(_fps > 120 && _pixelisation > 0)
+		if(_fps > 60 && _pixelisation > 0)
 			_pixelisation--;
 	}
 	else if(_pixelisation)
