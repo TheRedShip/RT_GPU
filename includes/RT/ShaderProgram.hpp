@@ -39,6 +39,8 @@ class ShaderProgram
 
 		void	set_textures(std::map<std::string, std::vector<GLuint>> texture_ids);
 
+		void	set_define(const std::string &name, const std::string &value);
+
 		GLuint	getProgram(void) const;
 
 	private:

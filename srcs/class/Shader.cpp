@@ -16,12 +16,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *loadFileWithIncludes(const std::string& path)
+std::stringstream loadFileWithIncludes(const std::string& path)
 {
     std::ifstream file(path);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << path << std::endl;
-        return "";
+        return std::stringstream();
     }
 
     std::stringstream fileContent;
@@ -36,7 +36,7 @@ const char *loadFileWithIncludes(const std::string& path)
             if (start != std::string::npos && end != std::string::npos && end > start)
 			{
                 std::string includePath = line.substr(start + 1, end - start - 1);
-                std::string includedContent = loadFileWithIncludes(includePath);
+                std::string includedContent = loadFileWithIncludes(includePath).str();
                 fileContent << includedContent << "\n";
             }
         }
@@ -44,7 +44,7 @@ const char *loadFileWithIncludes(const std::string& path)
             fileContent << line << "\n";
     }
 
-    return strdup(fileContent.str().c_str());
+    return fileContent;
 }
 
 
@@ -78,10 +78,16 @@ void	Shader::compile()
 {
 	_shader_id = glCreateShader(_type);
 	
-	const char *shader_code = loadFileWithIncludes(_file_path);
-	// printWithLineNumbers(shader_code);
+	std::string shader_code = loadFileWithIncludes(_file_path).str();
 	
-	glShaderSource(_shader_id, 1, &shader_code, NULL);
+    for (auto &define : _defines)
+        shader_code = "#define SHADER_" + define.first + " " + define.second + "\n" + shader_code;
+    shader_code = "#version 430\n" + shader_code;
+
+    const char *shader_code_cstr = shader_code.c_str();
+	// printWithLineNumbers(shader_code_cstr);
+    
+	glShaderSource(_shader_id, 1, &shader_code_cstr, NULL);
 	glCompileShader(_shader_id);
 
 	this->checkCompileErrors();
@@ -104,6 +110,11 @@ void Shader::checkCompileErrors()
 		glGetShaderInfoLog(_shader_id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
+}
+
+void    Shader::setDefine(const std::string &name, const std::string &value)
+{
+    _defines[name] = value;
 }
 
 GLuint	Shader::getShader(void) const

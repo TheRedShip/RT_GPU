@@ -1,11 +1,9 @@
-#version 430 core
-
 layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) uniform image2D read_texture;
 layout(binding = 2, rgba32f) uniform image2D write_texture;
 
-layout(binding = 3, rgba32f) uniform image2D position_texture;
-layout(binding = 4, rgba32f) uniform image2D normal_texture;
+layout(binding = 3, rgba32f) uniform image2D normal_texture;
+layout(binding = 4, rgba32f) uniform image2D position_texture;
 
 
 uniform vec2    u_resolution;
@@ -20,7 +18,7 @@ void main()
 	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
-	
+
 	int holes = int(pow(2, u_pass));
 
 	vec4 color_center = imageLoad(read_texture, pixel_coords);
@@ -31,6 +29,7 @@ void main()
     
     float totalWeight = 0.;
 	vec4 color = vec4(vec3(0.), 1.0);
+
 
 	for (int x = -2; x <= 2; x++)
 	{

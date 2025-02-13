@@ -184,7 +184,7 @@ void Window::imGuiNewFrame()
 	ImGui::NewFrame();
 }
 
-void Window::imGuiRender()
+void Window::imGuiRender(ShaderProgram &raytracing_program)
 {
 	bool has_changed = false;
 	
@@ -253,7 +253,12 @@ void Window::imGuiRender()
 	
 	if (ImGui::CollapsingHeader("Fog"))
 	{
-		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled));
+		if (ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled)))
+		{
+			raytracing_program.set_define("FOG", std::to_string(_scene->getVolume().enabled));
+			raytracing_program.reloadShaders();
+			has_changed = true;
+		}
 		ImGui::Separator();
 		
 		if (ImGui::SliderFloat("Absorption", &_scene->getVolume().sigma_a.x, 0., 0.1))
@@ -292,7 +297,12 @@ void Window::imGuiRender()
 	{
 		ImGui::PushID(0);
 
-		has_changed |= ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled));
+		if (ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled)))
+		{
+			raytracing_program.set_define("DEBUG", std::to_string(_scene->getDebug().enabled));
+			raytracing_program.reloadShaders();
+			has_changed = true;
+		}
 		ImGui::Separator();
 		has_changed |= ImGui::SliderInt("Debug mode", &_scene->getDebug().mode, 0, 2);
 		has_changed |= ImGui::SliderInt("Box treshold", &_scene->getDebug().box_treshold, 1, 2000);

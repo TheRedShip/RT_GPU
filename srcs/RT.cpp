@@ -18,6 +18,32 @@ std::vector<GLuint>		generateTextures(unsigned int textures_count);
 std::vector<Buffer *>	createDataOnGPU(Scene &scene);
 void					updateDataOnGPU(Scene &scene, std::vector<Buffer *> buffers);
 
+void	shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures)
+{
+	denoising_program.use();
+
+	denoising_program.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
+	denoising_program.set_float("u_c_phi", denoise.c_phi);
+	denoising_program.set_float("u_p_phi", denoise.p_phi);
+	denoising_program.set_float("u_n_phi", denoise.n_phi);
+
+	int output_texture = 0;
+	int denoising_texture = 2;
+
+	for (int pass = 0; pass < denoise.pass ; ++pass)
+	{
+		glBindImageTexture(0, textures[output_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+		glBindImageTexture(2, textures[denoising_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+		
+		denoising_program.set_int("u_pass", pass);
+		denoising_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+
+		std::swap(output_texture, denoising_texture);
+	}
+
+	glBindImageTexture(0, textures[output_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+}
+
 int main(int argc, char **argv)
 {
 	Arguments	args(argc, argv);
@@ -33,20 +59,21 @@ int main(int argc, char **argv)
 	GLuint VAO;
 	setupScreenTriangle(&VAO);
 
-	std::vector<GLuint> textures = generateTextures(2);
-	GLuint output_texture = textures[0];
+	std::vector<GLuint> textures = generateTextures(5);
 
 	ShaderProgram raytracing_program;
 	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
-	Shader debug = Shader(GL_COMPUTE_SHADER, "shaders/debug.glsl");
-
 	raytracing_program.attachShader(&compute);
 	raytracing_program.link();
+
+	ShaderProgram denoising_program;
+	Shader denoise = Shader(GL_COMPUTE_SHADER, "shaders/denoising.glsl");
+	denoising_program.attachShader(&denoise);
+	denoising_program.link();
 
 	ShaderProgram render_program;
 	Shader vertex = Shader(GL_VERTEX_SHADER, "shaders/vertex.vert");
 	Shader frag = Shader(GL_FRAGMENT_SHADER, "shaders/frag.frag");
-
 	render_program.attachShader(&vertex);
 	render_program.attachShader(&frag);
 	render_program.link();
@@ -62,15 +89,6 @@ int main(int argc, char **argv)
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		updateDataOnGPU(scene, buffers);
-
-		if (scene.getDebug().enabled)
-		{
-			raytracing_program.clearShaders();
-			
-			raytracing_program.attachShader(&debug);
-			raytracing_program.link();
-			scene.getDebug().enabled = 0;
-		}
 		
 		raytracing_program.use();
 		raytracing_program.set_int("u_frameCount", window.getFrameCount());
@@ -88,15 +106,21 @@ int main(int argc, char **argv)
 		
 		raytracing_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 
+		if (scene.getDenoise().enabled)
+			shaderDenoise(denoising_program, scene.getDenoise(), textures);
+
 		window.imGuiNewFrame();
 
 		render_program.use();
-		drawScreenTriangle(VAO, output_texture, render_program.getProgram());
+		drawScreenTriangle(VAO, textures[0], render_program.getProgram());
 
-		window.imGuiRender();
+		window.imGuiRender(raytracing_program);
 
 		window.display();
 		window.pollEvents();
+
+		glClearTexImage(textures[3], 0, GL_RGBA, GL_FLOAT, nullptr);
+		glClearTexImage(textures[4], 0, GL_RGBA, GL_FLOAT, nullptr);
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

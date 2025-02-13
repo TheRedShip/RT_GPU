@@ -21,15 +21,19 @@ class Shader
 		Shader(GLenum type, const std::string &file_path);
 		~Shader(void);
 
+		
 		void	compile(void);
 		void	reload();
+		
+		void	setDefine(const std::string &name, const std::string &value);
 		
 		GLuint	getShader(void) const;
 
 	private:
 		void	checkCompileErrors();
 
-		//
+		std::map<std::string, std::string>	_defines;
+
 		GLenum		_type;
 		GLuint		_shader_id;
 		std::string	_file_path;
