@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 18:10:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/02 19:42:13 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/13 19:10:11 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,51 +26,7 @@ class Shader
 		
 		GLuint	getShader(void) const;
 
-		void	attach(void);
-		void	setupVertexBuffer();
-		void	drawTriangles();
-
-		void	flipOutputDenoising(bool pass);
-
-		// void	setBool(const std::string &name, bool value) const;
-		void	set_int(const std::string &name, int value) const;
-		void	set_float(const std::string &name, float value) const;
-		void	set_vec2(const std::string &name, const glm::vec2 &value) const;
-		void	set_vec3(const std::string &name, const glm::vec3 &value) const;
-		// void	setVec4(const std::string &name, const RT::Vec4f &value) const;
-		void	set_mat4(const std::string &name, const glm::mat4 &value) const;
-
-		void	set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> emissive_texture_ids);
-
-		GLuint	getProgramCompute(void) const;
-		GLuint	getProgramComputeDenoising(void) const;
-
-		GLuint	getNormalTexture(void) const;
-		GLuint	getPositionTexture(void) const;
-
-		std::vector<float> getOutputImage(void);
-		
-
 	private:
-		GLuint _screen_VAO, _screen_VBO;
-
-		GLuint	_program;
-		GLuint	_program_compute;
-		GLuint	_program_denoising;
-
-		GLuint	_output_texture;
-		GLuint	_accumulation_texture;
-		GLuint	_denoising_texture;
-		GLuint	_normal_texture;
-		GLuint	_position_texture;
-
-		GLuint	_vertex;
-		GLuint	_fragment;
-		GLuint	_compute;
-		GLuint	_denoising;
-
-		size_t	_size;
-
 		void	checkCompileErrors();
 
 		//

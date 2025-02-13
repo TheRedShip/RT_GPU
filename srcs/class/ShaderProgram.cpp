@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ShaderProgram.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 22:21:46 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/12 22:21:46 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/02/13 19:16:44 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,14 @@ void	ShaderProgram::attachShader(Shader *shader)
 {
 	_shaders.push_back(shader);
 	glAttachShader(_program, shader->getShader());
+}
+
+void	ShaderProgram::clearShaders()
+{
+	for (Shader *shader : _shaders)
+		glDetachShader(_program, shader->getShader());
+	
+	_shaders.clear();
 }
 
 void	ShaderProgram::link()
@@ -84,6 +92,27 @@ void	ShaderProgram::set_float(const std::string &name, float value) const
 void	ShaderProgram::set_vec2(const std::string &name, const glm::vec2 &value) const
 {
 	glUniform2fv(glGetUniformLocation(_program, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void	ShaderProgram::set_textures(std::map<std::string, std::vector<GLuint>> texture_ids)
+{
+	size_t	start_texture = 0;
+
+	for (auto it = texture_ids.begin(); it != texture_ids.end(); it++)
+	{
+		for (unsigned int i = 0; i < it->second.size(); i++)
+		{
+			GLuint current_unit = start_texture + i;
+
+			glActiveTexture(GL_TEXTURE0 + current_unit);
+			glBindTexture(GL_TEXTURE_2D, it->second[i]);
+
+			std::string uniform_name = it->first + "[" + std::to_string(i) + "]";
+			// std::cout << "Loading texture " << uniform_name << " at unit " << i << std::endl;
+			glUniform1i(glGetUniformLocation(_program, uniform_name.c_str()), current_unit);
+		}
+		start_texture = it->second.size();
+	}
 }
 
 GLuint	ShaderProgram::getProgram(void) const

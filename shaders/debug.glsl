@@ -2,7 +2,6 @@
 
 layout(local_size_x = 16, local_size_y = 16) in;
 layout(binding = 0, rgba32f) uniform image2D output_image;
-layout(binding = 1, rgba32f) uniform image2D accumulation_image;
 
 struct GPUCamera
 {
@@ -121,6 +120,7 @@ struct hitInfo
 	vec3	position;
 	int		obj_index;
 	int		mat_index;
+	int		obj_type;
 
 	float	u;
 	float	v;
@@ -238,15 +238,26 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 		
 		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i], stats);
 
-		temp_hit.t = temp_hit.t / bvh_data.scale;
-
-		if (temp_hit.t < hit.t)
+		float transformed_t = temp_hit.t / bvh_data.scale;
+		if (transformed_t < hit.t)
 		{
-			hit.t = temp_hit.t;
+			GPUTriangle triangle = triangles[temp_hit.obj_index];
+
+			hit.u = temp_hit.u;
+			hit.v = temp_hit.v;
+			hit.t = transformed_t;
 			hit.obj_index = temp_hit.obj_index;
-			hit.normal = normalize(inverseTransformMatrix * temp_hit.normal);
+			hit.mat_index = triangle.mat_index;
+		
+			vec3 position = transformedRay.origin + transformedRay.direction * temp_hit.t;
+			hit.position = inverseTransformMatrix * position + bvh_data.offset;
+			
+			vec3 based_normal = triangle.normal * sign(-dot(transformedRay.direction, triangle.normal));
+			hit.normal = normalize(inverseTransformMatrix * based_normal);
 		}
 	}
+
+	hit.obj_type = 3;
 
 	return (hit);
 }
@@ -294,7 +305,7 @@ void main()
 
     vec2 uv = ((vec2(pixel_coords)) / u_resolution) * 2.0 - 1.0;;
 	uv.x *= u_resolution.x / u_resolution.y;
-	
+
 	vec3 color = debugColor(uv);
 
 	imageStore(output_image, pixel_coords, vec4(color, 1.));

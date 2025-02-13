@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 18:02:18 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/13 19:22:02 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,14 +38,10 @@ int main(int argc, char **argv)
 
 	ShaderProgram raytracing_program;
 	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
+	Shader debug = Shader(GL_COMPUTE_SHADER, "shaders/debug.glsl");
 
 	raytracing_program.attachShader(&compute);
 	raytracing_program.link();
-
-	raytracing_program.use();
-	// raytracing_program.bindImageTexture(output_texture, 0, GL_READ_WRITE, GL_RGBA32F);
-	// raytracing_program.bindImageTexture(textures[1], 1, GL_READ_WRITE, GL_RGBA32F);
-
 
 	ShaderProgram render_program;
 	Shader vertex = Shader(GL_VERTEX_SHADER, "shaders/vertex.vert");
@@ -57,12 +53,24 @@ int main(int argc, char **argv)
 
 	std::vector<Buffer *> buffers = createDataOnGPU(scene);
 
+	if (!scene.loadTextures())
+		return (-1);
+
 	while (!window.shouldClose())
 	{
 		window.updateDeltaTime();
 		glClear(GL_COLOR_BUFFER_BIT);
 		
 		updateDataOnGPU(scene, buffers);
+
+		if (scene.getDebug().enabled)
+		{
+			raytracing_program.clearShaders();
+			
+			raytracing_program.attachShader(&debug);
+			raytracing_program.link();
+			scene.getDebug().enabled = 0;
+		}
 		
 		raytracing_program.use();
 		raytracing_program.set_int("u_frameCount", window.getFrameCount());
@@ -72,8 +80,14 @@ int main(int argc, char **argv)
 		raytracing_program.set_int("u_pixelisation", window.getPixelisation());
 		raytracing_program.set_float("u_time", (float)(glfwGetTime()));
 		raytracing_program.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-		raytracing_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+
+		std::map<std::string, std::vector<GLuint>> object_textures;
+		object_textures["textures"] = scene.getTextureIDs();
+		object_textures["emissive_textures"] = scene.getEmissionTextureIDs();
+		raytracing_program.set_textures(object_textures);
 		
+		raytracing_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+
 		window.imGuiNewFrame();
 
 		render_program.use();

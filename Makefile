@@ -46,9 +46,10 @@ IMGUI_SRCS := imgui/imgui.cpp         \
               imgui/imgui_impl_glfw.cpp \
               imgui/imgui_impl_opengl3.cpp
 
-ALL_SRCS	:=	$(IMGUI_SRCS)			\
-				RT.cpp	gl.cpp			\
+ALL_SRCS	:=	$(IMGUI_SRCS)	gl.cpp	\
+				RT.cpp	RT_utils.cpp	\
 				class/Window.cpp		\
+				class/ShaderProgram.cpp	\
 				class/Shader.cpp		\
 				class/Camera.cpp		\
 				class/Scene.cpp			\

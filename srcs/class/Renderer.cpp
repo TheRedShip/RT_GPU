@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Renderer.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/07 23:24:53 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/13 19:03:34 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -307,7 +307,8 @@ void	Renderer::addImageToRender(Shader &shader)
 	long int videoFrameOffset;
 	long int outputImageOffset;
 
-	image = shader.getOutputImage();
+	(void) shader;
+	// image = shader.getOutputImage();
 
 	for (int x = 0; x < WIDTH; x++)
 	{
