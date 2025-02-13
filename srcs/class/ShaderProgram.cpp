@@ -50,12 +50,13 @@ void	ShaderProgram::link()
 	}
 }
 
-void	ShaderProgram::use() const
+void	ShaderProgram::use()
 {
 	glUseProgram(_program);
+	this->watchForChanges();
 }
 
-void	ShaderProgram::dispathCompute(GLuint x, GLuint y, GLuint z) const
+void	ShaderProgram::dispathCompute(GLuint x, GLuint y, GLuint z)
 {
 	this->use();
 	glDispatchCompute(x, y, z);
@@ -65,6 +66,19 @@ void	ShaderProgram::dispathCompute(GLuint x, GLuint y, GLuint z) const
 void	ShaderProgram::bindImageTexture(GLuint texture_id, GLuint unit, GLenum access, GLenum format) const
 {
 	glBindImageTexture(unit, texture_id, 0, GL_FALSE, 0, access, format);
+}
+
+void	ShaderProgram::watchForChanges(void)
+{
+	for (Shader *shader : _shaders)
+	{
+		if (shader->hasChanged())
+		{
+			std::cout << "Shader " << shader->getFilePath() << " has changed" << std::endl;
+			this->reloadShaders();
+			break;
+		}
+	}
 }
 
 void	ShaderProgram::reloadShaders(void)

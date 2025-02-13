@@ -14,35 +14,13 @@
 
 void					setupScreenTriangle(GLuint *VAO);
 void					drawScreenTriangle(GLuint VAO, GLuint output_texture, GLuint program);
+
 std::vector<GLuint>		generateTextures(unsigned int textures_count);
+
 std::vector<Buffer *>	createDataOnGPU(Scene &scene);
 void					updateDataOnGPU(Scene &scene, std::vector<Buffer *> buffers);
 
-void	shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures)
-{
-	denoising_program.use();
-
-	denoising_program.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-	denoising_program.set_float("u_c_phi", denoise.c_phi);
-	denoising_program.set_float("u_p_phi", denoise.p_phi);
-	denoising_program.set_float("u_n_phi", denoise.n_phi);
-
-	int output_texture = 0;
-	int denoising_texture = 2;
-
-	for (int pass = 0; pass < denoise.pass ; ++pass)
-	{
-		glBindImageTexture(0, textures[output_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-		glBindImageTexture(2, textures[denoising_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-		
-		denoising_program.set_int("u_pass", pass);
-		denoising_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
-
-		std::swap(output_texture, denoising_texture);
-	}
-
-	glBindImageTexture(0, textures[output_texture], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-}
+void					shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures);
 
 int main(int argc, char **argv)
 {

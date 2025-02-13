@@ -24,19 +24,24 @@ class Shader
 		
 		void	compile(void);
 		void	reload();
+
+		bool    hasChanged();
 		
 		void	setDefine(const std::string &name, const std::string &value);
 		
-		GLuint	getShader(void) const;
+		GLuint				getShader(void) const;
+		const std::string	&getFilePath(void) const;
 
 	private:
 		void	checkCompileErrors();
 
 		std::map<std::string, std::string>	_defines;
 
-		GLenum		_type;
-		GLuint		_shader_id;
-		std::string	_file_path;
+		GLenum						_type;
+		GLuint						_shader_id;
+		std::string					_file_path;
+
+		std::unordered_map<std::string, std::filesystem::file_time_type> _files_timestamps;
 };
 
 #endif

@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-std::stringstream loadFileWithIncludes(const std::string& path)
+std::stringstream loadFileWithIncludes(const std::string& path, std::vector<std::string> &included_files)
 {
     std::ifstream file(path);
     if (!file.is_open()) {
@@ -36,7 +36,9 @@ std::stringstream loadFileWithIncludes(const std::string& path)
             if (start != std::string::npos && end != std::string::npos && end > start)
 			{
                 std::string includePath = line.substr(start + 1, end - start - 1);
-                std::string includedContent = loadFileWithIncludes(includePath).str();
+                included_files.push_back(includePath);
+
+                std::string includedContent = loadFileWithIncludes(includePath, included_files).str();
                 fileContent << includedContent << "\n";
             }
         }
@@ -44,7 +46,7 @@ std::stringstream loadFileWithIncludes(const std::string& path)
             fileContent << line << "\n";
     }
 
-    return fileContent;
+    return (fileContent);
 }
 
 
@@ -78,8 +80,13 @@ void	Shader::compile()
 {
 	_shader_id = glCreateShader(_type);
 	
-	std::string shader_code = loadFileWithIncludes(_file_path).str();
-	
+    std::vector<std::string> files;
+    files.push_back(_file_path);
+
+	std::string shader_code = loadFileWithIncludes(_file_path, files).str();
+    for (auto &file : files)
+        _files_timestamps[file] = std::filesystem::last_write_time(file);
+
     for (auto &define : _defines)
         shader_code = "#define SHADER_" + define.first + " " + define.second + "\n" + shader_code;
     shader_code = "#version 430\n" + shader_code;
@@ -91,6 +98,19 @@ void	Shader::compile()
 	glCompileShader(_shader_id);
 
 	this->checkCompileErrors();
+}
+
+bool    Shader::hasChanged()
+{
+    for (auto &file : _files_timestamps)
+    {
+        if (std::filesystem::last_write_time(file.first) != file.second)
+        {
+            _files_timestamps[file.first] = std::filesystem::last_write_time(file.first);
+            return (true);
+        }
+    }
+    return (false);
 }
 
 void Shader::reload()
@@ -122,3 +142,7 @@ GLuint	Shader::getShader(void) const
 	return (_shader_id);
 }
 
+const std::string	&Shader::getFilePath(void) const
+{
+    return (_file_path);
+}

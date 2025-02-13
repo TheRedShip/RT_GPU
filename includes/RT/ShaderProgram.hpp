@@ -26,11 +26,12 @@ class ShaderProgram
 		
 		void	link(void);
 		
-		void	use(void) const;
-		void	dispathCompute(GLuint x, GLuint y, GLuint z) const;
+		void	use(void);
+		void	dispathCompute(GLuint x, GLuint y, GLuint z);
 		
 		void	bindImageTexture(GLuint texture_id, GLuint unit, GLenum access, GLenum format) const;
 
+		void	watchForChanges(void);
 		void	reloadShaders(void);
 
 		void	set_int(const std::string &name, int value) const;

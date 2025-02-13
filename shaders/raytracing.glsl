@@ -204,7 +204,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
         float p = max(color.r, max(color.g, color.b));
         if (randomValue(rng_state) >= p) break;
 		color /= max(p, 0.001);
-        
+
         GPUMaterial mat = materials[hit.mat_index];
         calculateLightColor(mat, hit, color, light, rng_state);
         
