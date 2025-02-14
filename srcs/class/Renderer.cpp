@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   Renderer.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
+/*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/07 23:24:53 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/13 19:03:34 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,14 +300,17 @@ void	Renderer::initRender(void)
         SWS_BILINEAR, nullptr, nullptr, nullptr);
 }
 
-void	Renderer::addImageToRender(Shader &shader)
+void	Renderer::addImageToRender(GLuint &texture)
 {
-	std::vector<float> image;
+	std::vector<float>	image(WIDTH * HEIGHT * 4);
+
 	AVPacket *pkt;
 	long int videoFrameOffset;
 	long int outputImageOffset;
-
-	image = shader.getOutputImage();
+	
+	glBindTexture(GL_TEXTURE_2D, texture);
+	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, image.data());
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	for (int x = 0; x < WIDTH; x++)
 	{
@@ -400,7 +403,7 @@ void	Renderer::addPoint(float time)
 	_path.insert(pos, newPoint);
 }
 
-void Renderer::update(Shader &shader)
+void Renderer::update(GLuint &texture)
 {
 	double			curTime;
 
@@ -421,7 +424,7 @@ void Renderer::update(Shader &shader)
 
 	if(!_testMode)
 	{
-		addImageToRender(shader);
+		addImageToRender(texture);
 		_frameCount++;
 	}
 	makeMovement(curTime - _curSplitStart, curTime);

@@ -38,7 +38,7 @@ class Renderer
 	public:
 		Renderer(Scene *scene, Window *win, Arguments &args);
 
-		void		update(Shader &shader);
+		void		update(GLuint &texture);
 		void		renderImgui(void);
 
 		int			rendering(void) const;
@@ -66,7 +66,7 @@ class Renderer
 		void		initRender();
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
 		void		updateAvailableCodecs(int mode, AVCodecID id);
-		void		addImageToRender(Shader &shader);
+		void		addImageToRender(GLuint &texture);
 		void		endRender(void);
 
 

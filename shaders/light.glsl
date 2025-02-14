@@ -2,7 +2,7 @@ hitInfo	traceRay(inout Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    return vec3(0.);
+    // return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;

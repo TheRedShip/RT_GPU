@@ -31,6 +31,7 @@
 # include "imgui/imgui_impl_glfw.h"
 # include "imgui/imgui_impl_opengl3.h"
 
+# include <filesystem>
 # include <algorithm>
 # include <string.h>
 # include <iostream>
@@ -58,10 +59,12 @@ struct Vertex {
 # include "objects/Portal.hpp"
 # include "objects/Cylinder.hpp"
 
+# include "Buffer.hpp"
 # include "Arguments.hpp"
 # include "Camera.hpp"
 # include "Renderer.hpp"
 # include "Window.hpp"
+# include "ShaderProgram.hpp"
 # include "Shader.hpp"
 # include "Scene.hpp"
 # include "SceneParser.hpp"

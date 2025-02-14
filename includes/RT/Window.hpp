@@ -16,6 +16,7 @@
 # include "RT.hpp"
 
 class Scene;
+class ShaderProgram;
 
 class Window
 {
@@ -35,7 +36,7 @@ class Window
 		static void	mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 		void		imGuiNewFrame();
-		void		imGuiRender();
+		void		imGuiRender(ShaderProgram &raytracing_program);
 
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
@@ -47,7 +48,7 @@ class Window
 
 		void		setFrameCount(int nb);
 
-		void		rendererUpdate(Shader &shader);
+		void		rendererUpdate(GLuint &texture);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;

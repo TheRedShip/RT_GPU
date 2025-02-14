@@ -6,178 +6,101 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/13 14:26:18 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/14 18:26:34 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
+
+void					setupScreenTriangle(GLuint *VAO);
+void					drawScreenTriangle(GLuint VAO, GLuint output_texture, GLuint program);
+
+std::vector<GLuint>		generateTextures(unsigned int textures_count);
+
+std::vector<Buffer *>	createDataOnGPU(Scene &scene);
+void					updateDataOnGPU(Scene &scene, std::vector<Buffer *> buffers);
+
+void					shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures);
 
 int main(int argc, char **argv)
 {
 	Arguments	args(argc, argv);
 	if (args.error())
 		return (1);
+
 	Scene		scene(args.getSceneName());
 	if (scene.fail())
 		return (1);
+
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);
-	Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/compute.glsl", "shaders/denoising.glsl");
-	// Shader		shader("shaders/vertex.vert", "shaders/frag.frag", "shaders/debug.glsl");
 
+	GLuint VAO;
+	setupScreenTriangle(&VAO);
 
-	GLint max_gpu_size;
-	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
+	std::vector<GLuint> textures = generateTextures(5);
 
-	const std::vector<GPUObject> &object_data = scene.getObjectData();
-	const std::vector<GPUTriangle> &triangle_data = scene.getTriangleData();
-	const std::vector<GPUBvh> &bvh_nodes = scene.getBvh();
-	const std::vector<GPUBvhData> &bvh_data = scene.getBvhData();
-	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
+	ShaderProgram raytracing_program;
+	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
+	raytracing_program.attachShader(&compute);
+	raytracing_program.link();
 
-	std::cout << "Sending " << object_data.size() << " objects for " << \
-				object_data.size() * sizeof(GPUObject) + \
-				triangle_data.size() * sizeof(GPUTriangle) + \
-				bvh_nodes.size() * sizeof(GPUBvh) + \
-				material_data.size() * sizeof(GPUMaterial) \
-				<< " / " << max_gpu_size << " bytes" << std::endl;
+	ShaderProgram denoising_program;
+	Shader denoise = Shader(GL_COMPUTE_SHADER, "shaders/denoising.glsl");
+	denoising_program.attachShader(&denoise);
+	denoising_program.link();
 
-	GLuint objectSSBO;
-    glGenBuffers(1, &objectSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, objectSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUObject) * object_data.size(), object_data.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, objectSSBO);
+	ShaderProgram render_program;
+	Shader vertex = Shader(GL_VERTEX_SHADER, "shaders/vertex.vert");
+	Shader frag = Shader(GL_FRAGMENT_SHADER, "shaders/frag.frag");
+	render_program.attachShader(&vertex);
+	render_program.attachShader(&frag);
+	render_program.link();
 
-	GLuint trianglesSSBO;
-    glGenBuffers(1, &trianglesSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, trianglesSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUTriangle) * triangle_data.size(), triangle_data.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 2, trianglesSSBO);
+	std::vector<Buffer *> buffers = createDataOnGPU(scene);
 
-	GLuint bvh_nodesSSBO;
-	glGenBuffers(1, &bvh_nodesSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvh_nodesSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvhData) * bvh_data.size(), bvh_data.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, bvh_nodesSSBO);
-
-	GLuint bvhSSBO;
-	glGenBuffers(1, &bvhSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, bvhSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUBvh) * bvh_nodes.size(), bvh_nodes.data(), GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, bvhSSBO);
-
-	GLuint materialSSBO;
-    glGenBuffers(1, &materialSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GPUMaterial) * material_data.size(), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 5, materialSSBO);
-	
-	GLuint lightSSBO;
-	glGenBuffers(1, &lightSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, scene.getGPULights().size() * sizeof(int), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, lightSSBO);
-
-	GLuint cameraUBO;
-	glGenBuffers(1, &cameraUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUCamera), nullptr, GL_DYNAMIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, cameraUBO);
-
-	GLuint volumeUBO;
-	glGenBuffers(1, &volumeUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUVolume), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 1, volumeUBO);
-
-	GLuint debugUBO;
-	glGenBuffers(1, &debugUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, debugUBO);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(GPUDebug), nullptr, GL_STATIC_DRAW);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 2, debugUBO);
-	
 	if (!scene.loadTextures())
-		return (1);
-
-	shader.attach();
-
-	shader.setupVertexBuffer();
+		return (-1);
 
 	while (!window.shouldClose())
 	{
 		window.updateDeltaTime();
 		
-		glUseProgram(shader.getProgramCompute());
+		updateDataOnGPU(scene, buffers);
+		window.rendererUpdate(textures[0]);
 		
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, materialSSBO);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, material_data.size() * sizeof(GPUMaterial), material_data.data());
-
-		std::set<int> gpu_lights = scene.getGPULights();
-		std::vector<int> gpu_lights_array(gpu_lights.begin(), gpu_lights.end());
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, lightSSBO);
-		glBufferSubData(GL_SHADER_STORAGE_BUFFER, 0, gpu_lights_array.size() * sizeof(int), gpu_lights_array.data());
-		window.rendererUpdate(shader);
-
-		GPUCamera camera_data = scene.getCamera()->getGPUData();
-
-		glBindBuffer(GL_UNIFORM_BUFFER, cameraUBO);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUCamera), &camera_data);
-
-		glBindBuffer(GL_UNIFORM_BUFFER, volumeUBO);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUVolume), &scene.getVolume());
-
-		glBindBuffer(GL_UNIFORM_BUFFER, debugUBO);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GPUDebug), &scene.getDebug());
-
-		shader.set_int("u_frameCount", window.getFrameCount());
-		shader.set_int("u_objectsNum", object_data.size());
-		shader.set_int("u_bvhNum", bvh_data.size());
-		shader.set_int("u_lightsNum", gpu_lights.size());
-		shader.set_int("u_pixelisation", window.getPixelisation());
-		shader.set_float("u_time", (float)(glfwGetTime()));
-		shader.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
-
-		shader.set_textures(scene.getTextureIDs(), scene.getEmissionTextureIDs());
-
-		glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
-		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-		
-		GPUDenoise denoise = scene.getDenoise();
-		if (denoise.enabled)
-		{
-			glUseProgram(shader.getProgramComputeDenoising());
-			
-			glUniform2fv(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_resolution"), 1, glm::value_ptr(glm::vec2(WIDTH, HEIGHT)));
-			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_c_phi"), denoise.c_phi);
-			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_p_phi"), denoise.p_phi);
-			glUniform1f(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_n_phi"), denoise.n_phi);
-
-			for (int pass = 0; pass < denoise.pass ; ++pass)
-			{
-				shader.flipOutputDenoising(pass % 2 == 0);
-				
-				glUniform1i(glGetUniformLocation(shader.getProgramComputeDenoising(), "u_pass"), pass);
-				
-				glDispatchCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
-				glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-			}
-			shader.flipOutputDenoising(true);
-		}
-
-
 		glClear(GL_COLOR_BUFFER_BIT);
+		
+		raytracing_program.use();
+		raytracing_program.set_int("u_frameCount", window.getFrameCount());
+		raytracing_program.set_int("u_objectsNum", scene.getObjectData().size());
+		raytracing_program.set_int("u_bvhNum", scene.getBvhData().size());
+		raytracing_program.set_int("u_lightsNum", scene.getGPULights().size());
+		raytracing_program.set_int("u_pixelisation", window.getPixelisation());
+		raytracing_program.set_float("u_time", (float)(glfwGetTime()));
+		raytracing_program.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
+
+		std::map<std::string, std::vector<GLuint>> object_textures;
+		object_textures["textures"] = scene.getTextureIDs();
+		object_textures["emissive_textures"] = scene.getEmissionTextureIDs();
+		raytracing_program.set_textures(object_textures);
+		
+		raytracing_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
+
+		if (scene.getDenoise().enabled)
+			shaderDenoise(denoising_program, scene.getDenoise(), textures);
 
 		window.imGuiNewFrame();
 
-		glUseProgram(shader.getProgram());
-		shader.drawTriangles();
+		render_program.use();
+		drawScreenTriangle(VAO, textures[0], render_program.getProgram());
 
-		window.imGuiRender();
+		window.imGuiRender(raytracing_program);
 
 		window.display();
 		window.pollEvents();
 
-		glClearTexImage(shader.getNormalTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-		glClearTexImage(shader.getPositionTexture(), 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+		glClearTexImage(textures[3], 0, GL_RGBA, GL_FLOAT, nullptr);
+		glClearTexImage(textures[4], 0, GL_RGBA, GL_FLOAT, nullptr);
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();

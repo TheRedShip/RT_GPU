@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 20:21:13 by ycontre           #+#    #+#             */
-/*   Updated: 2025/02/06 19:48:22 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/13 18:59:18 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,12 +16,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char *loadFileWithIncludes(const std::string& path)
+std::stringstream loadFileWithIncludes(const std::string& path, std::vector<std::string> &included_files)
 {
     std::ifstream file(path);
     if (!file.is_open()) {
         std::cerr << "Failed to open file: " << path << std::endl;
-        return "";
+        return std::stringstream();
     }
 
     std::stringstream fileContent;
@@ -36,7 +36,9 @@ const char *loadFileWithIncludes(const std::string& path)
             if (start != std::string::npos && end != std::string::npos && end > start)
 			{
                 std::string includePath = line.substr(start + 1, end - start - 1);
-                std::string includedContent = loadFileWithIncludes(includePath);
+                included_files.push_back(includePath);
+
+                std::string includedContent = loadFileWithIncludes(includePath, included_files).str();
                 fileContent << includedContent << "\n";
             }
         }
@@ -44,7 +46,7 @@ const char *loadFileWithIncludes(const std::string& path)
             fileContent << line << "\n";
     }
 
-    return strdup(fileContent.str().c_str());
+    return (fileContent);
 }
 
 
@@ -61,263 +63,86 @@ void printWithLineNumbers(const char *str)
         std::cout << lineNumber++ << ": " << line << std::endl;
 }
 
-Shader::Shader(std::string vertexPath, std::string fragmentPath, std::string computePath, std::string denoisingPath)
+Shader::Shader(GLenum type, const std::string &file_path)
 {
-	const char *vertexCode = loadFileWithIncludes(vertexPath);
-	const char *fragmentCode = loadFileWithIncludes(fragmentPath);
-	const char *computeCode = loadFileWithIncludes(computePath);
-	const char *denoisingCode = loadFileWithIncludes(denoisingPath);
+	_type = type;
+	_file_path = file_path;
+	_shader_id = 0;
 
-	// printWithLineNumbers(computeCode);
-
-	_vertex = glCreateShader(GL_VERTEX_SHADER);
-	
-	glShaderSource(_vertex, 1, &vertexCode, NULL);
-	glCompileShader(_vertex);
-
-	checkCompileErrors(_vertex);
-	
-	_fragment = glCreateShader(GL_FRAGMENT_SHADER);
-	
-	glShaderSource(_fragment, 1, &fragmentCode, NULL);
-	glCompileShader(_fragment);
-
-	checkCompileErrors(_fragment);
-
-	_compute = glCreateShader(GL_COMPUTE_SHADER);
-
-	glShaderSource(_compute, 1, &computeCode, NULL);
-	glCompileShader(_compute);
-
-	checkCompileErrors(_compute);
-
-	_denoising = glCreateShader(GL_COMPUTE_SHADER);
-
-	glShaderSource(_denoising, 1, &denoisingCode, NULL);
-	glCompileShader(_denoising);
-
-	checkCompileErrors(_denoising);
+	this->compile();
 }
 
 Shader::~Shader(void)
 {
-	glDeleteShader(_vertex);
-	glDeleteShader(_fragment);
-	glDeleteShader(_compute);
-	glDeleteProgram(_program);
-	glDeleteProgram(_program_compute);
-	glDeleteProgram(_denoising);
 }
 
-void Shader::attach(void)
+void	Shader::compile()
 {
-	_program = glCreateProgram();
-	_program_compute = glCreateProgram();
-	_program_denoising = glCreateProgram();
+	_shader_id = glCreateShader(_type);
+	
+    std::vector<std::string> files;
+    files.push_back(_file_path);
 
-	glEnable(GL_DEBUG_OUTPUT);
-	glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+	std::string shader_code = loadFileWithIncludes(_file_path, files).str();
+    for (auto &file : files)
+        _files_timestamps[file] = std::filesystem::last_write_time(file);
 
-	glAttachShader(_program, _vertex);
-	glAttachShader(_program, _fragment);
+    for (auto &define : _defines)
+        shader_code = "#define SHADER_" + define.first + " " + define.second + "\n" + shader_code;
+    shader_code = "#version 430\n" + shader_code;
 
-	glAttachShader(_program_compute, _compute);
+    const char *shader_code_cstr = shader_code.c_str();
+	// printWithLineNumbers(shader_code_cstr);
+    
+	glShaderSource(_shader_id, 1, &shader_code_cstr, NULL);
+	glCompileShader(_shader_id);
 
-	glAttachShader(_program_denoising, _denoising);
-
-	glLinkProgram(_program);
-	glLinkProgram(_program_compute);
-	glLinkProgram(_program_denoising);
-
-	glGenTextures(1, &_output_texture);
-	glBindTexture(GL_TEXTURE_2D, _output_texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	glGenTextures(1, &_accumulation_texture);
-    glBindTexture(GL_TEXTURE_2D, _accumulation_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glBindImageTexture(1, _accumulation_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	glGenTextures(1, &_denoising_texture);
-    glBindTexture(GL_TEXTURE_2D, _denoising_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glBindImageTexture(2, _denoising_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	glGenTextures(1, &_normal_texture);
-    glBindTexture(GL_TEXTURE_2D, _normal_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glBindImageTexture(3, _normal_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
-
-	glGenTextures(1, &_position_texture);
-    glBindTexture(GL_TEXTURE_2D, _position_texture);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, WIDTH, HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-    glBindImageTexture(4, _position_texture, 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
+	this->checkCompileErrors();
 }
 
-void Shader::checkCompileErrors(GLuint shader)
+bool    Shader::hasChanged()
+{
+    for (auto &file : _files_timestamps)
+    {
+        if (std::filesystem::last_write_time(file.first) != file.second)
+        {
+            _files_timestamps[file.first] = std::filesystem::last_write_time(file.first);
+            return (true);
+        }
+    }
+    return (false);
+}
+
+void Shader::reload()
+{
+	glDeleteShader(_shader_id);
+	this->compile();
+}
+
+void Shader::checkCompileErrors()
 {
 	GLint success;
 	GLchar infoLog[512];
 	
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	glGetShaderiv(_shader_id, GL_COMPILE_STATUS, &success);
 	if (!success)
 	{
-		glGetShaderInfoLog(shader, 512, NULL, infoLog);
+		glGetShaderInfoLog(_shader_id, 512, NULL, infoLog);
 		std::cout << "ERROR::SHADER::COMPILATION_FAILED\n" << infoLog << std::endl;
 	}
 }
 
-void Shader::setupVertexBuffer()
+void    Shader::setDefine(const std::string &name, const std::string &value)
 {
-
-	Vertex vertices[3] = {{{-1.0f, -1.0f}, {0.0f, 0.0f}},{{3.0f, -1.0f}, {2.0f, 0.0f}},{{-1.0f, 3.0f}, {0.0f, 2.0f}}};
-	_size = sizeof(vertices) / sizeof(Vertex) / 3;
-
-    glGenVertexArrays(1, &_screen_VAO);
-    glGenBuffers(1, &_screen_VBO);
-    
-    glBindVertexArray(_screen_VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, _screen_VBO);
-    glBufferData(GL_ARRAY_BUFFER, _size * 3 * sizeof(Vertex), vertices, GL_STATIC_DRAW);
-
-    // Position attribute
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // Texture coordinate attribute
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texCoord));
-    glEnableVertexAttribArray(1);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
+    _defines[name] = value;
 }
 
-void	Shader::drawTriangles()
+GLuint	Shader::getShader(void) const
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, _output_texture);
-	glUniform1i(glGetUniformLocation(_program, "screenTexture"), 0);
-	
-	glBindVertexArray(_screen_VAO);
-	glDrawArrays(GL_TRIANGLES, 0, _size * 3);
+	return (_shader_id);
 }
 
-void	Shader::flipOutputDenoising(bool pass)
+const std::string	&Shader::getFilePath(void) const
 {
-	if (pass)
-	{
-		glBindImageTexture(0, _output_texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);   
-		glBindImageTexture(2, _denoising_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	}
-	else
-	{
-		glBindImageTexture(0, _denoising_texture, 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA32F);
-    	glBindImageTexture(2, _output_texture, 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA32F);
-	}
+    return (_file_path);
 }
-
-void	Shader::set_int(const std::string &name, int value) const
-{
-	glUniform1i(glGetUniformLocation(_program_compute, name.c_str()), value);
-}
-void	Shader::set_float(const std::string &name, float value) const
-{
-	glUniform1f(glGetUniformLocation(_program_compute, name.c_str()), value);
-}
-void	Shader::set_vec2(const std::string &name, const glm::vec2 &value) const
-{
-	glUniform2fv(glGetUniformLocation(_program_compute, name.c_str()), 1, glm::value_ptr(value));
-}
-void	Shader::set_vec3(const std::string &name, const glm::vec3 &value) const
-{
-	glUniform3fv(glGetUniformLocation(_program_compute, name.c_str()), 1, glm::value_ptr(value));
-}
-void	Shader::set_mat4(const std::string &name, const glm::mat4 &value) const
-{
-	glUniformMatrix4fv(glGetUniformLocation(_program_compute, name.c_str()), 1, GL_FALSE, glm::value_ptr(value));
-}
-
-void	Shader::set_textures(std::vector<GLuint> texture_ids, std::vector<GLuint> emissive_texture_ids)
-{
-	for (size_t i = 0; i < texture_ids.size(); i++)
-	{
-		glActiveTexture(GL_TEXTURE0 + i);
-		glBindTexture(GL_TEXTURE_2D, texture_ids[i]);
-
-		std::string uniform_name = "textures[" + std::to_string(i) + "]";
-		// std::cout << "Loading texture " << uniform_name << " at unit " << i << std::endl;
-		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), i);
-	}
-
-	size_t start_texture = texture_ids.size();
-
-	for (size_t i = 0; i < emissive_texture_ids.size(); i++)
-	{
-		GLuint currentUnit = start_texture + i;
-
-		glActiveTexture(GL_TEXTURE0 + currentUnit);
-		glBindTexture(GL_TEXTURE_2D, emissive_texture_ids[i]);
-		std::string uniform_name = "emissive_textures[" + std::to_string(i) + "]";
-		// std::cout << "Loading emissive texture " << uniform_name << " (" << emissive_texture_ids[i] << ") at unit " << currentUnit << std::endl;
-		glUniform1i(glGetUniformLocation(_program_compute, uniform_name.c_str()), currentUnit);
-	}
-}
-
-
-GLuint	Shader::getProgram(void) const
-{
-	return (_program);
-}
-
-GLuint	Shader::getProgramCompute(void) const
-{
-	return (_program_compute);
-}
-
-GLuint	Shader::getProgramComputeDenoising(void) const
-{
-	return (_program_denoising);
-}
-
-GLuint	Shader::getNormalTexture(void) const
-{
-	return (_normal_texture);
-}
-
-GLuint	Shader::getPositionTexture(void) const
-{
-	return (_position_texture);
-}
-
-std::vector<float> Shader::getOutputImage(void)
-{
-	std::vector<float>	res(WIDTH * HEIGHT * 4);
-
-	glBindTexture(GL_TEXTURE_2D, _output_texture);
-	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, res.data());
-	glBindTexture(GL_TEXTURE_2D, 0);
-	return (res);
-}	
