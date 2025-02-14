@@ -11,8 +11,9 @@ MAT	255 255 255		0.0		0.0 0.0 // 1
 
 sp	0 2 0	150	0
 
-OBJ	obj/jinx.obj	-10 0 0				1.25	0 0 0
+#OBJ	obj/jinx.obj	-10 0 0				1.25	0 0 0
 # OBJ	obj/Dragon_800K.obj	0 0 0		35	0 0 0	1
 
-OBJ	obj/whitedragon.obj	0 0 0		1	0 0 0
-
+#OBJ	obj/whitedragon.obj	0 0 0		1	0 0 0
+#O
+OBJ obj/texturedMesh.obj 0 0 0  1	0
