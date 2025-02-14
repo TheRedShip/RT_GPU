@@ -64,9 +64,11 @@ int main(int argc, char **argv)
 	while (!window.shouldClose())
 	{
 		window.updateDeltaTime();
-		glClear(GL_COLOR_BUFFER_BIT);
 		
 		updateDataOnGPU(scene, buffers);
+		window.rendererUpdate(textures[0]);
+		
+		glClear(GL_COLOR_BUFFER_BIT);
 		
 		raytracing_program.use();
 		raytracing_program.set_int("u_frameCount", window.getFrameCount());

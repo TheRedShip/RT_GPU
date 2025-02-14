@@ -1,4 +1,4 @@
-#if 0
+#if SHADER_DEBUG
 #include "shaders/debug.glsl"
 #else
 #include "shaders/raytracing.glsl"

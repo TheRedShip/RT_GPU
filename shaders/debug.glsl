@@ -132,21 +132,31 @@ struct Stats
 
 #include "shaders/intersect.glsl"
 
-int traceRay(Ray ray)
+hitInfo traceScene(Ray ray)
 {
-    int num_hit;
+	hitInfo hit;
 
-    num_hit = 0;
-    for (int i = 0; i < u_objectsNum; i++)
-    {
-        GPUObject obj = objects[i];
+	hit.t = 1e30;
+	hit.obj_index = -1;
+	
+	for (int i = 0; i < u_objectsNum; i++)
+	{
+		GPUObject obj = objects[i];
 
-        hitInfo temp_hit;
-        if (intersect(ray, obj, temp_hit))
-            num_hit++;
-    }
+		hitInfo temp_hit;
+		
+		if (intersect(ray, obj, temp_hit) && temp_hit.t < hit.t)
+		{
+			hit.t = temp_hit.t;
+			hit.obj_index = i;
+			hit.obj_type = obj.type;
+			hit.mat_index = obj.mat_index;
+			hit.position = temp_hit.position;
+			hit.normal = temp_hit.normal;
+		}
+	}
 
-	return (num_hit);
+	return (hit);
 }
 
 hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
@@ -272,13 +282,24 @@ Ray initRay(vec2 uv)
 	return (Ray(origin, ray_direction, (1.0 / ray_direction)));
 }
 
+hitInfo trace(Ray ray, inout Stats stats)
+{
+	hitInfo hitBVH;
+	hitInfo hitScene;
+	hitInfo hit;
+
+	hitBVH = traverseBVHs(ray, stats);
+	hitScene = traceScene(ray);
+	return (hitBVH.t < hitScene.t ? hitBVH : hitScene);
+}
+
 vec3 debugColor(vec2 uv)
 {
 	Ray ray = initRay(uv);
 	Stats stats = Stats(0, 0);
 
-	hitInfo hit = traverseBVHs(ray, stats);
-	
+	hitInfo hit = trace(ray, stats);
+
 	float box_display = float(stats.box_count) / float(debug.box_treshold);
 	float triangle_display = float(stats.triangle_count) / float(debug.triangle_treshold);
 

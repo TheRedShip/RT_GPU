@@ -172,9 +172,9 @@ bool Window::shouldClose()
     return glfwWindowShouldClose(_window) || _renderer->shouldClose();
 }
 
-void		Window::rendererUpdate(Shader &shader)
+void		Window::rendererUpdate(GLuint &texture)
 {
-	_renderer->update(shader);
+	_renderer->update(texture);
 }
 
 void Window::imGuiNewFrame()
@@ -253,7 +253,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 	
 	if (ImGui::CollapsingHeader("Fog"))
 	{
-		if (ImGui::Checkbox("Enable", (bool *)(&_scene->getVolume().enabled)))
+		if (ImGui::Checkbox("Enable##0", (bool *)(&_scene->getVolume().enabled)))
 		{
 			raytracing_program.set_define("FOG", std::to_string(_scene->getVolume().enabled));
 			raytracing_program.reloadShaders();
@@ -279,9 +279,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 
 	if (ImGui::CollapsingHeader("Denoiser"))
 	{
-		ImGui::PushID(0);
-
-		ImGui::Checkbox("Enable", (bool *)(&_scene->getDenoise().enabled));
+		ImGui::Checkbox("Enable##1", (bool *)(&_scene->getDenoise().enabled));
 		ImGui::Separator();
 		if (ImGui::SliderInt("Pass", &_scene->getDenoise().pass, 0, 8))
 			_scene->getDenoise().pass = (_scene->getDenoise().pass / 2) * 2; // make sure it's even
@@ -289,15 +287,11 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 		ImGui::SliderFloat("Color diff", &_scene->getDenoise().c_phi, 0.0f, 1.0f);
 		ImGui::SliderFloat("Position diff", &_scene->getDenoise().p_phi, 0.0f, 1.0f);
 		ImGui::SliderFloat("Normal diff", &_scene->getDenoise().n_phi, 0.0f, 1.0f);
-
-		ImGui::PopID();
 	}
 
 	if (ImGui::CollapsingHeader("Debug"))
 	{
-		ImGui::PushID(0);
-
-		if (ImGui::Checkbox("Enable", (bool *)(&_scene->getDebug().enabled)))
+		if (ImGui::Checkbox("Enable##2", (bool *)(&_scene->getDebug().enabled)))
 		{
 			raytracing_program.set_define("DEBUG", std::to_string(_scene->getDebug().enabled));
 			raytracing_program.reloadShaders();
@@ -307,8 +301,6 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 		has_changed |= ImGui::SliderInt("Debug mode", &_scene->getDebug().mode, 0, 2);
 		has_changed |= ImGui::SliderInt("Box treshold", &_scene->getDebug().box_treshold, 1, 2000);
 		has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
-		
-		ImGui::PopID();
 	}
 
 
@@ -356,9 +348,9 @@ int			Window::getPixelisation(void)
 
 	if (mouse || movement)
 	{
-		if(_fps < 60 && _pixelisation < 16)	
+		if(_fps < 30 && _pixelisation < 16)	
 			_pixelisation++;
-		if(_fps > 120 && _pixelisation > 0)
+		if(_fps > 60 && _pixelisation > 0)
 			_pixelisation--;
 	}
 	else if(_pixelisation)

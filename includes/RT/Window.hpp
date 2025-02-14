@@ -48,7 +48,7 @@ class Window
 
 		void		setFrameCount(int nb);
 
-		void		rendererUpdate(Shader &shader);
+		void		rendererUpdate(GLuint &texture);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;
