@@ -191,7 +191,7 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
 
 		if (hit.obj_index == -1)
 		{
-			light += transmittance * GetEnvironmentLight(ray);
+			light += GetEnvironmentLight(ray);
 			break;
 		}
 
