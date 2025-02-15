@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 02:57:16 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:54:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ void Window::display()
 
     glfwSwapBuffers(_window);
 }
+
 void Window::pollEvents()
 {
 	this->process_input();
@@ -167,14 +168,20 @@ void Window::pollEvents()
 	
     glfwPollEvents();
 }
+
 bool Window::shouldClose()
 {
     return glfwWindowShouldClose(_window) || _renderer->shouldClose();
 }
 
-void		Window::rendererUpdate(GLuint &texture)
+bool Window::isRendering()
 {
-	_renderer->update(texture);
+	return (_renderer->rendering());
+}
+
+void		Window::rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+{
+	_renderer->update(textures, denoisingProgram);
 }
 
 void Window::imGuiNewFrame()

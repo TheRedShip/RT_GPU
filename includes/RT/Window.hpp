@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 16:46:37 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:54:27 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,9 @@ class Window
 		bool		&getAccumulate(void);
 
 		void		setFrameCount(int nb);
+		bool		isRendering();
 
-		void		rendererUpdate(GLuint &texture);
+		void		rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;

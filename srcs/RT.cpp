@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/14 18:26:34 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:54:52 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 		window.updateDeltaTime();
 		
 		updateDataOnGPU(scene, buffers);
-		window.rendererUpdate(textures[0]);
+		window.rendererUpdate(textures, denoising_program);
 		
 		glClear(GL_COLOR_BUFFER_BIT);
 		
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 		
 		raytracing_program.dispathCompute((WIDTH + 15) / 16, (HEIGHT + 15) / 16, 1);
 
-		if (scene.getDenoise().enabled)
+		if (scene.getDenoise().enabled && !window.isRendering())
 			shaderDenoise(denoising_program, scene.getDenoise(), textures);
 
 		window.imGuiNewFrame();
