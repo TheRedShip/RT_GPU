@@ -1,10 +1,13 @@
 
 layout(local_size_x = 16, local_size_y = 16) in;
-layout(binding = 0, rgba32f) uniform image2D output_image;
-layout(binding = 1, rgba32f) uniform image2D accumulation_image;
+layout(binding = 0, rgba32f) uniform image2D output_texture;
+layout(binding = 1, rgba32f) uniform image2D output_accum_texture;
 
 layout(binding = 3, rgba32f) uniform image2D normal_texture;
 layout(binding = 4, rgba32f) uniform image2D position_texture;
+layout(binding = 5, rgba32f) uniform image2D light_texture;
+layout(binding = 6, rgba32f) uniform image2D light_accum_texture;
+layout(binding = 7, rgba32f) uniform image2D color_texture;
 
 struct GPUObject {
 	mat4	rotation;
@@ -169,7 +172,9 @@ struct hitInfo
 #include "shaders/volumetric.glsl"
 #include "shaders/trace.glsl"
 
-vec3 pathtrace(Ray ray, inout uint rng_state)
+#define accumulate(texture, new_color, color) imageLoad(texture, ivec2(gl_GlobalInvocationID.xy)); new_color.rgb = mix(new_color.rgb, color, 1.0 / float(u_frameCount + 1)); new_color.a = 1.0; imageStore(texture, ivec2(gl_GlobalInvocationID.xy), new_color);
+
+vec3[2] pathtrace(Ray ray, inout uint rng_state)
 {
     vec3 color = vec3(1.0);
     vec3 light = vec3(0.0);
@@ -215,7 +220,8 @@ vec3 pathtrace(Ray ray, inout uint rng_state)
         ray.inv_direction = 1.0 / ray.direction;
     }
     
-    return color * light;
+	vec3[2] result = {color, light};
+    return result;
 }
 
 Ray initRay(vec2 uv, inout uint rng_state)
@@ -241,6 +247,7 @@ Ray initRay(vec2 uv, inout uint rng_state)
 	return (Ray(origin, ray_direction, 1.0 / ray_direction));
 }
 
+
 void main()
 {
 	ivec2 pixel_coords = ivec2(gl_GlobalInvocationID.xy);
@@ -259,19 +266,20 @@ void main()
 	uv.x *= u_resolution.x / u_resolution.y;
 
 	Ray ray = initRay(uv, rng_state);
-	vec3 color = pathtrace(ray, rng_state);
+	vec3[2] color_light = pathtrace(ray, rng_state);
+	vec3 color = color_light[0] * color_light[1];
 	
-	float blend = 1.0 / float(u_frameCount + 1);
-    vec4 accum = imageLoad(accumulation_image, pixel_coords);
-    accum.rgb = mix(accum.rgb, color, blend);
-	accum.a = 1.0;
+	vec4 accum_color = accumulate(color_texture, accum_color, sqrt(color_light[0]));
 
-    imageStore(accumulation_image, pixel_coords, accum);
-    
-    vec4 final_color = vec4(sqrt(accum.r), sqrt(accum.g), sqrt(accum.b), accum.a);
+	vec4 accum_light = accumulate(light_accum_texture, accum_light, color_light[1]);
+	vec4 final_light = sqrt(accum_light);
+	imageStore(light_texture, pixel_coords, final_light);
 
+	vec4 accum = accumulate(output_accum_texture, accum, color);
+	vec4 final_output_color = sqrt(accum);
+	
 	for (int y = 0; y < u_pixelisation; y++)
 		for (int x = 0; x < u_pixelisation; x++)
-			imageStore(output_image, pixel_coords + ivec2(x, y), final_color);
+			imageStore(output_texture, pixel_coords + ivec2(x, y), final_output_color);
 }
 

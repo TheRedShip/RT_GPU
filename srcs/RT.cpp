@@ -37,7 +37,15 @@ int main(int argc, char **argv)
 	GLuint VAO;
 	setupScreenTriangle(&VAO);
 
-	std::vector<GLuint> textures = generateTextures(5);
+	std::vector<GLuint> textures = generateTextures(8);
+	//0 output
+	//1 output_accumulation
+	//2 denoising
+	//3 normal
+	//4 position
+	//5 light
+	//6 light_accum
+	//7 color
 
 	ShaderProgram raytracing_program;
 	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
@@ -99,8 +107,8 @@ int main(int argc, char **argv)
 		window.display();
 		window.pollEvents();
 
-		glClearTexImage(textures[3], 0, GL_RGBA, GL_FLOAT, nullptr);
-		glClearTexImage(textures[4], 0, GL_RGBA, GL_FLOAT, nullptr);
+		// glClearTexImage(textures[3], 0, GL_RGBA, GL_FLOAT, nullptr);
+		// glClearTexImage(textures[4], 0, GL_RGBA, GL_FLOAT, nullptr);
 	}
 
 	ImGui_ImplOpenGL3_Shutdown();
