@@ -68,24 +68,18 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
     return mat.emission * mat.color / (light_dist * light_dist) * pdf;
 }
 
-vec3 sampleLights(vec3 position, inout uint rng_state)
+vec3 sampleLights(in vec3 position, inout uint rng_state)
 {
-	vec3 light = vec3(0.0);
+    int light_list_index = int(floor(randomValue(rng_state) * float(u_lightsNum)));
+    int light_index = lightsIndex[light_list_index];
+
+    GPUObject light_obj = objects[light_index];
+    GPUMaterial lightMat = materials[light_obj.mat_index];
     
-    for (int i = 0; i < u_lightsNum; i++)
-    {
-        int light_index = lightsIndex[i];
-
-        GPUObject obj = objects[light_index];
-        GPUMaterial mat = materials[obj.mat_index];
-
-        if (obj.type == 0)
-            light += sampleSphereLight(position, obj, light_index, mat, rng_state);
-        else if (obj.type == 2)
-            light += sampleQuadLight(position, obj, light_index, mat, rng_state);
-    }
-
-	return (light);
+    if (light_obj.type == 0)
+        return float(u_lightsNum) * sampleSphereLight(position, light_obj, light_index, lightMat, rng_state);
+    else if (light_obj.type == 2)
+        return float(u_lightsNum) * sampleQuadLight(position, light_obj, light_index, lightMat, rng_state);
 }
 
 vec2 getSphereUV(vec3 surfacePoint)
@@ -134,6 +128,7 @@ void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inou
     {
         color *= mat.color;
         light += mat.emission * mat.color;
-        // light += sampleLights(hit.position, rng_state);
+        // if (mat.emission == 0.0)
+            // light += sampleLights(hit.position, rng_state);
     }
 }

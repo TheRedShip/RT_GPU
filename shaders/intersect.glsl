@@ -77,7 +77,7 @@ bool intersectTriangle(Ray ray, GPUTriangle obj, out hitInfo hit)
 	vec3 pvec = cross(ray.direction, vertex2);
 	float det = dot(vertex1, pvec);
 
-	if (abs(det) < 1e-8) 
+	if (abs(det) < 1e-10) 
         return (false);
 
 	vec3 tvec = ray.origin - obj.position;

@@ -35,9 +35,9 @@ Scene::Scene(std::string &name)
 
 	_gpu_denoise.enabled = 0;
 	_gpu_denoise.pass = 0;
-	_gpu_denoise.c_phi = 0.1f;
-	_gpu_denoise.p_phi = 0.1f;
-	_gpu_denoise.n_phi = 0.1f;
+	_gpu_denoise.c_phi = 0.4f;
+	_gpu_denoise.p_phi = 0.01f;
+	_gpu_denoise.n_phi = 0.01f;
 
 	if (!file.is_open())
 	{

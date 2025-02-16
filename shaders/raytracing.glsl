@@ -204,6 +204,8 @@ vec3[2] pathtrace(Ray ray, inout uint rng_state)
 		{
 			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.normal), 1.0));
 			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.position), 1.0));
+			// vec4 accum_normal = accumulate(normal_texture, accum_normal, normalize(hit.normal));
+			// vec4 accum_position = accumulate(position_texture, accum_position, normalize(hit.position));
 		}
 
         float p = max(color.r, max(color.g, color.b));
@@ -269,11 +271,10 @@ void main()
 	vec3[2] color_light = pathtrace(ray, rng_state);
 	vec3 color = color_light[0] * color_light[1];
 	
-	vec4 accum_color = accumulate(color_texture, accum_color, sqrt(color_light[0]));
-
+	vec4 accum_color = accumulate(color_texture, accum_color, (color_light[0]));
 	vec4 accum_light = accumulate(light_accum_texture, accum_light, color_light[1]);
-	vec4 final_light = sqrt(accum_light);
-	imageStore(light_texture, pixel_coords, final_light);
+
+	imageStore(light_texture, pixel_coords, accum_light);
 
 	vec4 accum = accumulate(output_accum_texture, accum, color);
 	vec4 final_output_color = sqrt(accum);
