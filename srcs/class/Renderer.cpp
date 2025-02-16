@@ -6,11 +6,13 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/13 19:03:34 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:51:54 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
+
+void					shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures);
 
 Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 {
@@ -300,7 +302,7 @@ void	Renderer::initRender(void)
         SWS_BILINEAR, nullptr, nullptr, nullptr);
 }
 
-void	Renderer::addImageToRender(GLuint &texture)
+void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
 {
 	std::vector<float>	image(WIDTH * HEIGHT * 4);
 
@@ -308,7 +310,10 @@ void	Renderer::addImageToRender(GLuint &texture)
 	long int videoFrameOffset;
 	long int outputImageOffset;
 	
-	glBindTexture(GL_TEXTURE_2D, texture);
+
+	if(_scene->getDenoise().enabled)
+		shaderDenoise(denoisingProgram, _scene->getDenoise(), textures);
+	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, image.data());
 	glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -403,7 +408,7 @@ void	Renderer::addPoint(float time)
 	_path.insert(pos, newPoint);
 }
 
-void Renderer::update(GLuint &texture)
+void		Renderer::update(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
 {
 	double			curTime;
 
@@ -424,7 +429,7 @@ void Renderer::update(GLuint &texture)
 
 	if(!_testMode)
 	{
-		addImageToRender(texture);
+		addImageToRender(textures, denoisingProgram);
 		_frameCount++;
 	}
 	makeMovement(curTime - _curSplitStart, curTime);

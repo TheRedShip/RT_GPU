@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/05 17:24:37 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/15 22:46:36 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ extern "C" {
 class Scene;
 class Window;
 class Shader;
+class ShaderProgram;
 
 typedef struct s_pathPoint
 {
@@ -38,7 +39,7 @@ class Renderer
 	public:
 		Renderer(Scene *scene, Window *win, Arguments &args);
 
-		void		update(GLuint &texture);
+		void		update(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void		renderImgui(void);
 
 		int			rendering(void) const;
@@ -66,7 +67,7 @@ class Renderer
 		void		initRender();
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
 		void		updateAvailableCodecs(int mode, AVCodecID id);
-		void		addImageToRender(GLuint &texture);
+		void		addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void		endRender(void);
 
 
