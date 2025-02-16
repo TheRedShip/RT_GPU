@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/15 22:51:54 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/16 23:57:31 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -501,13 +501,44 @@ glm::vec2 Renderer::bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, g
 	return(from + glm::vec2(delta.x * t, delta.y * t));
 }
 
+t_pathPoint Renderer::createNextPoint(t_pathPoint from, t_pathPoint to)
+{
+	t_pathPoint res;
+
+	res.pos = to.pos + (to.pos - from.pos);
+	res.dir = to.dir + (to.dir - from.dir);
+	res.time = to.time + (to.time - from.time);
+	return (res);
+}
+
+void Renderer::getInterpolationPoints(t_pathPoint &prev, t_pathPoint &from, t_pathPoint &to, t_pathPoint &next)
+{
+	from = _path[_curPathIndex];
+	to = _path[_curPathIndex + 1];
+
+	if(!_curPathIndex)
+		prev = from;
+	else if (_curPathIndex && _path[_curPathIndex - 1].time == _path[_curPathIndex].time)
+		prev = createNextPoint(to, from);
+	else
+		prev = _path[_curPathIndex - 1];
+
+	if((size_t)_curPathIndex + 2 >= _path.size())
+		next = to;
+	else if ((size_t)_curPathIndex + 2 < _path.size() && _path[_curPathIndex + 2].time == _path[_curPathIndex + 1].time)
+		next = createNextPoint(from, to);
+	else
+		next = _path[_curPathIndex + 2];
+}
+
 
 void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 {
+	t_pathPoint		prev;
 	t_pathPoint		from;
 	t_pathPoint		to;
-	t_pathPoint		prev;
 	t_pathPoint		next;
+
 	float			pathTime;
 	Camera			*cam;
 	glm::vec3		pos;
@@ -517,23 +548,13 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	bool			smallDistNext;
 	glm::vec4		bezierControl;
 
-	from = _path[_curPathIndex];
-	to = _path[_curPathIndex + 1];
-	if(_curPathIndex)
-		prev = _path[_curPathIndex - 1];
-	else
-		prev = from;
-	if((size_t)_curPathIndex + 2 < _path.size())
-		next = _path[_curPathIndex + 2];
-	else
-		next = to;
+	getInterpolationPoints(prev, from, to, next);
 
 	cam = _scene->getCamera();
 	pathTime = (to.time - from.time) * 60;
 	normalTime = 1 - ((pathTime - timeFromStart) / pathTime);
 	
-	glm::vec3 points[4] = {prev.pos, from.pos, to.pos, next.pos};
-	pos = hermiteInterpolate(points, normalTime);
+	pos = hermiteInterpolate((glm::vec3 [4]){prev.pos, from.pos, to.pos, next.pos}, normalTime);
 
 	smallDistPrev = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (from.dir - prev.dir) / glm::vec2((from.time - prev.time) * 60)) < 40;
 	smallDistNext = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (next.dir - to.dir) / glm::vec2((next.time - to.time) * 60)) < 40;

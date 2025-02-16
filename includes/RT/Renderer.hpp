@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/15 22:46:36 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/16 23:20:09 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ class Renderer
 		void		makeMovement(float timeFromStart, float curSplitTimeReset);
 		glm::vec2	bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
 		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
+		t_pathPoint	createNextPoint(t_pathPoint from, t_pathPoint to);
+		void		getInterpolationPoints(t_pathPoint &prev, t_pathPoint &from, t_pathPoint &to, t_pathPoint &next);
 
 		void		initRender();
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
