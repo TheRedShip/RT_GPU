@@ -1,19 +1,9 @@
 CAM     0 1.3733 2.83437        -16 -87.8001    0 1 90  5
 
-# MAT	255 255 255 	0.0		1.5 0.0 DIE -1 // 0
-# sp	0 0 0			12.5		0
-
 TEX skymap.hdr
+MAT	255 255 255		100.0		0.0 0.0 // 1
 MAT	255 255 255		1.0		0.0 0.0 LAM 0 // 0
 
-MAT	255 255 255		0.0		0.0 0.0 // 1
+# sp	0 2 0	150		1
 
-
-sp	0 2 0	150	0
-
-#OBJ	obj/jinx.obj	-10 0 0				1.25	0 0 0
-# OBJ	obj/Dragon_800K.obj	0 0 0		35	0 0 0	1
-
-#OBJ	obj/whitedragon.obj	0 0 0		1	0 0 0
-#O
-OBJ obj/texturedMesh.obj 0 0 0  1	0
+OBJ obj/train.obj 0 0 0  0.1	0

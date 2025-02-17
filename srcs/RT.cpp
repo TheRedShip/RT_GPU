@@ -38,22 +38,13 @@ int main(int argc, char **argv)
 	setupScreenTriangle(&VAO);
 
 	std::vector<GLuint> textures = generateTextures(8);
-	//0 output
-	//1 output_accumulation
-	//2 denoising
-	//3 normal
-	//4 position
-	//5 light
-	//6 light_accum
-	//7 color
-
-	
 	
 	ShaderProgram raytracing_program;
 	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
 	int maxTextureUnits; glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
-	compute.setDefine("TEXTURE_MAX", std::to_string(maxTextureUnits / 2));
-	compute.reload();
+	std::cout << "Max texture units: " << maxTextureUnits << std::endl;
+	// compute.setDefine("TEXTURE_MAX", std::to_string(maxTextureUnits / 2));
+	// compute.reload();
 	raytracing_program.attachShader(&compute);
 	raytracing_program.link();
 

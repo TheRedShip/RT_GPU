@@ -27,8 +27,6 @@ void		Camera::updateCameraVectors()
 {
 	glm::vec3 frontTemp;
 
-	std::cout << _yaw << std::endl;
-
 	frontTemp.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 	frontTemp.y = sin(glm::radians(_pitch));
 	frontTemp.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));

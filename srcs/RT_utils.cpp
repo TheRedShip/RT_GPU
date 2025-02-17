@@ -48,6 +48,14 @@ void				drawScreenTriangle(GLuint VAO, GLuint output_texture, GLuint program)
 	glDrawArrays(GL_TRIANGLES, 0, 1 * 3); // size 1
 }
 
+//0 output
+//1 output_accumulation
+//2 denoising
+//3 normal
+//4 position
+//5 light
+//6 light_accum
+//7 color
 std::vector<GLuint> generateTextures(unsigned int textures_count)
 {
 	std::vector<GLuint> textures(textures_count);

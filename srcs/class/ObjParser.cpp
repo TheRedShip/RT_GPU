@@ -252,7 +252,7 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			mat->emission_texture_index = -1;
 			mat->refraction = 1.0f;
 			mat->roughness = 1.0f;
-			mat->metallic = 1.0f;
+			// mat->metallic = 1.0f;
 			mat->color = glm::vec3(1.0f, 1.0f, 1.0f);
 			continue;
 		}
