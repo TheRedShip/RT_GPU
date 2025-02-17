@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 14:00:38 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/06 19:45:46 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/17 23:00:28 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void Camera::updateCameraDirections()
     _pitch = glm::clamp(_pitch, -89.0f, 89.0f);
 }
 
-void		Camera::update(Scene *scene, float delta_time)
+void		Camera::update(Scene *scene, float delta_time, Renderer &renderer)
 {
 	// delta_time = std::min(delta_time, 0.01f);
 
@@ -73,13 +73,13 @@ void		Camera::update(Scene *scene, float delta_time)
 	if (speed > _maxSpeed)
 		_velocity = glm::normalize(_velocity) * _maxSpeed;
 	
-	if (glm::length(_velocity) > 0.0f && !this->portalTeleport(scene, delta_time))
+	if (glm::length(_velocity) > 0.0f && !this->portalTeleport(scene, delta_time, renderer))
 		_position += _velocity * delta_time;
 
 	_acceleration = glm::vec3(0.0f);
 }
 
-int	Camera::portalTeleport(Scene *scene, float delta_time)
+int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 {
 	for (const GPUObject &obj : scene->getObjectData())
 	{
@@ -124,17 +124,20 @@ int	Camera::portalTeleport(Scene *scene, float delta_time)
 
 				//teleportation
 
+				glm::vec3 previous_position = _position;
 				glm::vec3 relative_pos = _position - obj.position;
             	glm::vec3 transformed_relative_pos = portal_transform * relative_pos;
 	
 				float remaining_distance = distance_future_pos - distance_portal + imprecision;
 				glm::vec3 new_movement = remaining_distance * portal_transform * linked_portal.normal;
+
             
  				_position = linked_portal.position + transformed_relative_pos - new_movement;
 				// _position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);
 
 				// view direction
 
+				glm::vec2 previous_direction = getDirection();
 				_forward = glm::vec3(portal_transform * glm::vec4(_forward, 1.0f));
 				_up = glm::vec3(portal_transform * glm::vec4(_up, 1.0f));
 				_right = glm::vec3(portal_transform * glm::vec4(_right, 1.0f));
@@ -142,6 +145,8 @@ int	Camera::portalTeleport(Scene *scene, float delta_time)
 				updateCameraDirections();
 
 				_velocity = glm::vec3(portal_transform * glm::vec4(_velocity, 0.0f));
+
+				renderer.addTeleport(previous_position, previous_direction, linked_portal.position + transformed_relative_pos, getDirection());
 
 				return (1);
 			}

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/15 22:54:33 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/17 21:40:43 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,7 @@ void Window::display()
 void Window::pollEvents()
 {
 	this->process_input();
-	_scene->getCamera()->update(_scene, _delta);
+	_scene->getCamera()->update(_scene, _delta, *_renderer);
 	
     glfwPollEvents();
 }

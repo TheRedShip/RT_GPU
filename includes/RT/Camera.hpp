@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/15 13:59:57 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/05 19:05:45 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/02/17 22:47:47 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ struct GPUCamera
 };
 
 class Scene;
+class Renderer;
 
 class Camera
 {
@@ -36,14 +37,14 @@ class Camera
 		~Camera(void);
 
 
-		void		update(Scene *scene, float deltaTime);
+		void		update(Scene *scene, float deltaTime, Renderer &renderer);
 		void		processMouse(float xoffset, float yoffset, bool constrainPitch);
 		void		processKeyboard(bool forward, bool backward, bool left, bool right, bool up, bool down);
 		
 		void		updateCameraVectors();
 		void		updateCameraDirections();
 
-		int			portalTeleport(Scene *scene, float delta_time);
+		int			portalTeleport(Scene *scene, float delta_time, Renderer &renderer);
 
 		glm::vec3	getPosition();
 		glm::vec2	getDirection();

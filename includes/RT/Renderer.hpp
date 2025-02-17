@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/16 23:20:09 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/17 22:55:09 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,7 @@ class Renderer
 		Renderer(Scene *scene, Window *win, Arguments &args);
 
 		void		update(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void		addTeleport(glm::vec3 from_pos, glm::vec2 from_dir, glm::vec3 to_pos, glm::vec2 to_dir);
 		void		renderImgui(void);
 
 		int			rendering(void) const;
@@ -50,7 +51,7 @@ class Renderer
 
 		void		showRenderInfo(int isImgui); 
 		std::string	floatToTime(double timef);
-		float		calcTime(void);
+		float		calcTime(glm::vec3 pos);
 
 		void		addPoint(float time);
 		void		imguiPathCreation(void);
@@ -98,6 +99,7 @@ class Renderer
 		bool							_ignoreUnavailableCodec;
 		bool							_tp;
 		bool							_autoTime;
+		bool							_autoTP;
 		std::vector<const char *>		_codecListStr;
 		int								_codecIndex;
 

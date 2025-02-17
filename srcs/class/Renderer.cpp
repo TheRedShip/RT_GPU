@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/16 23:57:31 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/17 23:20:03 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -572,6 +572,11 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 		dir = to.dir;
 		_curSplitStart = curSplitTimeReset;
 		_curPathIndex++;
+		while( _curPathIndex < _destPathIndex && _path[_curPathIndex].time == _path[_curPathIndex + 1].time)
+		{
+			_curPathIndex++;
+			std::cout << "skip tp" << std::endl;
+		}
 	}
 	cam->setPosition(pos);
 	cam->setDirection(dir.x, dir.y);
@@ -584,21 +589,42 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	}
 }
 
-float Renderer::calcTime(void)
+void		Renderer::addTeleport(glm::vec3 from_pos, glm::vec2 from_dir, glm::vec3 to_pos, glm::vec2 to_dir)
+{
+	t_pathPoint point;
+
+	if(!_autoTP || !_path.size() || !_autoTime)
+		return ;
+
+	point.pos = from_pos;
+	point.dir = from_dir;
+	point.time = calcTime(from_pos);
+	_path.push_back(point);
+	
+	point.pos = to_pos;
+	point.dir = to_dir;
+	_path.push_back(point);
+}
+
+float Renderer::calcTime(glm::vec3 pos)
 {
 	float prevSpeed;
 	float time;
+	int index;
 
+	prevSpeed = 0;
 	if(_path.size() > 1)
-		prevSpeed = glm::distance(_path[_path.size() - 2].pos, _path[_path.size() - 1].pos) / (_path[_path.size() - 1].time - _path[_path.size() - 2].time);
-	else
-		prevSpeed = 0;
+	{
+		index = _path.size() - 1;
+		while(index >= 1 && _path[index].time == _path[index - 1].time)
+			index--;
+		prevSpeed = glm::distance(_path[index - 1].pos, _path[index].pos) / (_path[index].time - _path[index - 1].time);
+	}
 
 	if(_autoTime)
 	{
-		_tp = 0;
 		if(_path.size() > 1)
-			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, _scene->getCamera()->getPosition()) / prevSpeed);
+			time = _path[_path.size() - 1].time + (glm::distance(_path[_path.size() - 1].pos, pos) / prevSpeed);
 		else
 			time = (float)_path.size() / 60;
 		if(std::isnan(time))
@@ -608,7 +634,6 @@ float Renderer::calcTime(void)
 	}
 	else if(_tp)
 	{
-		_autoTime = 0;
 		if(!_path.size())
 			time = 0;
 		else
@@ -652,10 +677,20 @@ void Renderer::imguiPathCreation(void)
 			_autoTime = 0;
 			_tp = 0;
 	}
-	time = calcTime();
+	time = calcTime(_scene->getCamera()->getPosition());
 
-	ImGui::Checkbox("guess time automatically", &_autoTime);
-	ImGui::Checkbox("tp", &_tp);
+	if (ImGui::Checkbox("guess time automatically", &_autoTime))
+		_tp = 0;
+
+	if(_autoTime)
+	{
+		ImGui::SameLine();
+		ImGui::Checkbox("auto tp", &_autoTP);
+	}
+
+
+	if (ImGui::Checkbox("tp", &_tp))
+		_autoTime = 0;
 	if(ImGui::Button("add step"))
 		addPoint(time);
 
