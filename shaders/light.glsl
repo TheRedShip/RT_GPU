@@ -93,8 +93,13 @@ vec2 getSphereUV(vec3 surfacePoint)
     return vec2(u, v);
 }
 
-uniform sampler2D textures[64];
-uniform sampler2D emissive_textures[64];
+#if SHADER_TEXTURE_MAX
+    uniform sampler2D textures[SHADER_TEXTURE_MAX];
+    uniform sampler2D emissive_textures[SHADER_TEXTURE_MAX];
+#else
+    uniform sampler2D textures[64];
+    uniform sampler2D emissive_textures[64];
+#endif
 
 vec2 getTextureColor(hitInfo hit)
 {

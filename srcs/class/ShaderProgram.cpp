@@ -129,7 +129,7 @@ void	ShaderProgram::set_textures(std::map<std::string, std::vector<GLuint>> text
 	}
 }
 
-void	ShaderProgram::set_define(const std::string &name, const std::string &value)
+void	ShaderProgram::setDefine(const std::string &name, const std::string &value)
 {
 	for (Shader *shader : _shaders)
 		shader->setDefine(name, value);

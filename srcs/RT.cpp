@@ -47,8 +47,13 @@ int main(int argc, char **argv)
 	//6 light_accum
 	//7 color
 
+	
+	
 	ShaderProgram raytracing_program;
 	Shader compute = Shader(GL_COMPUTE_SHADER, "shaders/compute.glsl");
+	int maxTextureUnits; glGetIntegerv(GL_MAX_COMPUTE_TEXTURE_IMAGE_UNITS, &maxTextureUnits);
+	compute.setDefine("TEXTURE_MAX", std::to_string(maxTextureUnits / 2));
+	compute.reload();
 	raytracing_program.attachShader(&compute);
 	raytracing_program.link();
 

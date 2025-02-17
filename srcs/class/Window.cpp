@@ -262,7 +262,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 	{
 		if (ImGui::Checkbox("Enable##0", (bool *)(&_scene->getVolume().enabled)))
 		{
-			raytracing_program.set_define("FOG", std::to_string(_scene->getVolume().enabled));
+			raytracing_program.setDefine("FOG", std::to_string(_scene->getVolume().enabled));
 			raytracing_program.reloadShaders();
 			has_changed = true;
 		}
@@ -300,7 +300,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 	{
 		if (ImGui::Checkbox("Enable##2", (bool *)(&_scene->getDebug().enabled)))
 		{
-			raytracing_program.set_define("DEBUG", std::to_string(_scene->getDebug().enabled));
+			raytracing_program.setDefine("DEBUG", std::to_string(_scene->getDebug().enabled));
 			raytracing_program.reloadShaders();
 			has_changed = true;
 		}
