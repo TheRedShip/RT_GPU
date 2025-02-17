@@ -27,6 +27,8 @@ void		Camera::updateCameraVectors()
 {
 	glm::vec3 frontTemp;
 
+	std::cout << _yaw << std::endl;
+
 	frontTemp.x = cos(glm::radians(_yaw)) * cos(glm::radians(_pitch));
 	frontTemp.y = sin(glm::radians(_pitch));
 	frontTemp.z = sin(glm::radians(_yaw)) * cos(glm::radians(_pitch));
@@ -36,17 +38,26 @@ void		Camera::updateCameraVectors()
 	_up = glm::normalize(glm::cross(_right, _forward));
 }
 
-void		Camera::updateCameraDirections()
+void Camera::updateCameraDirections()
 {
-//	glm::vec3 forward_xz = glm::normalize(glm::vec3(_forward.x, 0.0f, _forward.z));
-    _pitch = glm::degrees(asin(_forward.y));
-    
-    _yaw = glm::degrees(atan2(-_forward.x, _forward.z));
+    float new_yaw = glm::degrees(atan2(-_forward.x, _forward.z));
+    if (new_yaw < 0.0f)
+        new_yaw += 360.0f;
 
-    _yaw = fmod(_yaw + 360.0f, 360.0f);
+    float old_yaw_mod = fmod(_yaw, 360.0f);
+    if (old_yaw_mod < 0.0f)
+        old_yaw_mod += 360.0f;
+
+    float delta_yaw = new_yaw - old_yaw_mod;
+    if (delta_yaw > 180.0f)
+        delta_yaw -= 360.0f;
+    else if (delta_yaw < -180.0f)
+        delta_yaw += 360.0f;
+
+    _yaw += delta_yaw + 90.0f;
+
+    _pitch = glm::degrees(asin(_forward.y));
     _pitch = glm::clamp(_pitch, -89.0f, 89.0f);
-	
-	_yaw += 90;
 }
 
 void		Camera::update(Scene *scene, float delta_time)
