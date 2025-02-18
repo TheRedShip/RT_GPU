@@ -248,7 +248,13 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 				has_changed |= ImGui::SliderFloat("Refraction", &mat.refraction, 1.0f, 2.0f);
 				has_changed |= ImGui::SliderFloat("Proba", &mat.metallic, 0., 1.);
 			}
-			has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 2);
+			else if (mat.type == 3)
+			{
+				has_changed |= ImGui::SliderFloat("Checker Scale", &mat.refraction, 0.0f, 40.0f);
+				has_changed |= ImGui::SliderFloat("Roughness", &mat.roughness, 0.0f, 1.0f);
+				has_changed |= ImGui::SliderFloat("Metallic", &mat.metallic, 0.0f, 1.0f);
+			}
+			has_changed |= ImGui::SliderInt("Type", &mat.type, 0, 3);
 
 			ImGui::PopID();
 

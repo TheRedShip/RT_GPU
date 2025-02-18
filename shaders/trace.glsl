@@ -48,6 +48,8 @@ hitInfo	traceScene(Ray ray)
 			hit.mat_index = obj.mat_index;
 			hit.position = temp_hit.position;
 			hit.normal = temp_hit.normal;
+			hit.u = temp_hit.u;
+			hit.v = temp_hit.v;
 		}
 	}
 

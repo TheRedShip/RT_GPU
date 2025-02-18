@@ -115,6 +115,17 @@ vec2 getTextureColor(hitInfo hit)
     return (vec2(uv.x, 1 - uv.y));
 }
 
+vec3    getCheckerboardColor(GPUMaterial mat, hitInfo hit)
+{
+    float scale = mat.refraction; //scale
+    int check = int(floor(hit.u * scale) + floor(hit.v * scale)) % 2;
+    
+    vec3 color1 = mat.color;
+    vec3 color2 = vec3(0.0);
+
+    return check == 0 ? color1 : color2;
+}
+
 void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inout vec3 light, inout uint rng_state)
 {
     if (mat.texture_index != -1)
@@ -131,8 +142,9 @@ void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inou
     }
     else
     {
-        color *= mat.color;
-        light += mat.emission * mat.color;
+        vec3 mat_color = (mat.type == 3) ? getCheckerboardColor(mat, hit) : mat.color;
+        color *= mat_color;
+        light += mat.emission * mat_color;
         // if (mat.emission == 0.0)
             // light += sampleLights(hit.position, rng_state);
     }

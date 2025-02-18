@@ -36,18 +36,24 @@ bool intersectPlane(Ray ray, GPUObject obj, out hitInfo hit)
 	hit.t = t;
 	hit.position = ray.origin + ray.direction * t;
 	hit.normal = d < 0.0 ? obj.normal : -obj.normal;
-	
+
+	vec3 U = normalize((abs(obj.normal.x) > abs(obj.normal.z)) ? vec3(-obj.normal.y, obj.normal.x, 0.0) : vec3(0.0, -obj.normal.z, obj.normal.y));
+	vec3 V = normalize(cross(obj.normal, U));
+
+	vec3 localPos = hit.position - obj.position;
+    hit.u = dot(localPos, U) * 1.0;
+    hit.v = dot(localPos, V) * 1.0;
+
 	return (valid);
 }
 
 bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 {
-	vec3 normal = obj.normal;
-	float d = dot(normal, ray.direction);
+	float d = dot(obj.normal, ray.direction);
 
 	if (d == 0.0 || (obj.radius != 0.0 && d <= 0)) return (false); // double sided or not
 
-	float t = dot(obj.position - ray.origin, normal) / d;
+	float t = dot(obj.position - ray.origin, obj.normal) / d;
 
 	if (t <= 0.0) return (false);
 	
@@ -59,12 +65,16 @@ bool intersectQuad(Ray ray, GPUObject obj, out hitInfo hit)
 	float l1 = dot(obj.vertex1, obj.vertex1);
 	float l2 = dot(obj.vertex2, obj.vertex2);
 	
+	
 	bool inside = e1 >= 0.0 && e1 <= l1 && e2 >= 0.0 && e2 <= l2;
 	
 	hit.t = t;
 	hit.position = p + obj.position;
-	hit.normal = normal * -sign(d);
+	hit.normal = obj.normal * -sign(d);
 	// hit.normal = normal;
+
+	hit.u = e1 / l1;
+	hit.v = e2 / l2;
 	
 	return (inside);
 }

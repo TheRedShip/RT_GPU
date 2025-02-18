@@ -30,7 +30,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	float		rough_refrac;
 	float		metallic;
 	std::string	type;
-	int			texture_index;
+	float		texture_index;
 
 	Material	*mat;
 
@@ -46,7 +46,7 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	mat->roughness = rough_refrac;
 	mat->metallic = metallic;
 	mat->refraction = rough_refrac;
-	
+
 	mat->type = -1;
 	if (type == "LAM")
 		mat->type = 0;
@@ -54,6 +54,8 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 		mat->type = 1;
 	else if (type == "TRN")
 		mat->type = 2;
+	else if (type == "CHK")
+		mat->type = 3;
 	
 	texture_index = -1;
 	if (mat->type != -1)
@@ -61,7 +63,13 @@ void	SceneParser::parseMaterial(std::stringstream &line)
 	else
 		mat->type = 0;
 
-	mat->texture_index = texture_index;
+	if (mat->type == 3) // i know it's ugly
+	{
+		mat->refraction = texture_index;
+		texture_index = -1;
+	}
+
+	mat->texture_index = (int)texture_index;
 	mat->emission_texture_index = -1;
 	_scene->addMaterial(mat);
 }

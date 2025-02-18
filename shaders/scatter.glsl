@@ -84,7 +84,7 @@ Ray newRay(hitInfo hit, Ray ray, inout uint rng_state)
 
 	mat = materials[hit.mat_index];
 
-    if (mat.type == 0)
+    if (mat.type == 0 || mat.type == 3)
         return (lambertRay(hit, ray, mat, rng_state));
     else if (mat.type == 1)
         return (dieletricRay(hit, ray, mat));
