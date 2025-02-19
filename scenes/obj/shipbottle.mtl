@@ -1,0 +1,87 @@
+# Aspose.3D Wavefront OBJ Exporter
+# Copyright 2004-2024 Aspose Pty Ltd.
+# File created: 02/10/2025 22:46:23
+
+newmtl plaqueexport_baked_material
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 1
+	d 1
+	Tr 0
+	map_Kd textures/plaqueexport_baked_material_baseColor.jpeg
+	map_Pr textures/plaqueexport_baked_material_metallicRoughness.png
+	map_Pm textures/plaqueexport_baked_material_metallicRoughness.png
+	norm plaqueexport_baked_material_normal.jpeg
+newmtl supportexport_baked_material.001
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/supportexport_baked_material.001_baseColor.jpeg
+	map_Pr textures/supportexport_baked_material.001_metallicRoughness.png
+	map_Pm textures/supportexport_baked_material.001_metallicRoughness.png
+	norm supportexport_baked_material.001_normal.jpeg
+newmtl bottle_inside
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.16634908
+	Pm 1
+	d 0.10537347
+	Tr 0.8946265
+newmtl material
+	illum 2
+	Kd 0.42244664 0.42244664 0.42244664
+	Ke 0 0 0
+	Pr 0.959032
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/material_baseColor.jpeg
+	map_Pr textures/material_metallicRoughness.png
+	map_Pm textures/material_metallicRoughness.png
+newmtl fond
+	illum 2
+	Kd 0.09901192 0.1762599 0.35260612
+	Ke 0 0 0
+	Pr 0.95770514
+	Pm 0
+	d 1
+	Tr 0
+newmtl veliero001_baked_material
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 0.95770514
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/veliero001_baked_material_baseColor.jpeg
+newmtl capexport_baked_material
+	illum 2
+	Kd 1 1 1
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 1
+	Tr 0
+	map_Kd textures/capexport_baked_material_baseColor.jpeg
+	map_Pr textures/capexport_baked_material_metallicRoughness.png
+	map_Pm textures/capexport_baked_material_metallicRoughness.png
+	norm capexport_baked_material_normal.jpeg
+newmtl bottleexport_baked_material
+	illum 2
+	Kd 0.9 0.9 0.9
+	Ke 0 0 0
+	Pr 1
+	Pm 0
+	d 0.26391006
+	Tr 0.73608994
+	map_Pr textures/bottleexport_baked_material_metallicRoughness.png
+	map_Pm textures/bottleexport_baked_material_metallicRoughness.png
+	norm bottleexport_baked_material_normal.jpeg
