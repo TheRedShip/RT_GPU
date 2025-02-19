@@ -79,6 +79,13 @@ void		Camera::update(Scene *scene, float delta_time, Renderer &renderer)
 
 int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 {
+	static bool tp_last_frame = false;
+	if (tp_last_frame)
+	{
+		tp_last_frame = false;
+		return (0);
+	}
+
 	for (const GPUObject &obj : scene->getObjectData())
 	{
 		if (obj.type != (int)Object::Type::PORTAL)
@@ -109,6 +116,7 @@ int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
 				std::cout << "Teleport" << std::endl;
+				tp_last_frame = true;
 				
 				GPUObject linked_portal = scene->getObjectData()[obj.radius];
 
@@ -129,7 +137,6 @@ int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 				float remaining_distance = distance_future_pos - distance_portal + imprecision;
 				glm::vec3 new_movement = remaining_distance * portal_transform * linked_portal.normal;
 
-            
  				_position = linked_portal.position + transformed_relative_pos - new_movement;
 				// _position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);
 
