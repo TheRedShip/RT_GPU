@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:05:44 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 22:17:04 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/20 22:36:06 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,28 @@ Arguments::Arguments(int argc, char **argv)
 		std::cerr << "missing scene name" << std::endl;
 		_err = 1;
 	}
+	if(getBoolean("server") && getBoolean("client"))
+	{
+		std::cerr << "RT can't be both a client and a server" << std::endl;
+		_err = 1;
+	}
 }
 
 void Arguments::initArguments()
 {
 	addArgument('r', "renderpath", 0);
 	addArgument('h', "headless", 1);
+	addArgument('c', "client", 0);
+	addArgument('s', "server", 0);
 }
 
 void	Arguments::printUsage(void)
-{
-	std::cerr << "usage : [options] <scene name> [options]" << std::endl;
+{ std::cerr << "usage : [options] <scene name> [options]" << std::endl;
 	std::cerr << R""""(options :
 	-r | --renderpath <file>: filename for the renderer path
 	-h | --headless : does the program need to start rendering as soon as it starts(and close automatically)
+	-c | --client <server ip:port> : start RT as a client
+	-s | --server <port>: start a server
 )"""";	
 }
 
@@ -64,25 +72,6 @@ void	Arguments::show(void)
 bool	Arguments::error(void) const
 {
 	return(_err);
-}
-
-
-std::string &Arguments::getSceneName(void) 
-{
-	return(_values["sceneName"]);
-}
-
-std::string *Arguments::getRenderPath(void)
-{
-	if(_values.find("renderpath") != _values.end())
-		return(&_values["renderpath"]);
-	else
-		return(0);
-}
-
-bool		Arguments::getHeadless(void)
-{
-	return(_values.find("headless") != _values.end());	
 }
 
 
@@ -160,4 +149,22 @@ int Arguments::handleArg(char **argv, int argc, int *i)
 		}
 	}
 	return(1);
+}
+
+bool Arguments::getBoolean(std::string name)
+{
+	return(_values.find(name) != _values.end());	
+}
+
+std::string *Arguments::getString(std::string name)
+{
+	if(_values.find(name) != _values.end())
+		return(&_values[name]);
+	else
+		return(0);
+}
+
+std::string &Arguments::getSceneName(void) 
+{
+	return(_values["sceneName"]);
 }

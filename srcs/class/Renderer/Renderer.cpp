@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 16:06:18 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/20 20:02:05 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 	std::string *renderPath;
 
 	init(scene, win);
-	_headless = args.getHeadless();
-	renderPath = args.getRenderPath();
+	_headless = args.getBoolean("headless");
+	renderPath = args.getString("renderpath");
 
 	if(renderPath)
 	{

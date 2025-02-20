@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/04 01:07:08 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/04 22:04:04 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/20 19:52:31 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,16 @@ class Arguments
 		bool		error(void) const;
 		void		show(void);
 
+		bool		getBoolean(std::string name);
+		std::string *getString(std::string name);
+
 		std::string	&getSceneName(void);
 		std::string *getRenderPath(void);
 		bool		getHeadless(void);
+
+		bool		isServer(void);
+		bool		isClient(void);
+		std::string	*getServerIp(void);
 
 	private:
 		void printUsage();

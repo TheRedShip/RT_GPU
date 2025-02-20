@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 23:39:14 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/20 21:28:15 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,11 @@
 # include <set>
 # include <map>
 
+# include <sys/socket.h>
+# include <netinet/in.h>
+# include <fcntl.h>
+# include <arpa/inet.h>
+
 struct Vertex {
     glm::vec2 position;
     glm::vec2 texCoord;
@@ -70,6 +75,7 @@ struct Vertex {
 # include "SceneParser.hpp"
 # include "ObjParser.hpp"
 # include "BVH.hpp"
+# include "Clusterizer.hpp"
 
 
 
