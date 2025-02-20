@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/17 22:55:09 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/20 15:57:21 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,9 @@ class Renderer
 		float		calcTime(glm::vec3 pos);
 
 		void		addPoint(float time);
-		void		imguiPathCreation(void);
 		void		imguiRenderSettings(void);
+		void		imguiPathCreation(void);
+		void		imguiPathNodeList(void);
 
 		void		rawRead(std::ifstream &file, void *buf, size_t len);
 		void		savePath(void);
