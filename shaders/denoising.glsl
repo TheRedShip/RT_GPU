@@ -67,7 +67,7 @@ void main()
 			totalWeight += weight;
 		}
 	}
-	light * (1.0 / totalWeight);
+	light *= (1.0 / totalWeight);
 	if (u_pass == u_pass_count - 1)
 	{
 		vec4 color = light * imageLoad(color_texture, pixel_coords);
