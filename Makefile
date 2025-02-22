@@ -65,6 +65,7 @@ ALL_SRCS	:=	$(IMGUI_SRCS)	gl.cpp		\
 				class/Clusterizer/Clusterizer.cpp\
 				class/Clusterizer/client.cpp	\
 				class/Clusterizer/server.cpp	\
+				class/Clusterizer/imgui.cpp	\
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

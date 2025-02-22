@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/21 18:17:33 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/22 22:09:46 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
 		render_program.use();
 		drawScreenTriangle(VAO, textures[0], render_program.getProgram());
 
-		window.imGuiRender(raytracing_program);
+		window.imGuiRender(raytracing_program, clusterizer);
 
 		window.display();
 		window.pollEvents();

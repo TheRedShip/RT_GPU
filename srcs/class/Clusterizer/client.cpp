@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/22 02:02:32 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/22 22:50:10 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,14 +60,13 @@ void Clusterizer::openClientConnection(const char *ip, int port)
 	(void)write(_serverFd, &sendBuffer, 1);
 }
 
-void Clusterizer::clientGetJob(std::vector<uint8_t> &sendBuf)
+void Clusterizer::clientGetJob(void)
 {
 	if(_receiveBuffer.size() < sizeof(t_job) + 1)
 		return ;
 	
 	_currentJob = *(t_job *)(_receiveBuffer.data() + 1);
 	_receiveBuffer.erase(_receiveBuffer.begin(), _receiveBuffer.begin() + sizeof(t_job) + 1);
-	sendBuf.push_back(ACK);
 }
 
 void Clusterizer::clientHandleBuffer(void)
@@ -75,7 +74,7 @@ void Clusterizer::clientHandleBuffer(void)
 	std::vector<uint8_t> sendBuf;
 
 	if(_receiveBuffer[0] == JOB)
-		clientGetJob(sendBuf);
+		clientGetJob();
 
 	if(sendBuf.size())
 		(void)write(1, sendBuf.data(), sendBuf.size());

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/21 22:19:20 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/22 23:36:42 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void Clusterizer::initServer(std::string port)
 {
 	_pollfds = 0;
+	_curId = 0;
 
 	try
 	{
@@ -56,23 +57,24 @@ void	Clusterizer::updatePollfds(void)
 	_pollfds = new struct pollfd[_clients.size()];
 	for(auto it = _clients.begin(); it != _clients.end(); it++)
 	{
-		_pollfds[std::distance(it, _clients.begin())].fd = it->first;
-		_pollfds[std::distance(it, _clients.begin())].events = POLLIN;
-		_pollfds[std::distance(it, _clients.begin())].revents = 0;
+		_pollfds[std::distance(_clients.begin(), it)].fd = it->first;
+		_pollfds[std::distance(_clients.begin(), it)].events = POLLIN;
+		_pollfds[std::distance(_clients.begin(), it)].revents = 0;
 	}
 }
 
-void Clusterizer::acceptClients(void)
+int Clusterizer::acceptClients(void)
 {
 	int fd;
 
 	fd = accept(_serverSocket, 0, 0);
-	if (fd != -1) {
-		std::cout << "new client :" << fd << std::endl;
-		_clients[fd].ready = 0;
-		_clients[fd].curJob = 0;
-		updatePollfds();
-	}
+	if (fd == -1)
+		return(0);
+	std::cout << "new client :" << fd << std::endl;
+	_clients[fd].ready = 0;
+	_clients[fd].curJob = 0;
+	updatePollfds();
+	return(1);
 }
 
 void Clusterizer::deleteClient(int fd)
@@ -95,6 +97,7 @@ void Clusterizer::handleBuffer(int fd, std::vector<uint8_t> &buf)
 	if(buf[0] == RDY)
 	{
 		_clients[fd].ready = 1;
+		std::cout << "client " << fd << " is ready !" << std::endl;
 		sendBuffer.push_back(ACK);
 	}
 
@@ -108,27 +111,77 @@ int Clusterizer::updateBuffer(int fd)
 	size_t ret;
 
 	ret = recv(fd, buffer, 512, 0);
-	if(!ret)
+	if(!ret || ret == (size_t)-1)
 		return(1);
 	_clients[fd].buffer.insert(_clients[fd].buffer.end(), buffer, buffer + ret);
 	handleBuffer(fd, _clients[fd].buffer);
 	return(0);
 }
 
+int Clusterizer::dispatchJobs(void)
+{
+	t_job *tmp;
+	int		dispatched;
+
+	dispatched = 0;
+	if(!_jobs[WAITING].size())
+		return (0);
+
+	for(auto it = _clients.begin(); it != _clients.end(); it++)
+	{
+		if(it->second.ready)
+		{
+			tmp = _jobs[WAITING].front();
+			_jobs[WAITING].erase(_jobs[WAITING].begin());
+			_jobs[IN_PROGRESS].push_back(tmp);
+			(void)write(it->first, &tmp, sizeof(t_job));
+			it->second.ready = 0;
+			it->second.progress = 0;
+			it->second.curJob = tmp;
+			dispatched = 1;
+		}
+	}
+	return (dispatched);
+}
+
+void Clusterizer::addJob(std::string scene, glm::vec3 pos, glm::vec2 dir, size_t samples)
+{
+	t_job *tmp;
+
+	tmp = new t_job;
+	tmp->scene = scene;
+	tmp->pos = pos;
+	tmp->dir = dir;
+	tmp->samples = samples;
+	tmp->id = _curId++;
+	_jobs[WAITING].push_back(tmp);
+}
+
 void Clusterizer::updateServer(void)
 {
 	int recv;
+	int	didSomething;
 
-	acceptClients();
-	recv = poll(_pollfds, _clients.size(), 1);
-	if(!recv)
-		return ;
-	for(auto it = _clients.begin(); it != _clients.end(); it++)
+	didSomething = 1;
+	while(didSomething)
 	{
-		if(_pollfds[std::distance(it, _clients.begin())].revents & POLLIN)
+		didSomething = acceptClients();
+		recv = poll(_pollfds, _clients.size(), 1);
+		if(!recv)
+			return ;
+		for(auto it = _clients.begin(); it != _clients.end(); it++)
 		{
-			if (updateBuffer(it->first))
-				deleteClient(it->first);
+			if(_pollfds[std::distance(_clients.begin(), it)].revents & POLLIN)
+			{
+				didSomething = 1;
+				if (updateBuffer(it->first))
+				{
+					deleteClient(it->first);
+					break;
+				}
+			}
 		}
+		if(dispatchJobs())
+			didSomething = 1;
 	}
 }

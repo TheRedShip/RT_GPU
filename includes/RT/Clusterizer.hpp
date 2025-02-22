@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/22 01:43:51 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/22 23:36:23 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,19 +15,28 @@
 
 # include "RT.hpp"
 
+typedef enum e_job_status
+{
+	WAITING,
+	IN_PROGRESS,
+	DONE
+} t_job_status;
+
 typedef struct s_job
 {
 	std::string	scene;
 	glm::vec3	pos;
 	glm::vec2	dir;
 	size_t		samples;
-	size_t		id;
+
+	size_t			id;
 } t_job;
 
 typedef struct s_client
 {
 	std::vector<uint8_t> buffer;
 	t_job				*curJob;
+	int					progress;
 	bool				ready;
 }	t_client;
 
@@ -49,21 +58,25 @@ class Clusterizer
 		Clusterizer(Arguments &args);
 		~Clusterizer();
 
-		void update(void);
-		bool getError(void);
+		void	update(void);
+		bool	getError(void);
+		void	imguiRender(void);
 	private:
 		bool				_isActive;
 		bool				_isServer;
 		bool				_error;
 
-		std::vector<t_job> _jobs;
+		std::vector<t_job *> _jobs[3];
+
+		void	imguiJobStat(void);
+		void	imguiClients(void);
 
 	private: //client
 		void initClient(std::string &dest);
 		void openClientConnection(const char *ip, int port);
 		void clientHandleBuffer(void);
 		void updateClient(void);
-		void clientGetJob(std::vector<uint8_t> &sendBuf);
+		void clientGetJob(void);
 		void clientReceive(void);
 
 		int						_serverFd;
@@ -73,20 +86,26 @@ class Clusterizer
 		t_job					_currentJob;
 
 	private: //server
-		void initServer(std::string port);
-		void updateServer(void);
+		void	initServer(std::string port);
+		void	updateServer(void);
 
 		void	initServerSocket(int port);
-		void	acceptClients(void);
+		int		acceptClients(void);
 		void	updatePollfds(void);
 		int		updateBuffer(int fd);
 		void	handleBuffer(int fd, std::vector<uint8_t> &buf);
+		void	addJob(std::string scene, glm::vec3 pos, glm::vec2 dir, size_t samples);
 		void	deleteClient(int fd);
+
+		int		dispatchJobs(void);
+
+
 		
 
 		int							_serverSocket;
 		struct pollfd				*_pollfds;
 		std::map<int, t_client>		_clients;
+		size_t						_curId;
 };
 
 #endif

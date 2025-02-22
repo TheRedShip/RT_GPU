@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/17 21:40:43 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/22 22:15:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -191,7 +191,7 @@ void Window::imGuiNewFrame()
 	ImGui::NewFrame();
 }
 
-void Window::imGuiRender(ShaderProgram &raytracing_program)
+void Window::imGuiRender(ShaderProgram &raytracing_program, Clusterizer &clusterizer)
 {
 	bool has_changed = false;
 	
@@ -318,6 +318,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 
 
 	_renderer->renderImgui();
+	clusterizer.imguiRender();
 	
 	ImGui::End();
 
