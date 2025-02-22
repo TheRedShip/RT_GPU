@@ -112,7 +112,7 @@ int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 			float distance_future_pos = glm::length(future_pos - _position);
 			float distance_portal = glm::length(point_projected - _position);
 
-			float imprecision = 0.101f;
+			float imprecision = 0.1f;
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
 				std::cout << "Teleport" << std::endl;
