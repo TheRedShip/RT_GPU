@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/18 13:44:57 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:35:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,6 +271,15 @@ void Clusterizer::handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint
 		sendImageToServer(scene, textures, denoisingProgram, buffers, win);
 	}
 
+	try
+	{
+		openClientConnection(_serverIp.c_str(), _serverPort);
+	}
+	catch(std::exception &e)
+	{
+		if(_error)
+			std::cerr << "\033[31mClient initialisation error : " << e.what() << std::endl;
+	}
 }
 
 void Clusterizer::updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
