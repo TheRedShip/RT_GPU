@@ -246,7 +246,7 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 		
 		hitInfo temp_hit = traceBVH(transformedRay, BvhData[i], stats);
 
-		float transformed_t = temp_hit.t / bvh_data.scale;
+		float transformed_t = temp_hit.t * (1.0 / bvh_data.scale);
 		if (transformed_t < hit.t)
 		{
 			GPUTriangle triangle = triangles[temp_hit.obj_index];
@@ -322,8 +322,8 @@ void main()
 	if (pixel_coords.x >= int(u_resolution.x) || pixel_coords.y >= int(u_resolution.y)) 
 		return;
 
-    vec2 uv = ((vec2(pixel_coords)) / u_resolution) * 2.0 - 1.0;;
-	uv.x *= u_resolution.x / u_resolution.y;
+    vec2 uv = ((vec2(pixel_coords)) * (1.0 / u_resolution)) * 2.0 - 1.0;;
+	uv.x *= u_resolution.x * (1.0 / u_resolution.y);
 
 	vec3 color = debugColor(uv);
 
