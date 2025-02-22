@@ -6,14 +6,13 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/18 16:27:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:51:47 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #pragma once
 
 # include "RT.hpp"
-
 
 typedef enum e_job_status
 {
