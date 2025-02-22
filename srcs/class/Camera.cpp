@@ -79,12 +79,16 @@ void		Camera::update(Scene *scene, float delta_time, Renderer &renderer)
 
 int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 {
-	static bool tp_last_frame = false;
-	if (tp_last_frame)
+	static int max_cooldown = 10;
+	static int tp_cooldown = max_cooldown;
+	if (tp_cooldown > 0)
 	{
-		tp_last_frame = false;
+		tp_cooldown -= 1;
 		return (0);
 	}
+
+	GPUObject portal;
+	float min_distance = std::numeric_limits<float>::max();
 
 	for (const GPUObject &obj : scene->getObjectData())
 	{
@@ -112,53 +116,64 @@ int	Camera::portalTeleport(Scene *scene, float delta_time, Renderer &renderer)
 			float distance_future_pos = glm::length(future_pos - _position);
 			float distance_portal = glm::length(point_projected - _position);
 
-			float imprecision = 0.1f;
 			if (distance_portal <= distance_future_pos && glm::dot(glm::normalize(future_pos - _position), obj.normal) > 0.0f)
 			{
-				std::cout << "Teleport" << std::endl;
-				tp_last_frame = true;
-				
-				GPUObject linked_portal = scene->getObjectData()[obj.radius];
-
-				glm::mat3 portal_transform = glm::mat3(linked_portal.transform) * glm::inverse(glm::mat3(obj.transform));
-
-				if (dot(obj.normal, linked_portal.normal) > 0.0)
+				if (distance_portal < min_distance)
 				{
-					glm::mat3 reflection = glm::mat3(1.0) - 2.0f * glm::outerProduct(linked_portal.normal, linked_portal.normal);
-					portal_transform *= reflection;
+					min_distance = distance_portal;
+					portal = obj;
 				}
-
-				//teleportation
-
-				glm::vec3 previous_position = _position;
-				glm::vec3 relative_pos = _position - obj.position;
-            	glm::vec3 transformed_relative_pos = portal_transform * relative_pos;
-	
-				float remaining_distance = distance_future_pos - distance_portal + imprecision;
-				glm::vec3 new_movement = remaining_distance * portal_transform * linked_portal.normal;
-
- 				_position = linked_portal.position + transformed_relative_pos - new_movement;
-				// _position = (linked_portal.position) + (_position - obj.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);
-
-				// view direction
-
-				glm::vec2 previous_direction = getDirection();
-				_forward = glm::vec3(portal_transform * glm::vec4(_forward, 1.0f));
-				_up = glm::vec3(portal_transform * glm::vec4(_up, 1.0f));
-				_right = glm::vec3(portal_transform * glm::vec4(_right, 1.0f));
-
-				updateCameraDirections();
-
-				_velocity = glm::vec3(portal_transform * glm::vec4(_velocity, 0.0f));
-
-				renderer.addTeleport(previous_position, previous_direction, linked_portal.position + transformed_relative_pos, getDirection());
-
-				return (1);
 			}
 		}
 	}
 
-	return (0);
+	if (min_distance == std::numeric_limits<float>::max())
+		return (0);
+
+	std::cout << "Teleport" << std::endl;
+
+	float imprecision = 0.1f;
+	tp_cooldown = max_cooldown;
+
+	glm::vec3 future_pos = _position + _velocity * delta_time;
+	float distance_future_pos = glm::length(future_pos - _position);
+
+	GPUObject linked_portal = scene->getObjectData()[portal.radius];
+
+	glm::mat3 portal_transform = glm::mat3(linked_portal.transform) * glm::inverse(glm::mat3(portal.transform));
+
+	if (dot(portal.normal, linked_portal.normal) > 0.0)
+	{
+		glm::mat3 reflection = glm::mat3(1.0) - 2.0f * glm::outerProduct(linked_portal.normal, linked_portal.normal);
+		portal_transform *= reflection;
+	}
+
+	//teleportation
+
+	glm::vec3 previous_position = _position;
+	glm::vec3 relative_pos = _position - portal.position;
+	glm::vec3 transformed_relative_pos = portal_transform * relative_pos;
+
+	float remaining_distance = distance_future_pos - min_distance + imprecision;
+	glm::vec3 new_movement = remaining_distance * portal_transform * linked_portal.normal;
+
+	_position = linked_portal.position + transformed_relative_pos - new_movement;
+	// _position = (linked_portal.position) + (_position - portal.position) - (((distance_future_pos - distance_portal + imprecision)) * linked_portal.normal);
+
+	// view direction
+
+	glm::vec2 previous_direction = getDirection();
+	_forward = glm::vec3(portal_transform * glm::vec4(_forward, 1.0f));
+	_up = glm::vec3(portal_transform * glm::vec4(_up, 1.0f));
+	_right = glm::vec3(portal_transform * glm::vec4(_right, 1.0f));
+
+	updateCameraDirections();
+
+	_velocity = glm::vec3(portal_transform * glm::vec4(_velocity, 0.0f));
+
+	renderer.addTeleport(previous_position, previous_direction, linked_portal.position + transformed_relative_pos, getDirection());
+
+	return (1);
 }
 
 void		Camera::processMouse(float xoffset, float yoffset, bool constraint_pitch = true)
