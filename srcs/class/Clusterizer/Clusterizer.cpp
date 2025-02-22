@@ -6,13 +6,13 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 22:42:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/21 21:45:24 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
-Clusterizer::Clusterizer(Arguments args)
+Clusterizer::Clusterizer(Arguments &args)
 {
 	_isActive = 1;
 	_isServer = 0;
@@ -27,8 +27,7 @@ Clusterizer::Clusterizer(Arguments args)
 	else if(args.getBoolean("client"))
 	{
 		_isServer = 0;
-		_serverIp = *args.getString("client");
-		initClient();
+		initClient(*args.getString("client"));
 	}
 	else
 		_isActive = 0;

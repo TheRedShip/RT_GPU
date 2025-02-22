@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/15 22:54:52 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/21 18:17:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,10 @@ int main(int argc, char **argv)
 	Arguments	args(argc, argv);
 	if (args.error())
 		return (1);
+
+	Clusterizer clusterizer(args);
+	if (clusterizer.getError())
+		return(1);
 
 	Scene		scene(args.getSceneName());
 	if (scene.fail())
@@ -67,6 +71,7 @@ int main(int argc, char **argv)
 
 	while (!window.shouldClose())
 	{
+		clusterizer.update();
 		window.updateDeltaTime();
 		
 		updateDataOnGPU(scene, buffers);

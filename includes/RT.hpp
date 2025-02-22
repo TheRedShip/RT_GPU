@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/20 21:28:15 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/21 14:53:36 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,9 @@
 
 # include <sys/socket.h>
 # include <netinet/in.h>
-# include <fcntl.h>
 # include <arpa/inet.h>
+# include <fcntl.h>
+# include <poll.h>
 
 struct Vertex {
     glm::vec2 position;
