@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 15:57:21 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 00:32:38 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 # define RENDERER_HPP
 
 # include "RT.hpp"
+
 extern "C" {
 	#include <libavformat/avformat.h>
 	#include <libavcodec/avcodec.h>
@@ -26,6 +27,8 @@ class Scene;
 class Window;
 class Shader;
 class ShaderProgram;
+class Clusterizer;
+class Ffmpeg;
 
 typedef struct s_pathPoint
 {
@@ -41,7 +44,7 @@ class Renderer
 
 		void		update(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void		addTeleport(glm::vec3 from_pos, glm::vec2 from_dir, glm::vec3 to_pos, glm::vec2 to_dir);
-		void		renderImgui(void);
+		void		renderImgui(Clusterizer &clust);
 
 		int			rendering(void) const;
 		bool		shouldClose(void) const;
@@ -54,7 +57,7 @@ class Renderer
 		float		calcTime(glm::vec3 pos);
 
 		void		addPoint(float time);
-		void		imguiRenderSettings(void);
+		void		imguiRenderSettings(Clusterizer &clust);
 		void		imguiPathCreation(void);
 		void		imguiPathNodeList(void);
 
@@ -62,15 +65,16 @@ class Renderer
 		void		savePath(void);
 		void		loadPath(std::string filename);
 
-		void		makeMovement(float timeFromStart, float curSplitTimeReset);
+		void		makeMovement(float time);
+		void		interpolateMovement(float time, glm::vec3 *pos, glm::vec2 *dir);
 		glm::vec2	bezierSphereInterpolate(glm::vec4 control, glm::vec2 from, glm::vec2 to, float time);
 		glm::vec3	hermiteInterpolate(glm::vec3 points[4], double alpha);
 		t_pathPoint	createNextPoint(t_pathPoint from, t_pathPoint to);
 		void		getInterpolationPoints(t_pathPoint &prev, t_pathPoint &from, t_pathPoint &to, t_pathPoint &next);
 
 		void		initRender();
+		void		createClusterJobs(Clusterizer &clust);
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
-		void		updateAvailableCodecs(int mode, AVCodecID id);
 		void		addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void		endRender(void);
 
@@ -82,9 +86,9 @@ class Renderer
 		std::string						_outputFilename;
 
 		std::vector<t_pathPoint>		_path;
-		int								_curPathIndex;
-		int								_destPathIndex;
-		double							_curSplitStart;
+		size_t							_curPathIndex;
+		size_t							_destPathIndex;
+		double							_testStartTime;
 		int								_curSamples;
 		int								_testMode;
 		long int						_frameCount;
@@ -105,16 +109,8 @@ class Renderer
 		int								_codecIndex;
 
 		bool							_renderSettings;
-
-
-		AVFormatContext					*_format;
-		AVCodecContext					*_codec_context;
-		AVFrame							*_rgb_frame;
-		AVFrame							*_yuv_frame;
-		SwsContext						*_sws_context;
-		AVStream						*_stream;
-		AVDictionary					*_codecOptions;
 		std::vector<const AVCodec *>	_codecList;
+		Ffmpeg							*_ffmpegVideo;
 };
 
 #endif

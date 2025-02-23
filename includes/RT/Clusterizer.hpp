@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/22 23:36:23 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/23 22:41:25 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,10 +61,16 @@ class Clusterizer
 		void	update(void);
 		bool	getError(void);
 		void	imguiRender(void);
+		bool	isServer(void);	
+		bool	hasJobs(void);
+
+		void	addJob(glm::vec3 pos, glm::vec2 dir, size_t samples);
+
 	private:
 		bool				_isActive;
 		bool				_isServer;
 		bool				_error;
+		std::string			_sceneName;
 
 		std::vector<t_job *> _jobs[3];
 
@@ -94,7 +100,6 @@ class Clusterizer
 		void	updatePollfds(void);
 		int		updateBuffer(int fd);
 		void	handleBuffer(int fd, std::vector<uint8_t> &buf);
-		void	addJob(std::string scene, glm::vec3 pos, glm::vec2 dir, size_t samples);
 		void	deleteClient(int fd);
 
 		int		dispatchJobs(void);

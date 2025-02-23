@@ -1,65 +1,56 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ffmpeg.cpp                                         :+:      :+:    :+:   */
+/*   Ffmpeg.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/20 15:59:41 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 16:06:39 by tomoron          ###   ########.fr       */
+/*   Created: 2025/02/23 23:28:19 by tomoron           #+#    #+#             */
+/*   Updated: 2025/02/24 00:44:26 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #include "RT.hpp"
 
 void					shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures);
 
-void	Renderer::initRender(void)
+Ffmpeg::Ffmpeg(std::string filename, int fps, const AVCodec *codec)
 {
-	if(_path.size() < 2)
-		throw std::runtime_error("render path doesn't have enough path points");
-	if(_path[0].time != 0)
-		throw std::runtime_error("render path does not start at 0, aborting");
-	if(_path[_path.size() - 1].time - _path[0].time <= 0)
-		throw std::runtime_error("render path is 0 seconds long, aborting");
-
+	std::cout << "ffmpeg init" << std::endl;
+	_rgb_frame = 0;
+	_yuv_frame = 0;
+	_format = 0;
+	_codec_context = 0;
 	_codecOptions = 0;
-	_destPathIndex = _path.size() - 1;
-	_curPathIndex = 0;
-	_frameCount = 0;
-	_curSamples = 0;
-	_curSplitStart = 0;
-	_testMode = 0;
-	_renderStartTime = glfwGetTime();
-	_scene->getCamera()->setPosition(_path[0].pos);
-	_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
-	_win->setFrameCount(_headless ? 0 : -1);
-	avformat_alloc_output_context2(&_format, nullptr, nullptr, _outputFilename.c_str());
+	_pts = 0;
+
+	avformat_alloc_output_context2(&_format, nullptr, nullptr, filename.c_str());
 	
-	_codec_context = avcodec_alloc_context3(_codecList[_codecIndex]);
+	_codec_context = avcodec_alloc_context3(codec);
 	_codec_context->width = WIDTH;
 	_codec_context->height = HEIGHT;
-	_codec_context->time_base = {1, _fps};
-	_codec_context->framerate = {_fps, 1};
+	_codec_context->time_base = {1, fps};
+	_codec_context->framerate = {fps, 1};
 	_codec_context->pix_fmt = AV_PIX_FMT_YUV420P;
 	_codec_context->gop_size = 10;
 	_codec_context->max_b_frames = 1;
-	if(_codecList[_codecIndex]->id == AV_CODEC_ID_H264 || _codecList[_codecIndex]->id == AV_CODEC_ID_HEVC)
+	if(codec->id == AV_CODEC_ID_H264 || codec->id == AV_CODEC_ID_HEVC)
 		av_dict_set(&_codecOptions, "crf", "0", 0);
 
 	if (_format->oformat->flags & AVFMT_GLOBALHEADER)
 		_codec_context->flags |= AV_CODEC_FLAG_GLOBAL_HEADER;
 
-	if (avcodec_open2(_codec_context, _codecList[_codecIndex], &_codecOptions) < 0)
+	if (avcodec_open2(_codec_context, codec, &_codecOptions) < 0)
 	{
-		endRender();
+		endVideo();
 		throw std::runtime_error("Failed to open codec");
 	}
 	
-	_stream = avformat_new_stream(_format, _codecList[_codecIndex]);
+	_stream = avformat_new_stream(_format, codec);
 	if (!_stream) 
 	{
-		endRender();
+		endVideo();
 		throw std::runtime_error("Failed to create stream");
 	}
 	_stream->time_base = _codec_context->time_base;
@@ -67,10 +58,10 @@ void	Renderer::initRender(void)
 
 	if (!(_format->flags & AVFMT_NOFILE))
 	{
-		if (avio_open(&_format->pb, _outputFilename.c_str(), AVIO_FLAG_WRITE) < 0)
+		if (avio_open(&_format->pb, filename.c_str(), AVIO_FLAG_WRITE) < 0)
 		{
-			endRender();
-			throw std::runtime_error("couldn't open " + _outputFilename);
+			endVideo();
+			throw std::runtime_error("couldn't open " + filename);
 		}
 	}
 	(void)avformat_write_header(_format, nullptr);
@@ -93,22 +84,23 @@ void	Renderer::initRender(void)
         SWS_BILINEAR, nullptr, nullptr, nullptr);
 }
 
-
-void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+Ffmpeg::~Ffmpeg(void)
 {
-	std::vector<float>	image(WIDTH * HEIGHT * 4);
+	std::cout << "destruct ffmpeg" << std::endl;
+	endVideo();
+}
 
-	AVPacket *pkt;
+void		Ffmpeg::addImageToVideo(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+{
 	long int videoFrameOffset;
 	long int outputImageOffset;
-	
+	std::vector<float>	image(WIDTH * HEIGHT * 4);
 
-	if(_scene->getDenoise().enabled)
-		shaderDenoise(denoisingProgram, _scene->getDenoise(), textures);
+	if(scene.getDenoise().enabled)
+		shaderDenoise(denoisingProgram, scene.getDenoise(), textures);
 	glBindTexture(GL_TEXTURE_2D, textures[0]);
 	glGetTexImage(GL_TEXTURE_2D, 0, GL_RGBA, GL_FLOAT, image.data());
 	glBindTexture(GL_TEXTURE_2D, 0);
-
 	for (int x = 0; x < WIDTH; x++)
 	{
 		for(int y = 0; y < HEIGHT; y++)
@@ -126,8 +118,16 @@ void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &d
 			_rgb_frame->data[0][videoFrameOffset + 2] = colors.z * 255;
 		}
 	}
+	convertAndAddToVid();
+}
+
+void	Ffmpeg::convertAndAddToVid(void)
+{
+	AVPacket *pkt;
+
+	std::cout << "add img to vid" << std::endl;
 	sws_scale(_sws_context, _rgb_frame->data, _rgb_frame->linesize, 0, HEIGHT, _yuv_frame->data, _yuv_frame->linesize);
-	_yuv_frame->pts = _frameCount;
+	_yuv_frame->pts = _pts++;
 
 	if (avcodec_send_frame(_codec_context, _yuv_frame) == 0) {
 		pkt = av_packet_alloc();
@@ -142,11 +142,11 @@ void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &d
 	}
 }
 
-void	Renderer::endRender(void)
+void	Ffmpeg::endVideo(void)
 {
 	AVPacket *pkt;
 
-	if(_codec_context)
+	if(_codec_context && _stream && _format)
 	{
 		avcodec_send_frame(_codec_context, 0);
 		pkt = av_packet_alloc();
@@ -157,8 +157,8 @@ void	Renderer::endRender(void)
 			av_interleaved_write_frame(_format, pkt);
 			av_packet_unref(pkt);
 		}
+		av_packet_free(&pkt);
 	}
-	av_packet_free(&pkt);
 
 	if(_format)
 		av_write_trailer(_format);
@@ -179,9 +179,6 @@ void	Renderer::endRender(void)
 	_rgb_frame = 0;
 	_yuv_frame = 0;
 	_codec_context = 0;
-	_destPathIndex = 0;
-	if(_headless)
-		_shouldClose = 1;
 }
 
 /* modes :
@@ -189,7 +186,7 @@ void	Renderer::endRender(void)
  * 	1 : adds all codecs
  * 	2 : adds only codec <id>
  */
-void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
+void	Ffmpeg::updateAvailableCodecs(std::vector<const AVCodec *> &codecList, std::vector<const char *> &codecListStr, std::string filename, int mode, AVCodecID id)
 {
 	const AVCodec *codec;
 	AVCodecContext *ctx;
@@ -198,13 +195,12 @@ void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
 	std::vector<AVCodecID>	goodCodecList;
 
 	fillGoodCodecList(goodCodecList);
-	_codecList.clear();
-	_codecListStr.clear();
-	_codecIndex = 0;
+	codecList.clear();
+	codecListStr.clear();
 	av_log_set_level(AV_LOG_QUIET);
-	format = _outputFilename.c_str();
-	if(_outputFilename.find(".") != std::string::npos)
-		format += _outputFilename.find(".") + 1;
+	format = filename.c_str();
+	if(filename.find(".") != std::string::npos)
+		format += filename.find(".") + 1;
 
 	muxer = av_guess_format(format, 0, 0);
 	for(std::vector<AVCodecID>::iterator it = goodCodecList.begin(); it != goodCodecList.end(); it++)
@@ -214,7 +210,7 @@ void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
 			continue;
 		if (mode == 1 || (mode == 2 && codec->id == id))
 		{
-			_codecList.push_back(codec);
+			codecList.push_back(codec);
 			continue;
 		}
 		ctx = avcodec_alloc_context3(codec);
@@ -224,24 +220,24 @@ void	Renderer::updateAvailableCodecs(int mode, AVCodecID id)
 			{
 				ctx->width = WIDTH;
 				ctx->height = HEIGHT;
-				ctx->time_base = {1, _fps};
-				ctx->framerate = {_fps, 1};
+				ctx->time_base = {1, 60};
+				ctx->framerate = {60, 1};
 				ctx->pix_fmt = AV_PIX_FMT_YUV420P;
 				ctx->gop_size = 10;
 				ctx->max_b_frames = 1;
 				if (avcodec_open2(ctx, codec, NULL) == 0)
-					_codecList.push_back(codec);
+					codecList.push_back(codec);
 	        }
 			avcodec_free_context(&ctx);
 		}
 	}
-	for(auto it = _codecList.begin(); it != _codecList.end(); it++)
+	for(auto it = codecList.begin(); it != codecList.end(); it++)
 	{
-		_codecListStr.push_back((*it)->name);
+		codecListStr.push_back((*it)->name);
 	}
 }
 
-void	Renderer::fillGoodCodecList(std::vector<AVCodecID> &lst)
+void	Ffmpeg::fillGoodCodecList(std::vector<AVCodecID> &lst)
 {
 	lst.push_back(AV_CODEC_ID_FFV1);
 	lst.push_back(AV_CODEC_ID_H264);

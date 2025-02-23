@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/21 21:45:24 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/23 22:41:07 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ Clusterizer::Clusterizer(Arguments &args)
 	_isServer = 0;
 	_error = 0;
 	_serverSocket = 0;
+	_sceneName = args.getSceneName();
 
 	if(args.getBoolean("server"))
 	{
@@ -52,4 +53,14 @@ void Clusterizer::update(void)
 bool Clusterizer::getError(void)
 {
 	return(_error);
+}
+
+bool Clusterizer::isServer(void)
+{
+	return(_isServer);	
+}
+
+bool Clusterizer::hasJobs(void)
+{
+	return(_jobs[WAITING].size() || _jobs[IN_PROGRESS].size());
 }

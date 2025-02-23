@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 16:01:59 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 16:02:05 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/23 22:13:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,7 @@ void Renderer::getInterpolationPoints(t_pathPoint &prev, t_pathPoint &from, t_pa
 		next = _path[_curPathIndex + 2];
 }
 
-
-void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
+void	Renderer::interpolateMovement(float time, glm::vec3 *pos, glm::vec2 *dir)
 {
 	t_pathPoint		prev;
 	t_pathPoint		from;
@@ -115,22 +114,24 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	t_pathPoint		next;
 
 	float			pathTime;
-	Camera			*cam;
-	glm::vec3		pos;
-	glm::vec2		dir;	
 	float			normalTime;
 	bool			smallDistPrev;
 	bool			smallDistNext;
+	float			splitTime;
 	glm::vec4		bezierControl;
 
+	std::cout << "current time : " << time << std::endl;
+	while(_curPathIndex < _path.size() - 2 && (_path[_curPathIndex + 1].time * 60) < time)
+		_curPathIndex++;
+
+	splitTime = time - (_path[_curPathIndex].time * 60);
 	getInterpolationPoints(prev, from, to, next);
 
-	cam = _scene->getCamera();
 	pathTime = (to.time - from.time) * 60;
-	normalTime = 1 - ((pathTime - timeFromStart) / pathTime);
+	normalTime = 1 - ((pathTime - splitTime) / pathTime);
 	
 	glm::vec3 points[4] = {prev.pos, from.pos, to.pos, next.pos};
-	pos = hermiteInterpolate(points, normalTime);
+	*pos = hermiteInterpolate(points, normalTime);
 
 	smallDistPrev = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (from.dir - prev.dir) / glm::vec2((from.time - prev.time) * 60)) < 40;
 	smallDistNext = glm::distance((to.dir - from.dir) / glm::vec2(pathTime), (next.dir - to.dir) / glm::vec2((next.time - to.time) * 60)) < 40;
@@ -139,24 +140,30 @@ void Renderer::makeMovement(float timeFromStart, float curSplitTimeReset)
 	bezierControl.z = 0.8f;
 	bezierControl.w = (size_t)_curPathIndex + 2 >= _path.size() ||  smallDistNext ? .9f : 1.0f;
 
-	dir = bezierSphereInterpolate(bezierControl, from.dir, to.dir, normalTime);
-	if(std::isnan(dir.x) || std::isnan(dir.y))
-		dir = from.dir;
-	if(timeFromStart >= pathTime)
+	*dir = bezierSphereInterpolate(bezierControl, from.dir, to.dir, normalTime);
+	if(std::isnan(dir->x) || std::isnan(dir->y))
+		*dir = from.dir;
+	if(splitTime >= pathTime)
 	{
-		pos = to.pos;
-		dir = to.dir;
-		_curSplitStart = curSplitTimeReset;
+		*pos = to.pos;
+		*dir = to.dir;
 		_curPathIndex++;
-		while( _curPathIndex < _destPathIndex && _path[_curPathIndex].time == _path[_curPathIndex + 1].time)
-		{
-			_curPathIndex++;
-			std::cout << "skip tp" << std::endl;
-		}
 	}
+}
+
+void Renderer::makeMovement(float time)
+{
+	glm::vec2	dir;
+	glm::vec3	pos;
+	Camera		*cam;
+
+	interpolateMovement(time, &pos, &dir);
+
+	cam = _scene->getCamera();
 	cam->setPosition(pos);
 	cam->setDirection(dir.x, dir.y);
 	_win->setFrameCount(0);
+	
 	if(_curPathIndex == _destPathIndex)
 	{
 		_destPathIndex = 0;

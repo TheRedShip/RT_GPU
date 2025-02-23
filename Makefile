@@ -58,14 +58,14 @@ ALL_SRCS	:=	$(IMGUI_SRCS)	gl.cpp		\
 				class/BVH.cpp				\
 				class/Arguments.cpp			\
 				class/Renderer/Renderer.cpp \
-				class/Renderer/ffmpeg.cpp	\
 				class/Renderer/imgui.cpp	\
 				class/Renderer/movements.cpp\
 				class/Renderer/saveLoad.cpp	\
 				class/Clusterizer/Clusterizer.cpp\
 				class/Clusterizer/client.cpp	\
 				class/Clusterizer/server.cpp	\
-				class/Clusterizer/imgui.cpp	\
+				class/Clusterizer/imgui.cpp		\
+				class/Ffmpeg.cpp				\
 
 SRCS		:=	$(ALL_SRCS:%=$(SRCS_DIR)/%)
 OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/22 23:36:42 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/23 22:15:38 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -144,17 +144,22 @@ int Clusterizer::dispatchJobs(void)
 	return (dispatched);
 }
 
-void Clusterizer::addJob(std::string scene, glm::vec3 pos, glm::vec2 dir, size_t samples)
+void Clusterizer::addJob(glm::vec3 pos, glm::vec2 dir, size_t samples)
 {
 	t_job *tmp;
 
 	tmp = new t_job;
-	tmp->scene = scene;
+	tmp->scene = _sceneName;
 	tmp->pos = pos;
 	tmp->dir = dir;
 	tmp->samples = samples;
 	tmp->id = _curId++;
 	_jobs[WAITING].push_back(tmp);
+
+	std::cout << "new job added : " << std::endl;
+	std::cout << "	- pos : " << glm::to_string(pos) << std::endl;
+	std::cout << "	- dir : " << glm::to_string(dir) << std::endl;
+	std::cout << std::endl;
 }
 
 void Clusterizer::updateServer(void)

@@ -6,12 +6,13 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 20:02:05 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 00:49:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
+//TODO: known problems : first image is put before starting the render and two first images are the same
 
 Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 {
@@ -66,12 +67,9 @@ void	Renderer::init(Scene *scene, Window *win)
 	memcpy(_filenameBuffer, _outputFilename.c_str(), _outputFilename.length());
 	_filenameBuffer[_outputFilename.length()] = 0;
 
-	_rgb_frame = 0;
-	_yuv_frame = 0;
-	_format = 0;
-	_codec_context = 0;
 	_ignoreUnavailableCodec = 0;
-	updateAvailableCodecs(_ignoreUnavailableCodec, (AVCodecID)0);
+	Ffmpeg::updateAvailableCodecs(_codecList, _codecListStr, _outputFilename, _ignoreUnavailableCodec, (AVCodecID)0);
+	_codecIndex = 0;
 }
 
 void	Renderer::addPoint(float time)
@@ -105,7 +103,7 @@ void		Renderer::update(std::vector<GLuint> &textures, ShaderProgram &denoisingPr
 		return;
 
 	if(_testMode)
-		curTime = glfwGetTime();
+		curTime = glfwGetTime() - _testStartTime;
 	else
 		curTime = (1 / (double)_fps) * (double)_frameCount;
 
@@ -114,7 +112,7 @@ void		Renderer::update(std::vector<GLuint> &textures, ShaderProgram &denoisingPr
 		addImageToRender(textures, denoisingProgram);
 		_frameCount++;
 	}
-	makeMovement(curTime - _curSplitStart, curTime);
+	makeMovement(curTime);
 	_curSamples = 0;
 
 }
@@ -134,6 +132,67 @@ void		Renderer::addTeleport(glm::vec3 from_pos, glm::vec2 from_dir, glm::vec3 to
 	point.pos = to_pos;
 	point.dir = to_dir;
 	_path.push_back(point);
+}
+
+void	Renderer::createClusterJobs(Clusterizer &clust)
+{
+	float delta;
+	size_t frames;
+	glm::vec3 pos;
+	glm::vec2 dir;
+
+	delta = 1/(double)_fps;
+	frames = 0;
+
+	while(_destPathIndex)
+	{
+		interpolateMovement(delta * frames, &pos, &dir);
+		clust.addJob(pos, dir, _samples);
+		if(_curPathIndex == _destPathIndex)
+			_destPathIndex = 0;
+		(void)clust;
+		frames++;
+	}
+}
+
+void	Renderer::initRender(void)
+{
+	if(_path.size() < 2)
+		throw std::runtime_error("render path doesn't have enough path points");
+	if(_path[0].time != 0)
+		throw std::runtime_error("render path does not start at 0, aborting");
+	if(_path[_path.size() - 1].time - _path[0].time <= 0)
+		throw std::runtime_error("render path is 0 seconds long, aborting");
+
+	_curPathIndex = 0;
+	_destPathIndex = _path.size() - 1;
+	_renderStartTime = glfwGetTime();
+//	if(clust && clust->isServer())
+//		createClusterJobs(*clust);
+//	else
+	if(1)
+	{
+		_frameCount = 0;
+		_curSamples = 0;
+		_testMode = 0;
+		_scene->getCamera()->setPosition(_path[0].pos);
+		_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);
+		_win->setFrameCount(_headless ? 0 : -1);
+	}
+	_ffmpegVideo = new Ffmpeg(_outputFilename, _fps, _codecList[_codecIndex]);
+}
+
+void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+{
+	_ffmpegVideo->addImageToVideo(*_scene, textures, denoisingProgram);
+}
+
+void Renderer::endRender(void)
+{
+	_destPathIndex = 0;
+	if(_headless)
+		_shouldClose = 1;
+	delete _ffmpegVideo;
 }
 
 bool	Renderer::shouldClose(void) const

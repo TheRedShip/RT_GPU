@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/22 22:15:32 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/23 19:05:24 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -317,7 +317,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program, Clusterizer &cluster
 	}
 
 
-	_renderer->renderImgui();
+	_renderer->renderImgui(clusterizer);
 	clusterizer.imguiRender();
 	
 	ImGui::End();

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:54:35 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 16:10:17 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 00:34:48 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,7 @@ void Renderer::imguiPathNodeList(void)
 			_scene->getCamera()->setPosition(_path[i].pos);	
 			_scene->getCamera()->setDirection(_path[i].dir.x, _path[i].dir.y);	
 			_win->setFrameCount(-1);
-			_curSplitStart = glfwGetTime();
+			_testStartTime = glfwGetTime() - _path[i].time;
 			_curPathIndex = i - 1;
 			_destPathIndex = i;
 			_testMode = 1;
@@ -109,7 +109,7 @@ void Renderer::imguiPathCreation(void)
 		_scene->getCamera()->setPosition(_path[0].pos);	
 		_scene->getCamera()->setDirection(_path[0].dir.x, _path[0].dir.y);	
 		_win->setFrameCount(-1);
-		_curSplitStart = glfwGetTime();
+		_testStartTime = glfwGetTime();
 		_curPathIndex = 0;
 		_destPathIndex = _path.size() - 1;
 		_testMode = 1;
@@ -149,17 +149,22 @@ void Renderer::imguiPathCreation(void)
 	imguiPathNodeList();
 }
 
-void	Renderer::imguiRenderSettings(void)
+void	Renderer::imguiRenderSettings(Clusterizer &clust)
 {
+	(void)clust;
 	ImGui::SliderInt("render spi", &_samples, 1, 1000);
 	ImGui::SliderInt("render fps", &_fps, 30, 120);
 	ImGui::Combo("codec", &_codecIndex, _codecListStr.data(), _codecListStr.size());
 	if(ImGui::Checkbox("show all codecs", &_ignoreUnavailableCodec))
-		updateAvailableCodecs(_ignoreUnavailableCodec, (AVCodecID)0);
+	{
+		Ffmpeg::updateAvailableCodecs(_codecList, _codecListStr, _outputFilename, _ignoreUnavailableCodec, (AVCodecID)0);
+		_codecIndex = 0;
+	}
 	if(ImGui::InputText("file name", _filenameBuffer, 512))
 	{
 		_outputFilename = _filenameBuffer;
-		updateAvailableCodecs(_ignoreUnavailableCodec, (AVCodecID)0);
+		Ffmpeg::updateAvailableCodecs(_codecList, _codecListStr, _outputFilename, _ignoreUnavailableCodec, (AVCodecID)0);
+		_codecIndex = 0;
 	}
 	if(_path.size() > 1 && _codecList.size())
 	{
@@ -189,7 +194,7 @@ void Renderer::showRenderInfo(int isImgui)
 	float timeElapsed;
 	float timeEst;
 
-	totalFrames = (_path[_destPathIndex].time - _path[0].time) * 60 * _fps;
+	totalFrames = (_path.back().time - _path[0].time) * 60 * _fps;
 	renderTime = ((float)_frameCount / _fps) / 60;
 
 	timeElapsed = glfwGetTime() - _renderStartTime;
@@ -204,7 +209,7 @@ void Renderer::showRenderInfo(int isImgui)
 	oss << "samples per frame : " << _samples << std::endl;
 	oss << "render fps : " << _fps << std::endl;
 	oss << "total render time : ";
-	oss << floatToTime((_path[_destPathIndex].time - _path[0].time) * 60).c_str();
+	oss << floatToTime((_path.back().time - _path[0].time) * 60).c_str();
 
 	if(isImgui)
 	{
@@ -226,12 +231,17 @@ void Renderer::showRenderInfo(int isImgui)
 	oss << "Render time : " << (int)renderTime << "m";
 	oss << (renderTime - (int)renderTime) * 60 << "s" << std::endl;
 	oss << "elapsed time : " << floatToTime(timeElapsed) << std::endl;
-	oss << "estimated time remaining :" <<  floatToTime(timeEst);
+	if((_frameCount * _samples) + _curSamples)
+		oss << "estimated time remaining :" <<  floatToTime(timeEst);
+	else
+		oss << "Estimated time remaining : unknown";
 	if(_headless)
 		oss << std::endl << "fps : " << _win->getFps();
 
 	progress = ((float)_frameCount * _samples)  + _curSamples;
 	progress /= (float)totalFrames * _samples;
+	if(std::isnan(progress))
+		progress = 0.f;
 
 	if(isImgui)
 	{
@@ -297,14 +307,14 @@ std::string	Renderer::floatToTime(double timef)
 	return(res);
 }
 
-void Renderer::renderImgui(void)
+void Renderer::renderImgui(Clusterizer &clust)
 {
 	if (ImGui::CollapsingHeader("Renderer"))
 	{
-		if(rendering())
+		if(rendering() || clust.hasJobs())
 			showRenderInfo(1);
 		else if(_renderSettings)
-			imguiRenderSettings();
+			imguiRenderSettings(clust);
 		else
 			imguiPathCreation();
 	}

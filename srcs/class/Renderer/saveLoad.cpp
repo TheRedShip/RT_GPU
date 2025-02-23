@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 16:05:52 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/20 16:05:57 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 00:35:18 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,8 @@ void	Renderer::loadPath(std::string filename)
 	memcpy(_filenameBuffer, _outputFilename.c_str(), _outputFilename.length());
 	_filenameBuffer[_outputFilename.length()] = 0;
 	rawRead(file, &codecId, sizeof(codecId));
-	updateAvailableCodecs(2, codecId);
+	Ffmpeg::updateAvailableCodecs(_codecList, _codecListStr, _outputFilename, _ignoreUnavailableCodec, (AVCodecID)0);
+	_codecIndex = 0;
 	if(_codecList.size() == 0)
 		throw std::runtime_error("codec not available");
 	rawRead(file, &_samples, sizeof(_samples));
