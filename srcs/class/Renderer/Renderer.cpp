@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/18 14:58:02 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:59:41 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,7 +205,6 @@ void Renderer::endRender(Clusterizer *clust)
 		delete _ffmpegVideo;
 	if(clust && clust->isServer())
 		clust->abortJobs();
-
 }
 
 bool	Renderer::shouldClose(void) const
