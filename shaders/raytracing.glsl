@@ -30,7 +30,10 @@ struct GPUTriangle
 	vec3	position;
 	vec3	vertex1;
 	vec3	vertex2;
-	vec3	normal;
+
+	vec3	normal_vertex1;
+	vec3	normal_vertex2;
+	vec3	normal_vertex3;
 
 	vec2	texture_vertex1;
 	vec2	texture_vertex2;
@@ -202,10 +205,10 @@ vec3[2] pathtrace(Ray ray, inout uint rng_state)
 
 		if (i == 0)
 		{
-			imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.normal), 1.0));
-			imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.position), 1.0));
-			// vec4 accum_normal = accumulate(normal_texture, accum_normal, normalize(hit.normal));
-			// vec4 accum_position = accumulate(position_texture, accum_position, normalize(hit.position));
+			// imageStore(normal_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.normal), 1.0));
+			// imageStore(position_texture, ivec2(gl_GlobalInvocationID.xy), vec4(normalize(hit.position), 1.0));
+			vec4 accum_normal = accumulate(normal_texture, accum_normal, normalize(hit.normal));
+			vec4 accum_position = accumulate(position_texture, accum_position, normalize(hit.position));
 		}
 
         float p = max(color.r, max(color.g, color.b));

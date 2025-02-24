@@ -157,8 +157,9 @@ hitInfo traverseBVHs(Ray ray)
 			vec3 position = transformedRay.origin + transformedRay.direction * temp_hit.t;
 			hit.position = inverseTransformMatrix * position + bvh_data.offset;
 			
-			vec3 based_normal = triangle.normal * sign(-dot(transformedRay.direction, triangle.normal));
-			hit.normal = normalize(inverseTransformMatrix * based_normal);
+			vec3 normal = normalize(triangle.normal_vertex1 * (1.0 - hit.u - hit.v) + triangle.normal_vertex2 * hit.u + triangle.normal_vertex3 * hit.v);
+			vec3 directed_normal = normal * sign(-dot(transformedRay.direction, normal));
+			hit.normal = normalize(inverseTransformMatrix * directed_normal);
 		}
 	}
 

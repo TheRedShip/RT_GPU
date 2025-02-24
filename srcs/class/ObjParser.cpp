@@ -58,6 +58,15 @@ glm::vec2	ObjParser::getUV(std::stringstream &line)
 	return(res);
 }
 
+glm::vec3	ObjParser::getNormals(std::stringstream &line)
+{
+	glm::vec3 res;
+
+	if(!(line >> res.x) || !(line >> res.y) || (!(line >> res.z)) && !line.eof())
+		throw std::runtime_error("syntax error in obj file while parsing normal vertex");
+	return(res);
+}
+
 long int	ObjParser::checkVertexIndex(int index, size_t size)
 {
 	if((size_t)index > size || index == 0 || (index < 0 && (size_t)(-index) > size))
@@ -97,10 +106,11 @@ int ObjParser::pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices
 	return(0);
 }
 
-bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, int inv)
+bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, std::vector<glm::vec3> &normalVertices, int inv)
 {
 	glm::vec3 v1, v2, v3;
 	glm::vec2 vt1, vt2, vt3;
+	glm::vec3 vn1, vn2, vn3;
 
 	float dot;
 
@@ -110,17 +120,22 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::ve
 		{
 			v1 = vertices.back();
 			vt1 = textureVertices.back();
+			vn1 = normalVertices.back();
 		}
 		else
 		{
 			v1 = vertices[i - 1];
 			vt1 = textureVertices[i - 1];
+			vn1 = normalVertices[i - 1];
 		}
 		v2 = vertices[i];
 		v3 = vertices[(i + 1) % vertices.size()];
 
 		vt2 = textureVertices[i];
 		vt3 = textureVertices[(i + 1) % textureVertices.size()];
+
+		vn2 = normalVertices[i];
+		vn3 = normalVertices[(i + 1) % normalVertices.size()];
 
 		if (inv)
 			dot = glm::cross(v2 - v1, v2 - v3).z;
@@ -133,14 +148,19 @@ bool ObjParser::addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::ve
 			continue;
 		vertices.erase(vertices.begin() + i);
 		textureVertices.erase(textureVertices.begin() + i);
-
+		normalVertices.erase(normalVertices.begin() + i);
 
 		std::vector<glm::vec2> texture;
 		texture.push_back(vt1);
 		texture.push_back(vt2);
 		texture.push_back(vt3);
 
-		addTriangle(v1, v2, v3, texture);
+		std::vector<glm::vec3> normals;
+		normals.push_back(vn1);
+		normals.push_back(vn2);
+		normals.push_back(vn3);
+
+		addTriangle(v1, v2, v3, texture, normals);
 		return(1);
 	}
 	return(0);
@@ -159,7 +179,7 @@ std::vector<std::string> ObjParser::objSplit(std::string str, std::string delim)
 	return(res);
 }
 
-void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::stringstream &line)
+void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::vector<glm::vec3> &normalVertices, std::stringstream &line)
 {
 	std::string el;
 	std::vector<std::string> sp;
@@ -174,6 +194,9 @@ void ObjParser::getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vecto
 		
 		if (sp.size() > 1 && sp[1].length())
 			textureVertices.push_back(_textureVertices[checkVertexIndex(std::stoi(sp[1]), _textureVertices.size())]);
+		if (sp.size() > 2 && sp[2].length())
+			normalVertices.push_back(_normalVertices[checkVertexIndex(std::stoi(sp[2]), _normalVertices.size())]);
+
 		faceVertices.push_back(_vertices[checkVertexIndex(std::stoi(sp[0]), _vertices.size())]);
 	}
 }
@@ -182,28 +205,33 @@ void ObjParser::addFace(std::stringstream &line)
 {
 	std::vector<glm::vec3> faceVertices;
 	std::vector<glm::vec2> textureVertices;
+	std::vector<glm::vec3> normalVertices;
 	
-	getFaceVertices(faceVertices, textureVertices, line);
+	getFaceVertices(faceVertices, textureVertices, normalVertices, line);
 	if(!line.eof())
 		throw std::runtime_error("OBJ : an error occured while paring face");
 	if(faceVertices.size() < 3)
 		throw std::runtime_error("OBJ : face does not have enough vertices");
 
 	while(faceVertices.size() > 3)
-		if (!addTriangleFromPolygon(faceVertices, textureVertices, 0))
-			if(!addTriangleFromPolygon(faceVertices, textureVertices, 1))
+		if (!addTriangleFromPolygon(faceVertices, textureVertices, normalVertices, 0))
+			if(!addTriangleFromPolygon(faceVertices, textureVertices, normalVertices, 1))
 				return ;
 
 	if(!line.eof())
 		throw std::runtime_error("OBJ: an error occured while parsing face");
-	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], textureVertices);
+	addTriangle(faceVertices[0], faceVertices[1], faceVertices[2], textureVertices, normalVertices);
 }
 
-void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> texture_vertices)
+void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> texture_vertices, std::vector<glm::vec3> normal_vertices)
 {
 	glm::vec2 vt1 = glm::vec2(0.);
 	glm::vec2 vt2 = glm::vec2(0.);
 	glm::vec2 vt3 = glm::vec2(0.);
+
+	glm::vec3 vn1 = glm::vec3(0.);
+	glm::vec3 vn2 = glm::vec3(0.);
+	glm::vec3 vn3 = glm::vec3(0.);
 
 	if (texture_vertices.size() == 3)
 	{
@@ -212,7 +240,14 @@ void	ObjParser::addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vecto
 		vt3 = texture_vertices[2];
 	}
 
-	_triangles.push_back(Triangle(v1, v2, v3, vt1, vt2, vt3, _mat));
+	if (normal_vertices.size() == 3)
+	{
+		vn1 = glm::normalize(normal_vertices[0]);
+		vn2 = glm::normalize(normal_vertices[1]);
+		vn3 = glm::normalize(normal_vertices[2]);
+	}
+	
+	_triangles.push_back(Triangle(v1, v2, v3, vt1, vt2, vt3, vn1, vn2, vn3, _mat));
 }
 
 void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
@@ -286,7 +321,9 @@ void	ObjParser::parseMtl(std::stringstream &input_line, Scene &scene)
 			float x, y, z;
 			if(!(lineStream >> x >> y >> z))
 				throw std::runtime_error("OBJ: syntax error while getting material emission");
-			mat->emission = (x + y + z) / 3;
+			if (mat->color == glm::vec3(0.0f))
+				mat->color = glm::vec3(x, y, z);
+			mat->emission = (x + y + z);
 		}
 		else if(identifier == "Ni")
 		{
@@ -384,6 +421,8 @@ void	ObjParser::parse(Scene &scene, glm::vec3 offset, float scale, glm::mat4 tra
 				_vertices.push_back(getVertex(lineStream));
 			else if (identifier == "vt")
 				_textureVertices.push_back(getUV(lineStream));
+			else if (identifier == "vn")
+				_normalVertices.push_back(getNormals(lineStream));
 			else if (identifier == "f")
 				addFace(lineStream);
 			else if (identifier == "mtllib")

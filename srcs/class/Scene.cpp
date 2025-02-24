@@ -115,17 +115,7 @@ void		Scene::addObject(Object *obj)
 	}
 	else if (obj->getType() == Object::Type::TRIANGLE)
 	{
-		GPUTriangle	gpu_triangle;
-
 		auto triangle = static_cast<Triangle *>(obj);
-		gpu_triangle.position = triangle->getPosition();
-		gpu_triangle.mat_index = triangle->getMaterialIndex();
-
-		gpu_triangle.vertex1 = triangle->getVertex2();
-		gpu_triangle.vertex2 = triangle->getVertex3();
-		gpu_triangle.normal = triangle->getNormal();
-
-		_gpu_triangles.push_back(gpu_triangle);
 
 		gpu_obj.vertex1 = triangle->getVertex2();
 		gpu_obj.vertex2 = triangle->getVertex3();
@@ -188,11 +178,14 @@ void		Scene::addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float sc
 
 		gpu_triangle.vertex1 = triangles[i].getVertex2();
 		gpu_triangle.vertex2 = triangles[i].getVertex3();
-		gpu_triangle.normal = triangles[i].getNormal();
 
 		gpu_triangle.texture_vertex1 = triangles[i].getTextureVertex1();
 		gpu_triangle.texture_vertex2 = triangles[i].getTextureVertex2();
 		gpu_triangle.texture_vertex3 = triangles[i].getTextureVertex3();
+
+		gpu_triangle.normal_vertex1 = triangles[i].getNormalVertex1();
+		gpu_triangle.normal_vertex2 = triangles[i].getNormalVertex2();
+		gpu_triangle.normal_vertex3 = triangles[i].getNormalVertex3();
 
 		_gpu_triangles.push_back(gpu_triangle);
 	}

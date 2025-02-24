@@ -102,10 +102,6 @@ bool intersectTriangle(Ray ray, GPUTriangle obj, out hitInfo hit)
 				hit.v >= 0.0 && (hit.u + hit.v) <= 1.0 &&
 				hit.t > 0.0;
 	
-	// hit.position = ray.origin + ray.direction * t;
-	// hit.normal = obj.normal * sign(-dot(ray.direction, obj.normal));
-	// hit.normal = vec3(u, v, 1 - (u + v)); //texture mapping
-	
 	return (valid);
 }
 
@@ -114,7 +110,6 @@ bool intersectTriangle(Ray ray, GPUObject obj, out hitInfo hit)
 	GPUTriangle tri;
 
 	tri.position = obj.position;
-	tri.normal = obj.normal;
 	tri.vertex1 = obj.vertex1;
 	tri.vertex2 = obj.vertex2;
 

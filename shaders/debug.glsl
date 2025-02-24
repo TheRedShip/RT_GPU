@@ -55,7 +55,10 @@ struct GPUTriangle
 	vec3	position;
 	vec3	vertex1;
 	vec3	vertex2;
-	vec3	normal;
+
+	vec3	normal_vertex1;
+	vec3	normal_vertex2;
+	vec3	normal_vertex3;
 
 	vec2	texture_vertex1;
 	vec2	texture_vertex2;
@@ -189,7 +192,8 @@ hitInfo traceBVH(Ray ray, GPUBvhData bvh_data, inout Stats stats)
 				{
 					hit.t = temp_hit.t;
 					hit.obj_index = bvh_data.triangle_start_index + node.index + i;
-					hit.normal = temp_hit.normal;
+					hit.u = temp_hit.u;
+					hit.v = temp_hit.v;
 				}
 			}
 		}
@@ -260,8 +264,9 @@ hitInfo traverseBVHs(Ray ray, inout Stats stats)
 			vec3 position = transformedRay.origin + transformedRay.direction * temp_hit.t;
 			hit.position = inverseTransformMatrix * position + bvh_data.offset;
 			
-			vec3 based_normal = triangle.normal * sign(-dot(transformedRay.direction, triangle.normal));
-			hit.normal = normalize(inverseTransformMatrix * based_normal);
+			vec3 normal = normalize(triangle.normal_vertex1 * (1.0 - hit.u - hit.v) + triangle.normal_vertex2 * hit.u + triangle.normal_vertex3 * hit.v);
+			vec3 directed_normal = normal * sign(-dot(transformedRay.direction, normal));
+			hit.normal = normalize(inverseTransformMatrix * directed_normal);
 		}
 	}
 
