@@ -26,20 +26,22 @@ class ObjParser
 	private:
 		glm::vec3					getVertex(std::stringstream &line);
 		glm::vec2					getUV(std::stringstream &line);
+		glm::vec3					getNormals(std::stringstream &line);
 		void 						addFace(std::stringstream &line);
 		long int					checkVertexIndex(int index, size_t size);
 		void						parseMtl(std::stringstream &line, Scene &scene);
-		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, int inv);
-		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> textureVertices);
+		bool 						addTriangleFromPolygon(std::vector<glm::vec3> &vertices, std::vector<glm::vec2> &textureVertices, std::vector<glm::vec3> &normalVertices, int inv);
+		void						addTriangle(glm::vec3 v1, glm::vec3 v2, glm::vec3 v3, std::vector<glm::vec2> textureVertices, std::vector<glm::vec3> normalVertices);
 		std::string					getFilePath(std::string &file);
 		int							pointInTriangle(glm::vec3 pts[3], std::vector<glm::vec3> vertices, size_t cur);
 		std::vector<std::string>	objSplit(std::string str, std::string delim);
-		void						getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::stringstream &line);
+		void						getFaceVertices(std::vector<glm::vec3> &faceVertices, std::vector<glm::vec2> &textureVertices, std::vector<glm::vec3> &normalVertices, std::stringstream &line);
 
 		std::string					_filename;
 		std::ifstream				_file;
 		std::vector<glm::vec3>		_vertices;
 		std::vector<glm::vec2>		_textureVertices;
+		std::vector<glm::vec3>		_normalVertices;
 		int							_mat;
 		std::map<std::string, int>	_matNames;
 

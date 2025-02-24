@@ -7,5 +7,5 @@ MAT	255 255 255		1.0		0.0 0.0 LAM 0 // 1
 # sp	0 2 0	150		1
 
 # pl	0 0 0	0 1 0	0
-OBJ	obj/castle.obj
+OBJ	obj/lambo2.obj	0 0 0 0.25
 

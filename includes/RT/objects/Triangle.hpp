@@ -52,12 +52,20 @@ class Triangle : public Object
 			_mat_index = mat_index;
 		}
 		Triangle(const glm::vec3& position, const glm::vec3& vertex2, const glm::vec3& vertex3,
-				const glm::vec2& vt1, const glm::vec2& vt2, const glm::vec2& vt3, const int mat_index)
+				const glm::vec2& vt1, const glm::vec2& vt2, const glm::vec2& vt3,
+				const glm::vec3& vn1, const glm::vec3& vn2, const glm::vec3& vn3,
+				const int mat_index)
 					: Object(position, mat_index), _vertex2(vertex2), _vertex3(vertex3),
-					_texture_vertex1(vt1), _texture_vertex2(vt2), _texture_vertex3(vt3)
+					_texture_vertex1(vt1), _texture_vertex2(vt2), _texture_vertex3(vt3),
+					_normal_vertex1(vn1), _normal_vertex2(vn2), _normal_vertex3(vn3)
 			{
-		
-				_normal = glm::normalize(glm::cross(_vertex2 - _position, _vertex3 - _position)); //optimization
+				if (vn1 == glm::vec3(0.0f) && vn2 == glm::vec3(0.0f) && vn3 == glm::vec3(0.0f))
+				{
+					glm::vec3 normal = glm::normalize(glm::cross(_vertex2 - _position, _vertex3 - _position));
+					_normal_vertex1 = normal;
+					_normal_vertex2 = normal;
+					_normal_vertex3 = normal;
+				}
 				_centroid = (_position + _vertex2 + _vertex3) / 3.0f;
 				// _vertex2 -= _position; //optimization
 				// _vertex3 -= _position; //optimization
@@ -66,6 +74,10 @@ class Triangle : public Object
 		const glm::vec2		&getTextureVertex1() const {return (_texture_vertex1); }
 		const glm::vec2		&getTextureVertex2() const {return (_texture_vertex2); }
 		const glm::vec2		&getTextureVertex3() const {return (_texture_vertex3); }
+
+		const glm::vec3		&getNormalVertex1() const {return (_normal_vertex1); }
+		const glm::vec3		&getNormalVertex2() const {return (_normal_vertex2); }
+		const glm::vec3		&getNormalVertex3() const {return (_normal_vertex3); }
 
 		const glm::vec3		&getVertex2() const { return (_vertex2); }
 		const glm::vec3		&getVertex3() const { return (_vertex3); }
@@ -82,6 +94,10 @@ class Triangle : public Object
 		glm::vec2	_texture_vertex1;
 		glm::vec2	_texture_vertex2;
 		glm::vec2	_texture_vertex3;
+
+		glm::vec3	_normal_vertex1;
+		glm::vec3	_normal_vertex2;
+		glm::vec3	_normal_vertex3;
 
 		glm::vec3	_normal;
 
