@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/17 15:24:12 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:17:38 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ class Window
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
-
+		int			getOutputTexture(void) const;
 		int			getPixelisation(void);
 
 		bool		&getAccumulate(void);
@@ -57,6 +57,8 @@ class Window
 		Scene		*_scene;
 		Renderer	*_renderer;
 		Clusterizer *_clusterizer;
+
+		int			_output_texture;
 		
 		float		_fps;
 		float		_delta;

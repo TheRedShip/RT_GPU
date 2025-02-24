@@ -96,7 +96,7 @@ int main(int argc, char **argv)
 		window.imGuiNewFrame();
 
 		render_program.use();
-		drawScreenTriangle(VAO, textures[0], render_program.getProgram());
+		drawScreenTriangle(VAO, textures[window.getOutputTexture()], render_program.getProgram());
 
 		window.imGuiRender(raytracing_program);
 
