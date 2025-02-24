@@ -41,7 +41,7 @@ class Window
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
 		int			getFrameCount(void) const;
-
+		int			getOutputTexture(void) const;
 		int			getPixelisation(void);
 
 		bool		&getAccumulate(void);
@@ -54,6 +54,8 @@ class Window
 		GLFWwindow	*_window;
 		Scene		*_scene;
 		Renderer	*_renderer;
+
+		int			_output_texture;
 		
 		float		_fps;
 		float		_delta;

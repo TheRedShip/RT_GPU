@@ -23,6 +23,7 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 	_fps = 0;
 	_frameCount = 0;
 	_pixelisation = 0;
+	_output_texture = 0;
 	_renderer = new Renderer(scene, this, args);
 	glfwSetErrorCallback(GLFWErrorCallback);
 	if (!glfwInit())
@@ -200,6 +201,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 	ImGui::Text("Fps: %d", int(_fps));
 	ImGui::Text("Frame: %d", _frameCount);
 	ImGui::Text("Objects: %lu", _scene->getObjectData().size() + _scene->getTriangleData().size());
+	ImGui::SliderInt("Output texture", &_output_texture, 0, 7);
 	
 	ImGui::Spacing();
 
@@ -352,6 +354,11 @@ void		Window::setFrameCount(int nb)
 bool		&Window::getAccumulate(void)
 {
 	return (accumulate);
+}
+
+int			Window::getOutputTexture(void) const
+{
+	return (_output_texture);
 }
 
 int			Window::getPixelisation(void)
