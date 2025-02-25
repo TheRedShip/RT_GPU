@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/16 15:00:33 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/06 02:19:50 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 17:53:46 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,7 @@ glm::vec3	ObjParser::getNormals(std::stringstream &line)
 {
 	glm::vec3 res;
 
-	if(!(line >> res.x) || !(line >> res.y) || (!(line >> res.z)) && !line.eof())
+	if((!(line >> res.x) || !(line >> res.y) || !(line >> res.z)) && !line.eof())
 		throw std::runtime_error("syntax error in obj file while parsing normal vertex");
 	return(res);
 }

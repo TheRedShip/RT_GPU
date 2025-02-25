@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/15 22:54:52 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 18:26:41 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,8 @@ int main(int argc, char **argv)
 		raytracing_program.set_int("u_pixelisation", window.getPixelisation());
 		raytracing_program.set_float("u_time", (float)(glfwGetTime()));
 		raytracing_program.set_vec2("u_resolution", glm::vec2(WIDTH, HEIGHT));
+
+		window.reduceTimeFrame();
 
 		std::map<std::string, std::vector<GLuint>> object_textures;
 		object_textures["textures"] = scene.getTextureIDs();
