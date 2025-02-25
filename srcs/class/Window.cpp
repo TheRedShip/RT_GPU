@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/18 13:34:26 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:23:10 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -377,7 +377,7 @@ int			Window::getPixelisation(void)
 
 	if (mouse || movement)
 	{
-		if(_fps < 30 && _pixelisation < 16)	
+		if(_fps > 15 && _fps < 30 && _pixelisation < 8)	
 			_pixelisation++;
 		if(_fps > 60 && _pixelisation > 0)
 			_pixelisation--;
@@ -385,4 +385,32 @@ int			Window::getPixelisation(void)
 	else if(_pixelisation)
 		_pixelisation = 0;
 	return (_pixelisation + 1);
+}
+
+void		Window::reduceTimeFrame()
+{
+	static bool was_moving = false;
+	static int previous_bounce = _scene->getCamera()->getBounce(); 
+
+	bool mouse = glfwGetMouseButton(_window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS;
+	bool movement = _scene->getCamera()->getVelocity() > 0.0f;
+	
+	bool is_moving = mouse || movement;
+	bool has_moved = is_moving != was_moving;
+	
+	if (has_moved && is_moving && _fps < 15)
+	{
+		previous_bounce = _scene->getCamera()->getBounce();
+
+		_scene->getCamera()->setBounce(1);
+		_output_texture = 7;
+	}
+	
+	if (has_moved && !is_moving)
+	{
+		_scene->getCamera()->setBounce(previous_bounce);
+		_output_texture = 0;
+	}
+	
+	was_moving = is_moving;
 }

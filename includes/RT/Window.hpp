@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/18 16:17:38 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:23:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ class Window
 		bool		shouldClose();
 
 		void		process_input();
+
+		void		reduceTimeFrame();
 		
 		static void	keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods);
 		static void	mouseMoveCallback(GLFWwindow *window, double xpos, double ypos);
