@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 23:41:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 00:41:00 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 14:47:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ class Ffmpeg
 		~Ffmpeg();
 
 		void		addImageToVideo(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void		addImageToVideo(std::vector<uint8_t> &buf);
 
 		static void	updateAvailableCodecs(std::vector<const AVCodec *> &codecList, std::vector<const char *> &codecListStr, std::string filename, int mode, AVCodecID id);
 	

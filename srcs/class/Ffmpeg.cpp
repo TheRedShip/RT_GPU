@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/23 23:28:19 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 00:44:26 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 14:47:15 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,6 +118,12 @@ void		Ffmpeg::addImageToVideo(Scene &scene, std::vector<GLuint> &textures, Shade
 			_rgb_frame->data[0][videoFrameOffset + 2] = colors.z * 255;
 		}
 	}
+	convertAndAddToVid();
+}
+
+void		Ffmpeg::addImageToVideo(std::vector<uint8_t> &buf)
+{
+	memcpy(_rgb_frame->data[0], buf.data(), WIDTH * HEIGHT * 3);
 	convertAndAddToVid();
 }
 

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:54:35 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 17:42:35 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 19:17:19 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,7 +185,7 @@ void	Renderer::imguiRenderSettings(Clusterizer &clust)
 		_renderSettings = 0;
 }
 
-void Renderer::showRenderInfo(int isImgui)
+void Renderer::showRenderInfo(int isImgui, Clusterizer *clust)
 {
 	std::ostringstream oss;
 	long int totalFrames;
@@ -250,7 +250,7 @@ void Renderer::showRenderInfo(int isImgui)
 		if(ImGui::Button("stop"))
 		{
 			_destPathIndex = 0;
-			endRender();
+			endRender(clust);
 		}
 	}
 	else
@@ -312,7 +312,7 @@ void Renderer::renderImgui(Clusterizer &clust)
 	if (ImGui::CollapsingHeader("Renderer"))
 	{
 		if(rendering() || clust.hasJobs())
-			showRenderInfo(1);
+			showRenderInfo(1, &clust);
 		else if(_renderSettings)
 			imguiRenderSettings(clust);
 		else

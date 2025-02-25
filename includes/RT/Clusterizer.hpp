@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 01:49:07 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 22:26:49 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,8 @@ typedef struct s_client
 	t_job				*curJob;
 	uint8_t				progress;
 	bool				ready;
+	bool				readyRespond;
+	bool				gotGo;
 }	t_client;
 
 typedef enum e_msg
@@ -46,7 +48,8 @@ typedef enum e_msg
 	JOB,
 	PROGRESS_UPDATE,
 	IMG_SEND_RQ,
-	IMG
+	IMG,
+	ABORT
 } t_msg;
 
 class Clusterizer
@@ -62,6 +65,7 @@ class Clusterizer
 		bool	hasJobs(void);
 
 		void	addJob(glm::vec3 pos, glm::vec2 dir, size_t samples, size_t frames, GPUDenoise &denoise);
+		void	abortJobs(void);
 
 	private:
 		bool				_isActive;
@@ -72,19 +76,21 @@ class Clusterizer
 
 		std::vector<t_job *> _jobs[3];
 
-		void	imguiJobStat(void);
-		void	imguiClients(void);
+		void		imguiJobStat(void);
+		void		imguiClients(void);
+		std::string	clientStatus(t_client client);
 
 	private: //client
-		void	initClient(std::string &dest);
-		void	openClientConnection(const char *ip, int port);
-		void	clientHandleBuffer(void);
-		void	updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
-		void	clientGetJob(void);
-		void	clientReceive(void);
-		void	handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
-		void	sendProgress(uint8_t progress);
-		void	sendImageToServer(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					initClient(std::string &dest);
+		void					openClientConnection(const char *ip, int port);
+		void					clientHandleBuffer(void);
+		void					updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					clientGetJob(void);
+		void					clientReceive(void);
+		void					handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					sendProgress(uint8_t progress);
+		void					sendImageToServer(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		std::vector<uint8_t>	rgb32fToRgb24i(std::vector<float> &imageFloat);
 
 		int						_serverFd;
 		std::string				_serverIp;
@@ -102,13 +108,16 @@ class Clusterizer
 		int		acceptClients(void);
 		void	updatePollfds(void);
 		int		updateBuffer(int fd);
-		void	handleBuffer(int fd, std::vector<uint8_t> &buf);
+		bool	handleBuffer(int fd, std::vector<uint8_t> &buf);
 		void	deleteClient(int fd);
+		int		handleSendRequests(void);
+		void	getImageFromClient(int fd, std::vector<uint8_t> &buf);
+		void	redistributeJob(t_job *job);
 
 		int		dispatchJobs(void);
 
 		int							_serverSocket;
 		struct pollfd				*_pollfds;
 		std::map<int, t_client>		_clients;
-		size_t						_curId;
+		size_t						_curFrame;
 };

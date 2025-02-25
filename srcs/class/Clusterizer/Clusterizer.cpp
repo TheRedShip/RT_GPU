@@ -6,20 +6,11 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 01:49:23 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 22:33:01 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
-
-//TODO before push :
-//	- client work on image when gets job 
-//	- handle client disconnect
-//	- show image number in imgui
-//	- client send progress update when percent change
-//	- server action to send map name
-//	- when image is done, send a image send request and wait for server response
-//	- when server accepts send request, send full image
 
 Clusterizer::Clusterizer(Arguments &args, Renderer *renderer)
 {

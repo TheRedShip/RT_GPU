@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 16:01:59 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/23 22:13:32 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 19:15:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,6 +168,6 @@ void Renderer::makeMovement(float time)
 	{
 		_destPathIndex = 0;
 		if(!_testMode)
-			endRender();
+			endRender(0);
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 19:52:51 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 20:52:33 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 22:26:44 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,21 @@ void Clusterizer::imguiJobStat(void)
 	ImGui::Text("  done : %lu", _jobs[DONE].size());
 }
 
+std::string Clusterizer::clientStatus(t_client client)
+{
+	if(!client.ready)	
+		return("not ready");
+	if(client.curJob)
+	{
+		if(client.gotGo)
+			return("sending image to server");
+		if(client.readyRespond)
+			return("waiting for server to send image");
+		return("working on frame " + std::to_string(client.curJob->frameNb));
+	}
+	return("idle");
+}
+
 void Clusterizer::imguiClients(void)
 {
 	std::string status;
@@ -28,13 +43,7 @@ void Clusterizer::imguiClients(void)
 	ImGui::BeginChild("clientList", ImVec2(0, 0), true, 0);
 	for(auto it = _clients.begin();it != _clients.end(); it++)
 	{
-		if(it->second.ready)
-			status = "idle";
-		else if(!it->second.ready && it->second.curJob)
-			status = "working";
-		else if(it->second.ready)
-			status = "not ready";
-		
+		status = clientStatus(it->second);
 		ImGui::Text("status : %s", status.c_str());
 		if(it->second.curJob)
 			ImGui::ProgressBar((float)it->second.progress / 100);

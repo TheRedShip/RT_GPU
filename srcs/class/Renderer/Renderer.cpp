@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 00:52:27 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 19:16:53 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void		Renderer::update(std::vector<GLuint> &textures, ShaderProgram &denoisingPr
 
 	_curSamples++;
 	if(_headless)
-		showRenderInfo(0);
+		showRenderInfo(0, 0);
 
 	if((_testMode && _curSamples < _testSamples) || (!_testMode && _curSamples < _samples))
 		return;
@@ -165,13 +165,13 @@ void	Renderer::initRender(Clusterizer *clust)
 		throw std::runtime_error("render path is 0 seconds long, aborting");
 
 	_curPathIndex = 0;
+	_frameCount = 0;
 	_destPathIndex = _path.size() - 1;
 	_renderStartTime = glfwGetTime();
 	if(clust && clust->isServer())
 		createClusterJobs(*clust);
 	else
 	{
-		_frameCount = 0;
 		_curSamples = 0;
 		_testMode = 0;
 		_scene->getCamera()->setPosition(_path[0].pos);
@@ -183,15 +183,29 @@ void	Renderer::initRender(Clusterizer *clust)
 
 void		Renderer::addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
 {
+	if(!_ffmpegVideo)
+		return;
 	_ffmpegVideo->addImageToVideo(*_scene, textures, denoisingProgram);
 }
 
-void Renderer::endRender(void)
+void		Renderer::addImageToRender(std::vector<uint8_t> &buf)
+{
+	if(!_ffmpegVideo)
+		return;
+	_ffmpegVideo->addImageToVideo(buf);
+	_frameCount++;
+}
+
+void Renderer::endRender(Clusterizer *clust)
 {
 	_destPathIndex = 0;
 	if(_headless)
 		_shouldClose = 1;
-	delete _ffmpegVideo;
+	if(_ffmpegVideo)
+		delete _ffmpegVideo;
+	if(clust && clust->isServer())
+		clust->abortJobs();
+
 }
 
 bool	Renderer::shouldClose(void) const

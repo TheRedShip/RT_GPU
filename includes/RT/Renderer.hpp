@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 17:21:08 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 19:16:25 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,11 +48,13 @@ class Renderer
 
 		int			rendering(void) const;
 		bool		shouldClose(void) const;
+		void		addImageToRender(std::vector<uint8_t> &buffer);
+		void		endRender(Clusterizer *clust);
 
 	private:
 		void		init(Scene *scene, Window *win);
 
-		void		showRenderInfo(int isImgui); 
+		void		showRenderInfo(int isImgui, Clusterizer *clust); 
 		std::string	floatToTime(double timef);
 		float		calcTime(glm::vec3 pos);
 
@@ -76,7 +78,6 @@ class Renderer
 		void		createClusterJobs(Clusterizer &clust);
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
 		void		addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
-		void		endRender(void);
 
 
 		Scene							*_scene;
