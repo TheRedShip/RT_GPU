@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/23 19:05:24 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:51:46 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 	_frameCount = 0;
 	_pixelisation = 0;
 	_renderer = new Renderer(scene, this, args);
+	_clusterizer = new Clusterizer(args, _renderer);
 	glfwSetErrorCallback(GLFWErrorCallback);
 	if (!glfwInit())
 	{
@@ -184,6 +185,11 @@ void		Window::rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoi
 	_renderer->update(textures, denoisingProgram);
 }
 
+void		Window::clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+{
+	_clusterizer->update(*_scene, *this, textures, denoisingProgram);
+}
+
 void Window::imGuiNewFrame()
 {
 	ImGui_ImplOpenGL3_NewFrame();
@@ -191,7 +197,7 @@ void Window::imGuiNewFrame()
 	ImGui::NewFrame();
 }
 
-void Window::imGuiRender(ShaderProgram &raytracing_program, Clusterizer &clusterizer)
+void Window::imGuiRender(ShaderProgram &raytracing_program)
 {
 	bool has_changed = false;
 	
@@ -317,8 +323,8 @@ void Window::imGuiRender(ShaderProgram &raytracing_program, Clusterizer &cluster
 	}
 
 
-	_renderer->renderImgui(clusterizer);
-	clusterizer.imguiRender();
+	_renderer->renderImgui(*_clusterizer);
+	_clusterizer->imguiRender();
 	
 	ImGui::End();
 

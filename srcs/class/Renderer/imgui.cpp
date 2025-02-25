@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 15:54:35 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 00:34:48 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 17:42:35 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void	Renderer::imguiRenderSettings(Clusterizer &clust)
 		try
 		{
 			if(ImGui::Button("start render"))
-				initRender();
+				initRender(&clust);
 			ImGui::SameLine();
 			if(ImGui::Button("save path"))
 				savePath();

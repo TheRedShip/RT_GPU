@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/23 22:15:38 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 00:53:02 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,7 +98,6 @@ void Clusterizer::handleBuffer(int fd, std::vector<uint8_t> &buf)
 	{
 		_clients[fd].ready = 1;
 		std::cout << "client " << fd << " is ready !" << std::endl;
-		sendBuffer.push_back(ACK);
 	}
 
 	if(sendBuffer.size())
@@ -120,7 +119,8 @@ int Clusterizer::updateBuffer(int fd)
 
 int Clusterizer::dispatchJobs(void)
 {
-	t_job *tmp;
+	t_job	*tmp;
+	uint8_t	sendBuf;
 	int		dispatched;
 
 	dispatched = 0;
@@ -134,26 +134,30 @@ int Clusterizer::dispatchJobs(void)
 			tmp = _jobs[WAITING].front();
 			_jobs[WAITING].erase(_jobs[WAITING].begin());
 			_jobs[IN_PROGRESS].push_back(tmp);
+			sendBuf = JOB;
+			(void)write(it->first, &sendBuf, 1);
 			(void)write(it->first, &tmp, sizeof(t_job));
 			it->second.ready = 0;
 			it->second.progress = 0;
 			it->second.curJob = tmp;
 			dispatched = 1;
 		}
+		if(!_jobs[WAITING].size())
+			return (1);
 	}
 	return (dispatched);
 }
 
-void Clusterizer::addJob(glm::vec3 pos, glm::vec2 dir, size_t samples)
+void Clusterizer::addJob(glm::vec3 pos, glm::vec2 dir, size_t samples, size_t frame, GPUDenoise &denoise)
 {
 	t_job *tmp;
 
 	tmp = new t_job;
-	tmp->scene = _sceneName;
 	tmp->pos = pos;
 	tmp->dir = dir;
 	tmp->samples = samples;
-	tmp->id = _curId++;
+	tmp->frameNb = frame;
+	tmp->denoise = denoise;
 	_jobs[WAITING].push_back(tmp);
 
 	std::cout << "new job added : " << std::endl;
@@ -171,6 +175,8 @@ void Clusterizer::updateServer(void)
 	while(didSomething)
 	{
 		didSomething = acceptClients();
+		if(dispatchJobs())
+			didSomething = 1;
 		recv = poll(_pollfds, _clients.size(), 1);
 		if(!recv)
 			return ;
@@ -186,7 +192,5 @@ void Clusterizer::updateServer(void)
 				}
 			}
 		}
-		if(dispatchJobs())
-			didSomething = 1;
 	}
 }

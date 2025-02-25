@@ -6,19 +6,29 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/23 22:41:07 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:49:23 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "RT.hpp"
 
-Clusterizer::Clusterizer(Arguments &args)
+//TODO before push :
+//	- client work on image when gets job 
+//	- handle client disconnect
+//	- show image number in imgui
+//	- client send progress update when percent change
+//	- server action to send map name
+//	- when image is done, send a image send request and wait for server response
+//	- when server accepts send request, send full image
+
+Clusterizer::Clusterizer(Arguments &args, Renderer *renderer)
 {
 	_isActive = 1;
 	_isServer = 0;
 	_error = 0;
 	_serverSocket = 0;
 	_sceneName = args.getSceneName();
+	_renderer = renderer;
 
 	if(args.getBoolean("server"))
 	{
@@ -40,14 +50,14 @@ Clusterizer::~Clusterizer(void)
 		close(_serverSocket);
 }
 
-void Clusterizer::update(void)
+void Clusterizer::update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
 {
 	if(!_isActive)
 		return ;
 	if(_isServer)
 		updateServer();
 	else
-		updateClient();
+		updateClient(scene, win, textures, denoisingProgram);
 }
 
 bool Clusterizer::getError(void)

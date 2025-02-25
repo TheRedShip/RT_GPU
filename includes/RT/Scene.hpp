@@ -6,12 +6,11 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/02/04 03:11:36 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:44:31 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef RT_SCENE__HPP
-# define RT_SCENE__HPP
+#pragma once
 
 # include "RT.hpp"
 
@@ -76,15 +75,6 @@ struct GPUDebug
 	int	mode;
 	int	triangle_treshold;
 	int	box_treshold;
-};
-
-struct GPUDenoise
-{
-	int		enabled;
-	int		pass;
-	float	c_phi;
-	float	p_phi;
-	float	n_phi;
 };
 
 struct GPUBvh
@@ -176,5 +166,3 @@ class Scene
 
 		Camera						*_camera;
 };
-
-#endif

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/22 19:52:51 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/22 23:39:46 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 20:52:33 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,12 @@ void Clusterizer::imguiClients(void)
 	ImGui::BeginChild("clientList", ImVec2(0, 0), true, 0);
 	for(auto it = _clients.begin();it != _clients.end(); it++)
 	{
-		if(!it->second.ready)
-			status = "not ready";
-		else if(it->second.ready && it->second.curJob)
+		if(it->second.ready)
+			status = "idle";
+		else if(!it->second.ready && it->second.curJob)
 			status = "working";
 		else if(it->second.ready)
-			status = "idle";
+			status = "not ready";
 		
 		ImGui::Text("status : %s", status.c_str());
 		if(it->second.curJob)

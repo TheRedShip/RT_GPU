@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:29:26 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 00:32:38 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/24 17:21:08 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ class Renderer
 		t_pathPoint	createNextPoint(t_pathPoint from, t_pathPoint to);
 		void		getInterpolationPoints(t_pathPoint &prev, t_pathPoint &from, t_pathPoint &to, t_pathPoint &next);
 
-		void		initRender();
+		void		initRender(Clusterizer *clust);
 		void		createClusterJobs(Clusterizer &clust);
 		void		fillGoodCodecList(std::vector<AVCodecID> &lst);
 		void		addImageToRender(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);

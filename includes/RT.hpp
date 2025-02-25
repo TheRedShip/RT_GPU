@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:52:10 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/23 23:39:46 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:44:28 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,16 @@ struct Vertex {
     glm::vec2 position;
     glm::vec2 texCoord;
 };
+
+
+struct GPUDenoise
+{
+	int		enabled;
+	int		pass;
+	float	c_phi;
+	float	p_phi;
+	float	n_phi;
+}; // il est chiant lui
 
 # include "Object.hpp"
 # include "objects/Sphere.hpp"

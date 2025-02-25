@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/24 00:49:53 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 00:52:27 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ Renderer::Renderer(Scene *scene, Window *win, Arguments &args)
 
 	try{
 		if(_headless)
-			initRender();
+			initRender(0);
 	}
 	catch(std::exception &e)
 	{
@@ -136,7 +136,7 @@ void		Renderer::addTeleport(glm::vec3 from_pos, glm::vec2 from_dir, glm::vec3 to
 
 void	Renderer::createClusterJobs(Clusterizer &clust)
 {
-	float delta;
+	double delta;
 	size_t frames;
 	glm::vec3 pos;
 	glm::vec2 dir;
@@ -147,15 +147,15 @@ void	Renderer::createClusterJobs(Clusterizer &clust)
 	while(_destPathIndex)
 	{
 		interpolateMovement(delta * frames, &pos, &dir);
-		clust.addJob(pos, dir, _samples);
+		frames++;
+		clust.addJob(pos, dir, _samples, frames, _scene->getDenoise());
 		if(_curPathIndex == _destPathIndex)
 			_destPathIndex = 0;
 		(void)clust;
-		frames++;
 	}
 }
 
-void	Renderer::initRender(void)
+void	Renderer::initRender(Clusterizer *clust)
 {
 	if(_path.size() < 2)
 		throw std::runtime_error("render path doesn't have enough path points");
@@ -167,10 +167,9 @@ void	Renderer::initRender(void)
 	_curPathIndex = 0;
 	_destPathIndex = _path.size() - 1;
 	_renderStartTime = glfwGetTime();
-//	if(clust && clust->isServer())
-//		createClusterJobs(*clust);
-//	else
-	if(1)
+	if(clust && clust->isServer())
+		createClusterJobs(*clust);
+	else
 	{
 		_frameCount = 0;
 		_curSamples = 0;

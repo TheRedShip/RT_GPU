@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/22 22:11:34 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:50:04 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ class Window
 		static void	mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 		void		imGuiNewFrame();
-		void		imGuiRender(ShaderProgram &raytracing_program, Clusterizer &clusterizer);
+		void		imGuiRender(ShaderProgram &raytracing_program);
 
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
@@ -51,10 +51,12 @@ class Window
 		bool		isRendering();
 
 		void		rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void		clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;
 		Renderer	*_renderer;
+		Clusterizer *_clusterizer;
 		
 		float		_fps;
 		float		_delta;

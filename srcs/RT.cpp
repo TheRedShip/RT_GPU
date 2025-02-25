@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/22 22:09:46 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/02/25 01:51:27 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,10 +27,6 @@ int main(int argc, char **argv)
 	Arguments	args(argc, argv);
 	if (args.error())
 		return (1);
-
-	Clusterizer clusterizer(args);
-	if (clusterizer.getError())
-		return(1);
 
 	Scene		scene(args.getSceneName());
 	if (scene.fail())
@@ -71,7 +67,7 @@ int main(int argc, char **argv)
 
 	while (!window.shouldClose())
 	{
-		clusterizer.update();
+		window.clusterizerUpdate(textures, denoising_program);
 		window.updateDeltaTime();
 		
 		updateDataOnGPU(scene, buffers);
@@ -103,7 +99,7 @@ int main(int argc, char **argv)
 		render_program.use();
 		drawScreenTriangle(VAO, textures[0], render_program.getProgram());
 
-		window.imGuiRender(raytracing_program, clusterizer);
+		window.imGuiRender(raytracing_program);
 
 		window.display();
 		window.pollEvents();
