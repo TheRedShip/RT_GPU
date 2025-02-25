@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/18 17:01:15 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 17:08:16 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -361,7 +361,5 @@ void Clusterizer::updateServer(void)
 				}
 			}
 		}
-		if(dispatchJobs())
-			didSomething = 1;
 	}
 }
