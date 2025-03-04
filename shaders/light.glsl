@@ -2,7 +2,7 @@ hitInfo	traceRay(inout Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    // return vec3(0.);
+    return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -36,9 +36,37 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
     
     Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir, (1.0 / light_dir));
     hitInfo shadow_hit = traceRay(shadow_ray);
-    
-    if (shadow_hit.obj_index != light_index)
-        return vec3(0.0);
+
+    vec3 dir = normalize(vec3(-0.5, 0.2, 0.));
+    if (dot(shadow_ray.direction, dir) < 0.995 || shadow_hit.obj_index != light_index)
+    {
+        theta = 2.0 * M_PI * randomValue(rng_state);
+        phi = acos(2.0 * randomValue(rng_state) - 1.0);
+        
+        sample_point = obj.position + tan(acos(0.995)) * light_dist * vec3(
+            sin(phi) * cos(theta),
+            sin(phi) * sin(theta),
+            cos(phi)
+        );
+
+        Ray light_ray = Ray(sample_point, -dir, (1.0 / -dir));
+        hitInfo light_ray_hit = traceRay(light_ray);
+
+        if (light_ray_hit.obj_index == -1)
+            return (vec3(0.0));
+
+        GPUMaterial light_ray_mat = materials[light_ray_hit.mat_index];
+        if (light_ray_mat.metallic == 0.)
+            return vec3(0.0);
+
+        Ray reflect_ray = newRay(light_ray_hit, light_ray, rng_state);
+        reflect_ray.inv_direction = 1.0 / reflect_ray.direction;
+
+        vec3 reflect_to_particle = normalize(position - reflect_ray.origin);
+        
+        if (dot(reflect_ray.direction, reflect_to_particle) < 0.995)
+            return vec3(0.0);
+    }
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
     return mat.emission * mat.color / (light_dist * light_dist) * cos_theta / (4.0 * M_PI * (obj.radius / 2.0) * (obj.radius / 2.0));
@@ -58,6 +86,10 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
     
     if (shadow_hit.obj_index != light_index)
         return vec3(0.0);
+
+    vec3 dir = normalize(vec3(-0.5, 0., 0.));
+    if (dot(shadow_ray.direction, dir) < 0.995)
+        return vec3(0.);
 
 	vec3 crossQuad = cross(obj.vertex1, obj.vertex2);
     float area = length(crossQuad);
@@ -143,8 +175,10 @@ void    calculateLightColor(GPUMaterial mat, hitInfo hit, inout vec3 color, inou
     else
     {
         vec3 mat_color = (mat.type == 3) ? getCheckerboardColor(mat, hit) : mat.color;
+        
         color *= mat_color;
         light += mat.emission * mat_color;
+
         // if (mat.emission == 0.0)
             // light += sampleLights(hit.position, rng_state);
     }
