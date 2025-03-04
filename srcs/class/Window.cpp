@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/18 16:23:10 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:24:39 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -326,7 +326,6 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 		has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
 	}
 
-
 	_renderer->renderImgui(*_clusterizer);
 	_clusterizer->imguiRender();
 	
@@ -334,7 +333,6 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 
 	if (has_changed)
 		_frameCount = (accumulate == 0) - 1;
