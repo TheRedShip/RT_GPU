@@ -2,7 +2,7 @@ hitInfo	traceRay(inout Ray ray);
 
 vec3 GetEnvironmentLight(Ray ray)
 {
-    return vec3(0.);
+    // return vec3(0.);
 	vec3 sun_pos = vec3(-0.5, 0.5, 0.5);
 	float SunFocus = 1.5;
 	float SunIntensity = 1.;
@@ -37,17 +37,26 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
     Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir, (1.0 / light_dir));
     hitInfo shadow_hit = traceRay(shadow_ray);
 
-    vec3 dir = normalize(vec3(-0.5, 0.2, 0.));
+    vec3 dir = normalize(vec3(-0.5, 0.15, 0.));
     if (dot(shadow_ray.direction, dir) < 0.995 || shadow_hit.obj_index != light_index)
     {
-        theta = 2.0 * M_PI * randomValue(rng_state);
-        phi = acos(2.0 * randomValue(rng_state) - 1.0);
-        
-        sample_point = obj.position + tan(acos(0.995)) * light_dist * vec3(
-            sin(phi) * cos(theta),
-            sin(phi) * sin(theta),
-            cos(phi)
-        );
+        float circleRadius = light_dist * tan(acos(0.995));
+
+        // Uniformly sample a point in a disk.
+        float r = circleRadius * sqrt(randomValue(rng_state));
+        float theta = 2.0 * M_PI * randomValue(rng_state);
+        vec2 diskSample = vec2(r * cos(theta), r * sin(theta));
+
+        // Build an orthonormal basis for the plane perpendicular to 'dir'.
+        vec3 up = abs(dir.y) < 0.99 ? vec3(0, 1, 0) : vec3(1, 0, 0);
+        vec3 tangent = normalize(cross(up, dir));
+        vec3 bitangent = cross(dir, tangent);
+
+        // Determine the center of the projected circle on the wall.
+        vec3 circleCenter = obj.position + light_dist * dir;
+
+        // Compute the final sample point on the projected circle.
+        vec3 sample_point = circleCenter + diskSample.x * tangent + diskSample.y * bitangent;
 
         Ray light_ray = Ray(sample_point, -dir, (1.0 / -dir));
         hitInfo light_ray_hit = traceRay(light_ray);
@@ -66,6 +75,8 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
         
         if (dot(reflect_ray.direction, reflect_to_particle) < 0.995)
             return vec3(0.0);
+        mat.color *= light_ray_mat.color;
+        return mat.emission * mat.color * vec3(10.0);
     }
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
