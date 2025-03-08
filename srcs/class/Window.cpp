@@ -231,11 +231,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 			
 			ImGui::Text("Material %d", i);
 			has_changed |= ImGui::ColorEdit3("Color", &mat.color[0]);
-			if (ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f))
-			{
-				has_changed = 1;
-				_scene->updateLightAndObjects(i);
-			}
+			has_changed |= ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f);
 			
 			if (mat.type == 0)
 			{
@@ -318,14 +314,12 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 		has_changed |= ImGui::SliderInt("Triangle treshold", &_scene->getDebug().triangle_treshold, 1, 2000);
 	}
 
-
 	_renderer->renderImgui();
 	
 	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
 
 	if (has_changed)
 		_frameCount = (accumulate == 0) - 1;

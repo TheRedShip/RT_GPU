@@ -205,7 +205,7 @@ bool intersectCylinder(Ray ray, GPUObject obj, out hitInfo hit)
 
 bool intersect(Ray ray, GPUObject obj, out hitInfo hit)
 {
-	if (obj.type == 0)
+	if (obj.type == 0 || obj.type == 7)
 		return (intersectSphere(ray, obj, hit));
 	if (obj.type == 1)
 		return (intersectPlane(ray, obj, hit));

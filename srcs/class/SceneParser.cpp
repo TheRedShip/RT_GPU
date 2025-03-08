@@ -21,6 +21,7 @@ SceneParser::SceneParser(Scene *scene, std::string filename) : _scene(scene), _f
 	object_parsers["cu"] = [](std::stringstream &ss) -> Object * { return (new Cube(ss)); };
 	object_parsers["po"] = [](std::stringstream &ss) -> Object * { return (new Portal(ss)); };
 	object_parsers["cy"] = [](std::stringstream &ss) -> Object * { return (new Cylinder(ss)); };
+	object_parsers["sl"] = [](std::stringstream &ss) -> Object * { return (new SpotLight(ss)); };
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)
@@ -170,9 +171,6 @@ bool		SceneParser::parseLine(const std::string &line)
 				_scene->addObject(static_cast<Portal *>(obj)->createSupportQuad());
 			
 			_scene->addObject(obj);
-
-			if (mat.emission > 0.0)
-				_scene->updateLightAndObjects(obj->getMaterialIndex());
 		}
 
 		if (identifier == "MAT")

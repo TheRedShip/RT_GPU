@@ -44,11 +44,14 @@ void calculateVolumetricLight(float t_scatter, inout Ray ray, inout vec3 color, 
     transmittance *= exp(-volume.sigma_t * t_scatter);
     color *= volume.sigma_s / volume.sigma_t;
     
-    light += transmittance * color * sampleLights(scatter_pos, rng_state);
-    
+    vec3 direct_light = sampleLights(scatter_pos, rng_state);
+
     float cos_theta = sampleHG(volume.g, rng_state);
     vec3 new_dir = sampleDirection(ray.direction, cos_theta, rng_state);
     
     ray.origin = scatter_pos;
     ray.direction = new_dir;
+    ray.inv_direction = 1.0 / new_dir;
+    
+    light += transmittance * color * direct_light;
 }
