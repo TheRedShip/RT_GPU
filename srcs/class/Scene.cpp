@@ -94,6 +94,9 @@ void		Scene::addObject(Object *obj)
 		gpu_obj.vertex2 = quad->getRight();
 		gpu_obj.normal = quad->getNormal();
 		gpu_obj.radius = quad->getSingleSided();
+
+		if (_gpu_materials[gpu_obj.mat_index].emission > 0.)
+			this->_gpu_lights.insert(_gpu_objects.size());
 	}
 	else if (obj->getType() == Object::Type::CUBE)
 	{
@@ -114,6 +117,16 @@ void		Scene::addObject(Object *obj)
 		gpu_obj.vertex1 = triangle->getVertex2();
 		gpu_obj.vertex2 = triangle->getVertex3();
 		gpu_obj.normal = triangle->getNormal();
+	}
+	else if (obj->getType() == Object::Type::SPOTLIGHT)
+	{
+		auto spotlight = static_cast<SpotLight *>(obj);
+		
+		gpu_obj.radius = spotlight->getRadius();
+		gpu_obj.normal = spotlight->getDirection();
+		gpu_obj.vertex1 = glm::vec3(spotlight->getAngle(), 0.0f, 0.0f);
+
+		this->_gpu_lights.insert(_gpu_objects.size());
 	}
 	else if (obj->getType() == Object::Type::PORTAL)
 	{
@@ -293,25 +306,9 @@ bool		Scene::loadTextures()
 	return (true);
 }
 
-void		Scene::updateLightAndObjects(int mat_id)
-{
-	for (unsigned int i = 0; i < _gpu_objects.size(); i++)
-	{
-		if (_gpu_objects[i].mat_index == mat_id)
-			_gpu_lights.insert(i);
-	}
-	for (auto it = _gpu_lights.begin(); it != _gpu_lights.end(); )
-	{
-        if (_gpu_materials[_gpu_objects[*it].mat_index].emission <= 0.0) 
-            it = _gpu_lights.erase(it);
-		else
-            ++it;
-    }
-}
-
 bool		Scene::fail(void) const
 {
-	return(_fail);
+	return (_fail);
 }
 
 std::set<int>					Scene::getGPULights()

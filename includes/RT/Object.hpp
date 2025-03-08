@@ -47,7 +47,9 @@ class Object
 			TRIANGLE,
 			CUBE,
 			PORTAL,
-			CYLINDER
+			CYLINDER,
+			SPOTLIGHT,
+			LASERBEAM
     	};
 
     	virtual Type	getType() const = 0;

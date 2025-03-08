@@ -127,7 +127,6 @@ class Scene
 
 		bool							loadTextures();
 		
-		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
 
 		void							addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float scale, glm::mat4 transform);

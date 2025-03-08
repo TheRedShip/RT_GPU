@@ -20,6 +20,8 @@ vec3 GetEnvironmentLight(Ray ray)
 	return composite;
 }
 
+#define FOG_BOUNCE 0
+
 vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMaterial mat, inout uint rng_state)
 {
     float theta = 2.0 * M_PI * randomValue(rng_state);
@@ -37,46 +39,48 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
     Ray shadow_ray = Ray(position + light_dir * 0.001, light_dir, (1.0 / light_dir));
     hitInfo shadow_hit = traceRay(shadow_ray);
 
-    vec3 dir = normalize(vec3(-0.5, 0.15, 0.));
-    if (dot(shadow_ray.direction, dir) < 0.995 || shadow_hit.obj_index != light_index)
+    float beam_cos_angle = obj.vertex1.x;
+    vec3 dir = obj.normal;
+    
+    if (shadow_hit.obj_index != light_index || dot(shadow_ray.direction, dir) < beam_cos_angle)
     {
-        float circleRadius = light_dist * tan(acos(0.995));
+        #if FOG_BOUNCE
+            float circleRadius = light_dist * tan(acos(beam_cos_angle));
 
-        // Uniformly sample a point in a disk.
-        float r = circleRadius * sqrt(randomValue(rng_state));
-        float theta = 2.0 * M_PI * randomValue(rng_state);
-        vec2 diskSample = vec2(r * cos(theta), r * sin(theta));
+            float r = circleRadius * sqrt(randomValue(rng_state));
+            float theta = 2.0 * M_PI * randomValue(rng_state);
+            vec2 diskSample = vec2(r * cos(theta), r * sin(theta));
 
-        // Build an orthonormal basis for the plane perpendicular to 'dir'.
-        vec3 up = abs(dir.y) < 0.99 ? vec3(0, 1, 0) : vec3(1, 0, 0);
-        vec3 tangent = normalize(cross(up, dir));
-        vec3 bitangent = cross(dir, tangent);
+            vec3 up = abs(dir.y) < 0.99 ? vec3(0, 1, 0) : vec3(1, 0, 0);
+            vec3 tangent = normalize(cross(up, dir));
+            vec3 bitangent = cross(dir, tangent);
 
-        // Determine the center of the projected circle on the wall.
-        vec3 circleCenter = obj.position + light_dist * dir;
+            vec3 circleCenter = obj.position + light_dist * dir;
 
-        // Compute the final sample point on the projected circle.
-        vec3 sample_point = circleCenter + diskSample.x * tangent + diskSample.y * bitangent;
+            vec3 sample_point = circleCenter + diskSample.x * tangent + diskSample.y * bitangent;
 
-        Ray light_ray = Ray(sample_point, -dir, (1.0 / -dir));
-        hitInfo light_ray_hit = traceRay(light_ray);
+            Ray light_ray = Ray(sample_point, -dir, (1.0 / -dir));
+            hitInfo light_ray_hit = traceRay(light_ray);
 
-        if (light_ray_hit.obj_index == -1)
-            return (vec3(0.0));
+            if (light_ray_hit.obj_index == -1)
+                return (vec3(0.0));
 
-        GPUMaterial light_ray_mat = materials[light_ray_hit.mat_index];
-        if (light_ray_mat.metallic == 0.)
-            return vec3(0.0);
+            GPUMaterial light_ray_mat = materials[light_ray_hit.mat_index];
+            if (light_ray_mat.metallic == 0.)
+                return vec3(0.0);
 
-        Ray reflect_ray = newRay(light_ray_hit, light_ray, rng_state);
-        reflect_ray.inv_direction = 1.0 / reflect_ray.direction;
+            Ray reflect_ray = newRay(light_ray_hit, light_ray, rng_state);
+            reflect_ray.inv_direction = 1.0 / reflect_ray.direction;
 
-        vec3 reflect_to_particle = normalize(position - reflect_ray.origin);
-        
-        if (dot(reflect_ray.direction, reflect_to_particle) < 0.995)
-            return vec3(0.0);
-        mat.color *= light_ray_mat.color;
-        return mat.emission * mat.color * vec3(10.0);
+            vec3 reflect_to_particle = normalize(position - reflect_ray.origin);
+            
+            if (dot(reflect_ray.direction, reflect_to_particle) < beam_cos_angle)
+                return vec3(0.0);
+
+            mat.color *= light_ray_mat.color;
+        #else
+            return vec3(0.);
+        #endif
     }
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
@@ -98,16 +102,28 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
     if (shadow_hit.obj_index != light_index)
         return vec3(0.0);
 
-    vec3 dir = normalize(vec3(-0.5, 0., 0.));
-    if (dot(shadow_ray.direction, dir) < 0.995)
-        return vec3(0.);
+    vec3 quad_to_camera = position - obj.position;
+    float distance_plane = dot(quad_to_camera, obj.normal);
+    vec3 point_projected = position - distance_plane * obj.normal;
+
+    mat2 A = mat2(
+        dot(obj.vertex1, obj.vertex1), dot(obj.vertex1, obj.vertex2),
+        dot(obj.vertex1, obj.vertex2), dot(obj.vertex2, obj.vertex2)
+    );
+    vec2 b = vec2(
+        dot(point_projected - obj.position, obj.vertex1),
+        dot(point_projected - obj.position, obj.vertex2)
+    );
+    vec2 alphaBeta = inverse(A) * b;
+
+    if (alphaBeta.x < 0.0f || alphaBeta.x > 1.0f || alphaBeta.y < 0.0f || alphaBeta.y > 1.0f)
+        return vec3(0.0);
 
 	vec3 crossQuad = cross(obj.vertex1, obj.vertex2);
     float area = length(crossQuad);
     float pdf = 1.0 / area;
 
-    vec3 normal = normalize(crossQuad);
-    float cos_theta = max(0.0, dot(normal, -light_dir));
+    float cos_theta = max(0.0, dot(obj.normal, -light_dir));
     return mat.emission * mat.color / (light_dist * light_dist) * pdf;
 }
 
@@ -119,10 +135,11 @@ vec3 sampleLights(in vec3 position, inout uint rng_state)
     GPUObject light_obj = objects[light_index];
     GPUMaterial lightMat = materials[light_obj.mat_index];
     
-    if (light_obj.type == 0)
+    if (light_obj.type == 7)
         return float(u_lightsNum) * sampleSphereLight(position, light_obj, light_index, lightMat, rng_state);
     else if (light_obj.type == 2)
         return float(u_lightsNum) * sampleQuadLight(position, light_obj, light_index, lightMat, rng_state);
+    return (vec3(0.));
 }
 
 vec2 getSphereUV(vec3 surfacePoint)

@@ -231,11 +231,7 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 			
 			ImGui::Text("Material %d", i);
 			has_changed |= ImGui::ColorEdit3("Color", &mat.color[0]);
-			if (ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f))
-			{
-				has_changed = 1;
-				_scene->updateLightAndObjects(i);
-			}
+			has_changed |= ImGui::SliderFloat("Emission", &mat.emission, 0.0f, 10.0f);
 			
 			if (mat.type == 0)
 			{
