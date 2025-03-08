@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/18 13:37:23 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:47:45 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,7 +117,6 @@ class Scene
 
 		bool							loadTextures();
 		
-		void							updateLightAndObjects(int mat_id);
 		std::set<int>					getGPULights();
 
 		void							addBvh(std::vector<Triangle> &triangles, glm::vec3 offset, float scale, glm::mat4 transform);
@@ -147,6 +146,7 @@ class Scene
 		void							changeScene(std::string &name, std::vector<Buffer *> &buffers);
 
 		std::vector<Buffer *>			createDataOnGPU(void);
+		void							updateLightAndObjects(int mat_id);
 		
 	private:
 		void						init(std::string &name);

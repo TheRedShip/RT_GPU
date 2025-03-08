@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/18 13:37:16 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:14:11 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,9 @@ void		Scene::addObject(Object *obj)
 		gpu_obj.vertex2 = quad->getRight();
 		gpu_obj.normal = quad->getNormal();
 		gpu_obj.radius = quad->getSingleSided();
+
+		if (_gpu_materials[gpu_obj.mat_index].emission > 0.)
+			this->_gpu_lights.insert(_gpu_objects.size());
 	}
 	else if (obj->getType() == Object::Type::CUBE)
 	{
@@ -120,6 +123,16 @@ void		Scene::addObject(Object *obj)
 		gpu_obj.vertex1 = triangle->getVertex2();
 		gpu_obj.vertex2 = triangle->getVertex3();
 		gpu_obj.normal = triangle->getNormal();
+	}
+	else if (obj->getType() == Object::Type::SPOTLIGHT)
+	{
+		auto spotlight = static_cast<SpotLight *>(obj);
+		
+		gpu_obj.radius = spotlight->getRadius();
+		gpu_obj.normal = spotlight->getDirection();
+		gpu_obj.vertex1 = glm::vec3(spotlight->getAngle(), 0.0f, 0.0f);
+
+		this->_gpu_lights.insert(_gpu_objects.size());
 	}
 	else if (obj->getType() == Object::Type::PORTAL)
 	{

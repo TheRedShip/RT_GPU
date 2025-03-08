@@ -74,6 +74,7 @@ struct GPUDenoise
 # include "objects/Cube.hpp"
 # include "objects/Portal.hpp"
 # include "objects/Cylinder.hpp"
+# include "objects/SpotLight.hpp"
 
 # include "Buffer.hpp"
 # include "Arguments.hpp"

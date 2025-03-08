@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 01:21:11 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 16:47:59 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ SceneParser::SceneParser(Scene *scene, std::string filename) : _scene(scene), _f
 	object_parsers["cu"] = [](std::stringstream &ss) -> Object * { return (new Cube(ss)); };
 	object_parsers["po"] = [](std::stringstream &ss) -> Object * { return (new Portal(ss)); };
 	object_parsers["cy"] = [](std::stringstream &ss) -> Object * { return (new Cylinder(ss)); };
+	object_parsers["sl"] = [](std::stringstream &ss) -> Object * { return (new SpotLight(ss)); };
 }
 
 void	SceneParser::parseMaterial(std::stringstream &line)
@@ -165,14 +166,12 @@ bool		SceneParser::parseLine(const std::string &line)
 			Object *obj = it->second(ss);
 			
 			GPUMaterial mat = _scene->getMaterial(obj->getMaterialIndex()); //verify material
+			(void)mat;
 			
 			if (obj->getType() == Object::Type::PORTAL)
 				_scene->addObject(static_cast<Portal *>(obj)->createSupportQuad());
 			
 			_scene->addObject(obj);
-
-			if (mat.emission > 0.0)
-				_scene->updateLightAndObjects(obj->getMaterialIndex());
 		}
 
 		if (identifier == "MAT")
