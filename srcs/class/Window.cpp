@@ -192,7 +192,7 @@ void Window::imGuiNewFrame()
 	ImGui::NewFrame();
 }
 
-void Window::imGuiRender(ShaderProgram &raytracing_program)
+void Window::imGuiRender(ShaderProgram &raytracing_program, std::vector<GLuint> &textures)
 {
 	bool has_changed = false;
 	
@@ -290,7 +290,12 @@ void Window::imGuiRender(ShaderProgram &raytracing_program)
 
 	if (ImGui::CollapsingHeader("Denoiser"))
 	{
-		ImGui::Checkbox("Enable##1", (bool *)(&_scene->getDenoise().enabled));
+		if (ImGui::Checkbox("Enable##1", (bool *)(&_scene->getDenoise().enabled)))
+		{
+			//clear denoising texture
+			glClearTexImage(textures[3], 0, GL_RGBA, GL_FLOAT, nullptr);
+			glClearTexImage(textures[4], 0, GL_RGBA, GL_FLOAT, nullptr);
+		}
 		ImGui::Separator();
 		if (ImGui::SliderInt("Pass", &_scene->getDenoise().pass, 0, 8))
 			_scene->getDenoise().pass = (_scene->getDenoise().pass / 2) * 2; // make sure it's even

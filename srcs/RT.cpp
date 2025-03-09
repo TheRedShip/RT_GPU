@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 		render_program.use();
 		drawScreenTriangle(VAO, textures[window.getOutputTexture()], render_program.getProgram());
 
-		window.imGuiRender(raytracing_program);
+		window.imGuiRender(raytracing_program, textures);
 
 		window.display();
 		window.pollEvents();

@@ -38,7 +38,7 @@ class Window
 		static void	mouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
 
 		void		imGuiNewFrame();
-		void		imGuiRender(ShaderProgram &raytracing_program);
+		void		imGuiRender(ShaderProgram &raytracing_program, std::vector<GLuint> &textures);
 
 		GLFWwindow	*getWindow(void) const;
 		float		getFps(void) const;
