@@ -84,7 +84,7 @@ vec3 sampleSphereLight(vec3 position, GPUObject obj, int light_index, GPUMateria
     }
 
     float cos_theta = max(0.0, -dot(light_dir, normalize(sample_point - obj.position)));
-    return mat.emission * mat.color / (light_dist * light_dist) * cos_theta / (4.0 * M_PI * (obj.radius / 2.0) * (obj.radius / 2.0));
+    return mat.emission * mat.color / max(light_dist * light_dist, 1.0) * cos_theta / (4.0 * M_PI * (obj.radius / 2.0) * (obj.radius / 2.0));
 }
 
 vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial mat, inout uint rng_state)
@@ -123,8 +123,8 @@ vec3 sampleQuadLight(vec3 position, GPUObject obj, int light_index, GPUMaterial 
     float area = length(crossQuad);
     float pdf = 1.0 / area;
 
-    float cos_theta = max(0.0, dot(obj.normal, -light_dir));
-    return mat.emission * mat.color / (light_dist * light_dist) * pdf;
+    // float cos_theta = max(0.0, dot(obj.normal, -light_dir));
+    return mat.emission * mat.color / max(light_dist * light_dist, 1.);
 }
 
 vec3 sampleLights(in vec3 position, inout uint rng_state)
