@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 22:06:58 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/14 14:22:06 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,10 +152,10 @@ void Clusterizer::getImageFromClient(int fd, std::vector<uint8_t> &buf)
 	buf.erase(buf.begin(), buf.begin() + (WIDTH * HEIGHT * 3));
 
 	_clients[fd].gotGo = 0;
-	_clients[fd].curJob = 0;
 	_clients[fd].readyRespond = 0;
 
-	_jobs[IN_PROGRESS].erase(std::find(_jobs[IN_PROGRESS].begin(), _jobs[IN_PROGRESS].end(), _clients[fd].curJob));
+	auto posIter = std::find(_jobs[IN_PROGRESS].begin(), _jobs[IN_PROGRESS].end(), _clients[fd].curJob);
+	_jobs[IN_PROGRESS].erase(posIter);
 	_jobs[DONE].push_back(_clients[fd].curJob);
 	_clients[fd].curJob = 0;
 
