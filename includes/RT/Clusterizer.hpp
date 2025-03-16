@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 22:26:49 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/14 17:29:56 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ typedef enum e_msg
 	PROGRESS_UPDATE,
 	IMG_SEND_RQ,
 	IMG,
+	SET_MAP,
 	ABORT
 } t_msg;
 
@@ -83,14 +84,17 @@ class Clusterizer
 	private: //client
 		void					initClient(std::string &dest);
 		void					openClientConnection(const char *ip, int port);
-		void					clientHandleBuffer(void);
+		void					clientHandleBuffer(Scene &scene);
 		void					updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void					clientGetJob(void);
-		void					clientReceive(void);
+		void					clientReceive(Scene &scene);
 		void					handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		void					sendProgress(uint8_t progress);
-		void					sendImageToServer(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
 		std::vector<uint8_t>	rgb32fToRgb24i(std::vector<float> &imageFloat);
+
+		void					changeMap(Scene &scene);
+		bool					stringComplete(void);
 
 		int						_serverFd;
 		std::string				_serverIp;

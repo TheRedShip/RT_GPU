@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/02/25 01:44:31 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/16 17:00:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,8 +140,13 @@ class Scene
 		GPUMaterial						getMaterial(int material_index);
 		
 		bool							fail(void) const;
+
+		void							changeScene(std::string &name);
+
+		std::vector<Buffer *>			createDataOnGPU(void);
 		
 	private:
+		void						init(std::string &name);
 
 		bool						_fail;
 		std::vector<GPUBvhData>		_gpu_bvh_data;

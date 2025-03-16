@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/14 14:22:06 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/16 17:39:06 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,8 @@ int Clusterizer::acceptClients(void)
 	std::cout << "new client :" << fd << std::endl;
 	_clients[fd].ready = 0;
 	_clients[fd].curJob = 0;
+	(void)write(fd, (uint8_t []){SET_MAP}, 1);
+	(void)write(fd, _sceneName.c_str(), _sceneName.size() + 1);
 	updatePollfds();
 	return(1);
 }
@@ -157,8 +159,8 @@ void Clusterizer::getImageFromClient(int fd, std::vector<uint8_t> &buf)
 	auto posIter = std::find(_jobs[IN_PROGRESS].begin(), _jobs[IN_PROGRESS].end(), _clients[fd].curJob);
 	_jobs[IN_PROGRESS].erase(posIter);
 	_jobs[DONE].push_back(_clients[fd].curJob);
-	_clients[fd].curJob = 0;
 
+	_clients[fd].curJob = 0;
 	_curFrame++;
 }
 

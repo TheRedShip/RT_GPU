@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/02/13 18:13:58 by ycontre          ###   ########.fr       */
+/*   Updated: 2025/03/16 17:49:37 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,12 +17,18 @@
 
 Scene::Scene(std::string &name)
 {
+	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+	_fail = 0;
+	init(name);
+}
+
+void Scene::init(std::string &name)
+{
 	std::ifstream	file(name);
 	std::string		line;
-	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
+
 	
 	_gpu_volume.enabled = 0;
-	_fail = 0;
 	_gpu_volume.sigma_a = glm::vec3(0.0000f);
 	_gpu_volume.sigma_s = glm::vec3(0.0800f);
 	_gpu_volume.sigma_t = _gpu_volume.sigma_a + _gpu_volume.sigma_s;
@@ -396,4 +402,50 @@ GPUMaterial	Scene::getMaterial(int material_index)
 	if (material_index < 0 || material_index >= (int)_gpu_materials.size())
 		throw std::runtime_error("Incorrect material index");
 	return (_gpu_materials[material_index]);
+}
+
+std::vector<Buffer *>	Scene::createDataOnGPU(void)
+{
+	GLint max_gpu_size;
+	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
+
+
+	std::cout << "Sending " << _gpu_objects.size() << " objects for " << \
+				_gpu_objects.size() * sizeof(GPUObject) + \
+				_gpu_triangles.size() * sizeof(GPUTriangle) + \
+				_gpu_bvh.size() * sizeof(GPUBvh) + \
+				_gpu_materials.size() * sizeof(GPUMaterial) \
+				<< " / " << max_gpu_size << " bytes" << std::endl;
+
+	std::vector<Buffer *> buffers;
+
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 1, sizeof(GPUObject) * _gpu_objects.size(), _gpu_objects.data()));
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 2, sizeof(GPUTriangle) * _gpu_triangles.size(), _gpu_triangles.data()));
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 3, sizeof(GPUBvhData) * _gpu_bvh_data.size(), _gpu_bvh_data.data()));
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 4, sizeof(GPUBvh) * _gpu_bvh.size(), _gpu_bvh.data()));
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 5, sizeof(GPUMaterial) * _gpu_materials.size(), nullptr));
+	buffers.push_back(new Buffer(Buffer::Type::SSBO, 6, getGPULights().size() * sizeof(int), nullptr));
+
+	buffers.push_back(new Buffer(Buffer::Type::UBO, 0, sizeof(GPUCamera), nullptr));
+	buffers.push_back(new Buffer(Buffer::Type::UBO, 1, sizeof(GPUVolume), nullptr));
+	buffers.push_back(new Buffer(Buffer::Type::UBO, 2, sizeof(GPUDebug), nullptr));
+
+	return (buffers);
+}
+
+void		Scene::changeScene(std::string &name)
+{
+	_gpu_bvh_data.clear();
+	_gpu_bvh.clear();
+	_gpu_objects.clear();
+	_gpu_triangles.clear();
+	_gpu_materials.clear();
+	_textures.clear();
+	_emissive_textures.clear();
+	_gpu_textures.clear();
+	_gpu_emissive_textures.clear();
+	_gpu_lights.clear();
+	init(name);
+	createDataOnGPU();
+	loadTextures();
 }

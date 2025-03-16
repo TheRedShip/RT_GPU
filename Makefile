@@ -80,6 +80,7 @@ $(NAME): $(OBJS) $(HEADERS)
 	@echo $(WHITE) $(NAME): PROJECT COMPILED !$(RESET)
 else
 $(NAME): $(OBJS) $(HEADERS)
+	@printf "$(LINE_CLR)$(WHITE) $(NAME): linking ...$(RESET)"
 	@$(CC) $(OBJS) $(IFLAGS) $(CFLAGS) $(LDFLAGS) -o $(NAME)
 	@printf "$(LINE_CLR)$(WHITE) $(NAME): PROJECT COMPILED !$(RESET)\n\n"
 endif

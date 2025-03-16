@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/25 01:51:27 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/16 17:38:51 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,6 @@ void					drawScreenTriangle(GLuint VAO, GLuint output_texture, GLuint program);
 
 std::vector<GLuint>		generateTextures(unsigned int textures_count);
 
-std::vector<Buffer *>	createDataOnGPU(Scene &scene);
 void					updateDataOnGPU(Scene &scene, std::vector<Buffer *> buffers);
 
 void					shaderDenoise(ShaderProgram &denoising_program, GPUDenoise &denoise, std::vector<GLuint> textures);
@@ -60,7 +59,7 @@ int main(int argc, char **argv)
 	render_program.attachShader(&frag);
 	render_program.link();
 
-	std::vector<Buffer *> buffers = createDataOnGPU(scene);
+	std::vector<Buffer *> buffers = scene.createDataOnGPU();
 
 	if (!scene.loadTextures())
 		return (-1);

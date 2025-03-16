@@ -6,7 +6,7 @@
 /*   By: TheRed <TheRed@students.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/12 23:21:09 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/12 23:21:09 by TheRed           ###   ########.fr       */
+/*   Updated: 2025/03/16 17:37:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,40 +72,6 @@ std::vector<GLuint> generateTextures(unsigned int textures_count)
 		glBindImageTexture(i, textures[i], 0, GL_FALSE, 0, GL_READ_WRITE, GL_RGBA32F);
 	}
 	return (textures);
-}
-
-std::vector<Buffer *>	createDataOnGPU(Scene &scene)
-{
-	GLint max_gpu_size;
-	glGetIntegerv(GL_MAX_SHADER_STORAGE_BLOCK_SIZE, &max_gpu_size);
-
-	const std::vector<GPUObject> &object_data = scene.getObjectData();
-	const std::vector<GPUTriangle> &triangle_data = scene.getTriangleData();
-	const std::vector<GPUBvh> &bvh_nodes = scene.getBvh();
-	const std::vector<GPUBvhData> &bvh_data = scene.getBvhData();
-	const std::vector<GPUMaterial> &material_data = scene.getMaterialData();
-
-	std::cout << "Sending " << object_data.size() << " objects for " << \
-				object_data.size() * sizeof(GPUObject) + \
-				triangle_data.size() * sizeof(GPUTriangle) + \
-				bvh_nodes.size() * sizeof(GPUBvh) + \
-				material_data.size() * sizeof(GPUMaterial) \
-				<< " / " << max_gpu_size << " bytes" << std::endl;
-
-	std::vector<Buffer *> buffers;
-
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 1, sizeof(GPUObject) * object_data.size(), object_data.data()));
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 2, sizeof(GPUTriangle) * triangle_data.size(), triangle_data.data()));
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 3, sizeof(GPUBvhData) * bvh_data.size(), bvh_data.data()));
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 4, sizeof(GPUBvh) * bvh_nodes.size(), bvh_nodes.data()));
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 5, sizeof(GPUMaterial) * material_data.size(), nullptr));
-	buffers.push_back(new Buffer(Buffer::Type::SSBO, 6, scene.getGPULights().size() * sizeof(int), nullptr));
-
-	buffers.push_back(new Buffer(Buffer::Type::UBO, 0, sizeof(GPUCamera), nullptr));
-	buffers.push_back(new Buffer(Buffer::Type::UBO, 1, sizeof(GPUVolume), nullptr));
-	buffers.push_back(new Buffer(Buffer::Type::UBO, 2, sizeof(GPUDebug), nullptr));
-
-	return (buffers);
 }
 
 void	updateDataOnGPU(Scene &scene, std::vector<Buffer *> buffers)
