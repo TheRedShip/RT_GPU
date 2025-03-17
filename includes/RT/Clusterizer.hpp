@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/14 17:29:56 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 18:05:15 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ class Clusterizer
 		Clusterizer(Arguments &args, Renderer *renderer);
 		~Clusterizer();
 
-		void	update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void	update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers);
 		bool	getError(void);
 		void	imguiRender(void);
 		bool	isServer(void);	
@@ -84,16 +84,16 @@ class Clusterizer
 	private: //client
 		void					initClient(std::string &dest);
 		void					openClientConnection(const char *ip, int port);
-		void					clientHandleBuffer(Scene &scene);
-		void					updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					clientHandleBuffer(Scene &scene, std::vector<Buffer *> &buffers, Window &win);
+		void					updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers);
 		void					clientGetJob(void);
-		void					clientReceive(Scene &scene);
-		void					handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					clientReceive(Scene &scene, std::vector<Buffer *> &buffers, Window &win);
+		void					handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers);
 		void					sendProgress(uint8_t progress);
-		void					sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void					sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers, Window &win);
 		std::vector<uint8_t>	rgb32fToRgb24i(std::vector<float> &imageFloat);
 
-		void					changeMap(Scene &scene);
+		void					changeMap(Scene &scene, std::vector<Buffer *> &buffers, Window &win);
 		bool					stringComplete(void);
 
 		int						_serverFd;

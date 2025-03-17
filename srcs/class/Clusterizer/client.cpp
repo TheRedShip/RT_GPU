@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/16 16:42:41 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 18:05:26 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ bool Clusterizer::stringComplete(void)
 	return(false);	
 }
 
-void Clusterizer::changeMap(Scene &scene)
+void Clusterizer::changeMap(Scene &scene, std::vector<Buffer *> &buffers, Window &win)
 {
 	size_t len;
 
@@ -95,13 +95,14 @@ void Clusterizer::changeMap(Scene &scene)
 	_sceneName = std::string((char *)_receiveBuffer.data() + 1);	
 	_receiveBuffer.erase(_receiveBuffer.begin(), _receiveBuffer.begin() + len);
 	std::cout << "changing scene to name :" << _sceneName << std::endl;
-	scene.changeScene(_sceneName);
+	scene.changeScene(_sceneName, buffers);
+	win.setFrameCount(0);
 	if(scene.fail())
 		throw std::runtime_error("map change failed");
 	(void)write(_serverFd, (uint8_t []){RDY}, 1);
 }
 
-void Clusterizer::clientHandleBuffer(Scene &scene)
+void Clusterizer::clientHandleBuffer(Scene &scene, std::vector<Buffer *> &buffers, Window &win)
 {
 	std::vector<uint8_t> sendBuf;
 
@@ -129,7 +130,7 @@ void Clusterizer::clientHandleBuffer(Scene &scene)
 	{
 		std::cout << "got change map request" << std::endl;
 		if(stringComplete())
-			changeMap(scene);
+			changeMap(scene, buffers, win);
 		else
 			std::cout << "string is not complete, waiting for eof signal" << std::endl;
 	}
@@ -144,7 +145,7 @@ void Clusterizer::clientHandleBuffer(Scene &scene)
 		(void)write(_serverFd, sendBuf.data(), sendBuf.size());
 }
 
-void Clusterizer::clientReceive(Scene &scene)
+void Clusterizer::clientReceive(Scene &scene, std::vector<Buffer *> &buffers, Window &win)
 {
 	uint8_t	buffer[512];
 	size_t	ret;
@@ -160,7 +161,7 @@ void Clusterizer::clientReceive(Scene &scene)
 		}
 		_receiveBuffer.insert(_receiveBuffer.end(), buffer, buffer + ret);
 	}
-	clientHandleBuffer(scene);
+	clientHandleBuffer(scene, buffers, win);
 }
 
 void Clusterizer::sendProgress(uint8_t progress)
@@ -195,7 +196,7 @@ std::vector<uint8_t>	Clusterizer::rgb32fToRgb24i(std::vector<float> &imageFloat)
 	return(buffer);
 }
 
-void	Clusterizer::sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+void	Clusterizer::sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers, Window &win)
 {
 	_srvReady = 0;
 	std::vector<float> imageFloat(WIDTH * HEIGHT * 4);
@@ -204,7 +205,7 @@ void	Clusterizer::sendImageToServer(Scene &scene, std::vector<GLuint> &textures,
 	(void)write(_serverFd, (uint8_t []){IMG_SEND_RQ}, 1);
 	while(!_srvReady)
 	{
-		clientReceive(scene);
+		clientReceive(scene, buffers, win);
 		if(!_serverFd)
 		{
 			delete _currentJob;
@@ -231,7 +232,7 @@ void	Clusterizer::sendImageToServer(Scene &scene, std::vector<GLuint> &textures,
 	std::cout << "image sent" << std::endl;
 }
 
-void Clusterizer::handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+void Clusterizer::handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
 {
 	uint8_t progress;
 	if(!_currentJob)	
@@ -264,12 +265,12 @@ void Clusterizer::handleCurrentJob(Scene &scene, Window &win, std::vector<GLuint
 	if((size_t)win.getFrameCount() == _currentJob->samples)
 	{
 		std::cout << "send request" << std::endl;
-		sendImageToServer(scene, textures, denoisingProgram);
+		sendImageToServer(scene, textures, denoisingProgram, buffers, win);
 	}
 
 }
 
-void Clusterizer::updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+void Clusterizer::updateClient(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
 {
 	if(!_serverFd)
 	{
@@ -282,6 +283,6 @@ void Clusterizer::updateClient(Scene &scene, Window &win, std::vector<GLuint> &t
 		std::cout << "server reconnected." << std::endl;
 	}
 
-	clientReceive(scene);
-	handleCurrentJob(scene, win, textures, denoisingProgram);
+	clientReceive(scene, buffers, win);
+	handleCurrentJob(scene, win, textures, denoisingProgram, buffers);
 }

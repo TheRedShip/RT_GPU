@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/16 17:49:37 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 15:28:10 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -433,7 +433,7 @@ std::vector<Buffer *>	Scene::createDataOnGPU(void)
 	return (buffers);
 }
 
-void		Scene::changeScene(std::string &name)
+void		Scene::changeScene(std::string &name, std::vector<Buffer *> &buffers)
 {
 	_gpu_bvh_data.clear();
 	_gpu_bvh.clear();
@@ -445,7 +445,11 @@ void		Scene::changeScene(std::string &name)
 	_gpu_textures.clear();
 	_gpu_emissive_textures.clear();
 	_gpu_lights.clear();
+	for (size_t i = 0; i < buffers.size(); i++)
+		delete buffers[i];
+	buffers.clear();
+
 	init(name);
-	createDataOnGPU();
+	buffers = createDataOnGPU();
 	loadTextures();
 }

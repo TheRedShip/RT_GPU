@@ -31,7 +31,6 @@ else
 	CFLAGS      :=	-Wall -Wextra -Werror -g -O3 -std=c++20
 	IFLAGS	    :=	-I./includes -I./includes/RT -I./includes/imgui 
 	LDFLAGS		+=  -lglfw -lGL -lGLU -lX11 -lpthread -ldl -lavformat -lavcodec -lavutil -lswscale -lswresample
-	FILE		=	$(shell ls -lR srcs/ | grep -F .c | wc -l)
 	CMP			=	1
 endif
 
@@ -46,7 +45,8 @@ IMGUI_SRCS := imgui/imgui.cpp         \
               imgui/imgui_impl_glfw.cpp \
               imgui/imgui_impl_opengl3.cpp
 
-ALL_SRCS	:=	$(IMGUI_SRCS)	gl.cpp		\
+ALL_SRCS	:=	$(IMGUI_SRCS)				\
+				gl.cpp						\
 				RT.cpp	RT_utils.cpp		\
 				class/Window.cpp			\
 				class/ShaderProgram.cpp		\
@@ -72,6 +72,10 @@ OBJS		:=	$(addprefix $(OBJS_DIR)/, $(SRCS:%.cpp=%.o))
 HEADERS		:=	includes/RT.hpp
 MAKEFLAGS   += --no-print-directory
 
+ifneq ($(OS),Windows_NT)
+	FILE		=	$(shell echo $(SRCS) | tr " " "\n" | wc -l)
+endif
+
 all: $(NAME)
 
 ifeq ($(OS),Windows_NT)
@@ -82,7 +86,7 @@ else
 $(NAME): $(OBJS) $(HEADERS)
 	@printf "$(LINE_CLR)$(WHITE) $(NAME): linking ...$(RESET)"
 	@$(CC) $(OBJS) $(IFLAGS) $(CFLAGS) $(LDFLAGS) -o $(NAME)
-	@printf "$(LINE_CLR)$(WHITE) $(NAME): PROJECT COMPILED !$(RESET)\n\n"
+	@printf "$(LINE_CLR)$(WHITE) $(NAME): PROJECT COMPILED !$(RESET)\n"
 endif
 
 flags:

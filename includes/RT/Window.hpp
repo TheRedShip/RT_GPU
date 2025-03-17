@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:15:41 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/25 01:50:04 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 15:24:12 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ class Window
 		bool		isRendering();
 
 		void		rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
-		void		clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram);
+		void		clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers);
 	private:
 		GLFWwindow	*_window;
 		Scene		*_scene;

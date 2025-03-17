@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/16 17:38:51 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 14:54:43 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
 
 	while (!window.shouldClose())
 	{
-		window.clusterizerUpdate(textures, denoising_program);
+		window.clusterizerUpdate(textures, denoising_program, buffers);
 		window.updateDeltaTime();
 		
 		updateDataOnGPU(scene, buffers);

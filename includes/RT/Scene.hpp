@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/16 17:00:32 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 15:26:14 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ class Scene
 		
 		bool							fail(void) const;
 
-		void							changeScene(std::string &name);
+		void							changeScene(std::string &name, std::vector<Buffer *> &buffers);
 
 		std::vector<Buffer *>			createDataOnGPU(void);
 		

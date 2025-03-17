@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/25 01:51:46 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 15:16:19 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,9 +185,9 @@ void		Window::rendererUpdate(std::vector<GLuint> &textures, ShaderProgram &denoi
 	_renderer->update(textures, denoisingProgram);
 }
 
-void		Window::clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+void		Window::clusterizerUpdate(std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
 {
-	_clusterizer->update(*_scene, *this, textures, denoisingProgram);
+	_clusterizer->update(*_scene, *this, textures, denoisingProgram, buffers);
 }
 
 void Window::imGuiNewFrame()

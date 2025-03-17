@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 22:33:01 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/17 15:16:43 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,14 +41,14 @@ Clusterizer::~Clusterizer(void)
 		close(_serverSocket);
 }
 
-void Clusterizer::update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram)
+void Clusterizer::update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
 {
 	if(!_isActive)
 		return ;
 	if(_isServer)
 		updateServer();
 	else
-		updateClient(scene, win, textures, denoisingProgram);
+		updateClient(scene, win, textures, denoisingProgram, buffers);
 }
 
 bool Clusterizer::getError(void)
