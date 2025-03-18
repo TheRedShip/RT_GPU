@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/22 16:34:53 by tomoron           #+#    #+#             */
-/*   Updated: 2025/02/25 19:16:53 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 14:58:02 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ void		Renderer::update(std::vector<GLuint> &textures, ShaderProgram &denoisingPr
 	if(_testMode)
 		curTime = glfwGetTime() - _testStartTime;
 	else
-		curTime = (1 / (double)_fps) * (double)_frameCount;
+		curTime = (1 / (double)_fps) * ((double)_frameCount + 1);
 
 	if(!_testMode)
 	{
