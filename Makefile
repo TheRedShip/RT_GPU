@@ -125,6 +125,7 @@ else
 	@$(RM) $(OBJS_DIR)
 endif
 
-re: fclean $(NAME) 
+re: fclean
+	$(MAKE) all -j$(shell nproc)
 
 .PHONY: all clean fclean re windows linux

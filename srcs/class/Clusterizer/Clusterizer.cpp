@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:24:39 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/17 15:16:43 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 14:00:59 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@ Clusterizer::Clusterizer(Arguments &args, Renderer *renderer)
 	_isServer = 0;
 	_error = 0;
 	_serverSocket = 0;
+	_serverFd = 0;
+	_pollfds = 0;
+	_currentJob = 0;
 	_sceneName = args.getSceneName();
 	_renderer = renderer;
 
@@ -39,6 +42,21 @@ Clusterizer::~Clusterizer(void)
 {
 	if(_serverSocket)
 		close(_serverSocket);
+	if(_serverFd)
+		close(_serverFd);
+	if(_pollfds)
+		delete[] _pollfds;
+	abortJobs();
+	for(auto it = _clients.begin(); it != _clients.end(); it++)
+	{
+		std::cout << "closing fd " << it->first << std::endl;
+		close(it->first);
+	}
+	if(_clients.size())
+		updateServer();
+	if(_currentJob)
+		delete _currentJob;
+	
 }
 
 void Clusterizer::update(Scene &scene, Window &win, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers)
@@ -58,7 +76,7 @@ bool Clusterizer::getError(void)
 
 bool Clusterizer::isServer(void)
 {
-	return(_isServer);	
+	return(_isServer);
 }
 
 bool Clusterizer::hasJobs(void)

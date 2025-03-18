@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 18:25:18 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/17 18:05:15 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 12:56:01 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ class Clusterizer
 		std::string			_sceneName;
 		Renderer			*_renderer;
 
-		std::vector<t_job *> _jobs[3];
 
 		void		imguiJobStat(void);
 		void		imguiClients(void);
@@ -124,4 +123,6 @@ class Clusterizer
 		struct pollfd				*_pollfds;
 		std::map<int, t_client>		_clients;
 		size_t						_curFrame;
+
+		std::vector<t_job *>		_jobs[3];
 };

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/13 16:16:24 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/17 15:16:19 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:34:26 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ Window::Window(Scene *scene, int width, int height, const char *title, int sleep
 Window::~Window(void)
 {
 	glfwTerminate();
+	delete _renderer;
+	delete _clusterizer;
 }
 
 
@@ -172,7 +174,7 @@ void Window::pollEvents()
 
 bool Window::shouldClose()
 {
-    return glfwWindowShouldClose(_window) || _renderer->shouldClose();
+    return glfwWindowShouldClose(_window) || _renderer->shouldClose() || _clusterizer->getError();
 }
 
 bool Window::isRendering()

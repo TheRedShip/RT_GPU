@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/17 18:05:26 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:44:57 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ void Clusterizer::openClientConnection(const char *ip, int port)
 		close(_serverFd);
 		_serverFd = 0;
 	}
-//	(void)write(_serverFd, (uint8_t []){RDY}, 1);
 }
 
 void Clusterizer::clientGetJob(void)
@@ -97,7 +96,7 @@ void Clusterizer::changeMap(Scene &scene, std::vector<Buffer *> &buffers, Window
 	std::cout << "changing scene to name :" << _sceneName << std::endl;
 	scene.changeScene(_sceneName, buffers);
 	win.setFrameCount(0);
-	if(scene.fail())
+	if(scene.error())
 		throw std::runtime_error("map change failed");
 	(void)write(_serverFd, (uint8_t []){RDY}, 1);
 }
@@ -155,6 +154,10 @@ void Clusterizer::clientReceive(Scene &scene, std::vector<Buffer *> &buffers, Wi
 	{
 		if(!ret)
 		{
+			if(_currentJob)
+				delete _currentJob;
+			_currentJob = 0;
+
 			close(_serverFd);
 			_serverFd = 0;
 			return ;
@@ -198,10 +201,10 @@ std::vector<uint8_t>	Clusterizer::rgb32fToRgb24i(std::vector<float> &imageFloat)
 
 void	Clusterizer::sendImageToServer(Scene &scene, std::vector<GLuint> &textures, ShaderProgram &denoisingProgram, std::vector<Buffer *> &buffers, Window &win)
 {
-	_srvReady = 0;
 	std::vector<float> imageFloat(WIDTH * HEIGHT * 4);
 	std::vector<uint8_t> buffer;
 
+	_srvReady = 0;
 	(void)write(_serverFd, (uint8_t []){IMG_SEND_RQ}, 1);
 	while(!_srvReady)
 	{

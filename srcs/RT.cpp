@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/27 14:51:49 by TheRed            #+#    #+#             */
-/*   Updated: 2025/03/17 14:54:43 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:36:35 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ int main(int argc, char **argv)
 		return (1);
 
 	Scene		scene(args.getSceneName());
-	if (scene.fail())
+	if (scene.error())
 		return (1);
 
 	Window		window(&scene, WIDTH, HEIGHT, "RT_GPU", 0, args);

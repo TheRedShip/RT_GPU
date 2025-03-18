@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:29:41 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/17 15:28:10 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:37:16 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@
 Scene::Scene(std::string &name)
 {
 	_camera = new Camera(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), -90.0f, 0.0f);
-	_fail = 0;
+	_error = 0;
 	init(name);
 }
 
@@ -48,7 +48,7 @@ void Scene::init(std::string &name)
 	if (!file.is_open())
 	{
 		std::cerr << "Can't open scene file" << std::endl;
-		_fail = 1;
+		_error = 1;
 		return ;
 	}
 
@@ -60,7 +60,7 @@ void Scene::init(std::string &name)
 		{
 			file.close();
 			std::cerr << line << std::endl;
-			_fail = 1;
+			_error = 1;
 			return ;
 		}
 	}
@@ -322,9 +322,9 @@ void		Scene::updateLightAndObjects(int mat_id)
     }
 }
 
-bool		Scene::fail(void) const
+bool		Scene::error(void) const
 {
-	return(_fail);
+	return(_error);
 }
 
 std::set<int>					Scene::getGPULights()

@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/23 18:30:18 by ycontre           #+#    #+#             */
-/*   Updated: 2025/03/17 15:26:14 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 13:37:23 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -139,7 +139,7 @@ class Scene
 		Camera							*getCamera(void) const;
 		GPUMaterial						getMaterial(int material_index);
 		
-		bool							fail(void) const;
+		bool							error(void) const;
 
 		void							changeScene(std::string &name, std::vector<Buffer *> &buffers);
 
@@ -148,7 +148,7 @@ class Scene
 	private:
 		void						init(std::string &name);
 
-		bool						_fail;
+		bool						_error;
 		std::vector<GPUBvhData>		_gpu_bvh_data;
 		std::vector<GPUBvh>			_gpu_bvh;
 

@@ -6,7 +6,7 @@
 /*   By: tomoron <tomoron@student.42angouleme.fr>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 21:08:38 by tomoron           #+#    #+#             */
-/*   Updated: 2025/03/16 17:39:06 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/18 14:03:32 by tomoron          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ void Clusterizer::initServer(std::string port)
 	}
 	catch(std::exception &e)
 	{
-		std::cerr << "server initialization error : " << e.what() << std::endl;
+		std::cerr << "\033[31;1mserver initialization error : " << e.what() << "\033[0m" << std::endl;
 		_error = 1;
 	}
 }
@@ -38,12 +38,25 @@ void	Clusterizer::initServerSocket(int port)
 	_serverSocket = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
 	if (_serverSocket < 0)
 		throw std::runtime_error("can't create socket");
+
+	int opt = 1;
+	if (setsockopt(_serverSocket, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1)
+	{
+    	perror("setsockopt");
+		throw std::runtime_error("can't set socket options");
+	}
+
 	s_addr.sin_family = AF_INET;
 	s_addr.sin_addr.s_addr = INADDR_ANY;
 	s_addr.sin_port = htons(port);
 	if (bind(_serverSocket, (struct sockaddr *)&s_addr, \
 	sizeof(struct sockaddr_in)) < 0)
+	{
+		std::perror("bind :");
 		throw std::runtime_error("can't bind socket");
+	}
+
+
 	if (::listen(_serverSocket, 50) < 0)
 		throw std::runtime_error("can't listen on socket");
 	if(_serverSocket == -1)
