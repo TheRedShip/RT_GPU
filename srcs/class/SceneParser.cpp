@@ -6,7 +6,7 @@
 /*   By: ycontre <ycontre@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/12/26 21:43:51 by TheRed            #+#    #+#             */
-/*   Updated: 2025/02/04 01:21:11 by tomoron          ###   ########.fr       */
+/*   Updated: 2025/03/26 18:05:52 by ycontre          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,8 @@ bool		SceneParser::parseLine(const std::string &line)
 			Object *obj = it->second(ss);
 			
 			GPUMaterial mat = _scene->getMaterial(obj->getMaterialIndex()); //verify material
-			
+			(void) mat;
+
 			if (obj->getType() == Object::Type::PORTAL)
 				_scene->addObject(static_cast<Portal *>(obj)->createSupportQuad());
 			
