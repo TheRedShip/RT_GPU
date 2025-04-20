@@ -46,23 +46,31 @@ RT is a GPU‑accelerated raytracing engine built as a school project to explore
 
 ### 🖥️ OpenGL Initialization & Setup
 1. **Window & Context**  
+  
    - Created via GLFW with a core‑profile OpenGL 4.3 context.  
+  
    - Connected to ImGUI.
 
 2. **Buffer & Texture Allocation**  
+  
    - **Full‑Screen Triangle**: A single VAO/VBO with 3 vertices covering NDC space:  
      ```glsl
      // Vertex positions in NDC: (−1,−1), (3,−1), (−1,3)
      const vec2 triVerts[3] = vec2[3](vec2(-1), vec2(3, -1), vec2(-1, 3));
      ```  
    - **Image2D Textures**: Created with `glTexImage2D` (RGBA32F) for:
+
      - **output_texture** (final color)
+   
      - **output_accum_texture** (color accumulation)
+   
      - **normal**, **position**, **light**, **light_accum**, **color** buffers  
+   
    - Bound each to a unique image unit (0–7) for compute shader writes.
 
 3. **Shader Compilation & Dispatch**  
    - Compile `shaders/compute.glsl` as a compute shader.  
+   
    - Query workgroup size (16×16) and compute dispatch dimensions as:
      ```cpp
      GLuint groupsX = (width  + localSizeX - 1) / localSizeX;
@@ -70,6 +78,7 @@ RT is a GPU‑accelerated raytracing engine built as a school project to explore
      glDispatchCompute(groupsX, groupsY, 1);
      glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
      ```
+   
    - Swap & present the resulting texture each frame.
 
 🔗 [View full compute shader source](shaders/raytracing.glsl)
@@ -195,6 +204,7 @@ typedef struct s_Material {
 ### 🖼️ Texture Implementation
 Our RT uses [stb_image](https://github.com/nothings/stb/tree/master) to load 2D images (albedo & emissive maps) on the CPU, then uploads them as GLSL `sampler2D` arrays. In the compute shader:
 - Binded albedo maps at `mat.texture_index`, emissive maps at `mat.emissive_texture_index`.
+
 - Sample with UVs interpolated per‑hit:
   ```glsl
     if (mat.texture_index != -1)
@@ -352,18 +362,27 @@ We based our implementation on [Noah Pitts' excellent writeup](https://noahpitts
 #### 🧪 Core Algorithm
 
 - Randomly sample a distance `t` along the ray.
+
 - If the sample is inside a foggy volume and before hitting any object, we:
+
   - Compute **transmittance** (light absorption).
+
   - Compute **phase scattering** using the Henyey-Greenstein phase function.
+
   - Add light contribution from **a spotlight only** (custom behavior).
+
   - Spawn a new ray from the scatter point with a sampled new direction.
+
 - This happens probabilistically per ray, and when it does, we accumulate **soft beams of light** from the spotlight into the final pixel.
 
 #### ☁️ Spotlight-Only Volumetric Fog (Custom Modifications)
 
 We diverged from the original article in a few important ways:
+
 - Only a **specific spotlight** is allowed to contribute to the volumetric lighting.
+
 - This makes fog behavior **customizable per light**, letting us mix **color**, **falloff**, and **beam shape** for creative control.
+
 - Fog is not just gray, its hue and density vary depending on the light it scatters.
 
 > 🔦 This lets us create atmospheric shafts, volumetric cones, and sci-fi effects that are tightly bound to how we configure the spotlight.
@@ -378,6 +397,7 @@ To evaluate the realism of our lighting pipeline, we recreated the environment s
 
 Our raytracer reproduced similar illumination, especially in terms of:
 - Emissive bounce light from screens and panels.
+
 - Soft fog and god rays from spotlights through dusty air.
 
 <div align="center">
@@ -415,14 +435,19 @@ To make ray-triangle intersections faster, we implemented a **Bounding Volume Hi
 #### 🔍 How it Works
 
 - Each node in the BVH holds a bounding box (`AABB`) around a subset of triangles.
+
 - When subdividing, we test different split planes along the X, Y, and Z axes.
+
 - For each candidate, we compute the SAH cost:
 
   **Cost = C<sub>trav</sub> + (A<sub>L</sub> / A<sub>P</sub>) × N<sub>L</sub> × C<sub>isect</sub> + (A<sub>R</sub> / A<sub>P</sub>) × N<sub>R</sub> × C<sub>isect</sub>**
 
   Where:
+  
   - A<sub>L</sub>, A<sub>R</sub>, A<sub>P</sub>: Surface areas of left, right, and parent bounding boxes
+  
   - N<sub>L</sub>, N<sub>R</sub>: Triangle counts in each child
+  
   - C<sub>trav</sub>, C<sub>isect</sub>: Empirically chosen traversal and intersection costs
 
 This cost function encourages spatial splits that reduce overlap and keep bounding boxes tight.
@@ -682,7 +707,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Author
 
-Developed by Contré Yavin and Tom Moron as part of [Course/Project Name] at [Your School/University].
+Developed by Contré Yavin and Tom Moron as part of RT at 42 School.
 
 - My GitHub: [@TheRedShip](https://github.com/TheRedShip)
 - Tom's GitHub: [@arandompig](https://github.com/arandompig)
