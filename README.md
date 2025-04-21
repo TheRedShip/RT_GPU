@@ -11,8 +11,9 @@
 
 <p align="center">
   <video width="80%" controls> 
-  <source src="assets/sponza.avi" type="video/mp4"> Your browser does not support the video tag.
+  <source src="renders/sponza.mp4" type="video/mp4"> Your browser does not support the video tag.
   </video>
+<video src="renders/sponza.mp4" width="500px"></video>
 </p>
 
 ## 1. Introduction
