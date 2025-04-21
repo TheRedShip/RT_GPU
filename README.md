@@ -9,13 +9,13 @@
   <br>
 </p>
 
+<div align="center">
 
-<video controls width="480">
+https://github.com/user-attachments/assets/808b370c-b9ee-4a43-88f0-9966a10c55c3
 
-  <source src="https://github.com/TheRedShip/RT_GPU/raw/refs/heads/main/renders/sponza.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+</div>
 
-</video>
+
 
 ## 1. Introduction
 
