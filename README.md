@@ -1,3 +1,20 @@
+<h1 align="center" style="font-size: 4rem; margin-bottom: 0.5rem"> RT_GPU </h1>
+
+<p align="center">
+  <img src="assets/sponza_image.png" alt="Raytracer Screenshot" width="90%" style="border-radius: 8px;">
+</p>
+
+<p align="center">
+  <b>🌌 Real-Time GPU Raytracing Engine</b>
+  <br>
+</p>
+
+<p align="center">
+  <video width="80%" controls> 
+  <source src="assets/sponza.avi" type="video/mp4"> Your browser does not support the video tag.
+  </video>
+</p>
+
 ## 1. Introduction
 
 ### 🎯 Project Description & Purpose
@@ -133,16 +150,16 @@ void main() {
 ### 🔷 Supported Primitives
 Our RT comes with a variety of built‑in geometric primitives, each traced mathematically in the compute shader:
 
-| Primitive  | Description & Notes                                      | Preview |
-| ---------- | --------------------------------------------------------- | ----------------------------------- |
-| **Cube**   | Axis‑aligned cube.         | `![Cube](assets/cube.png)`         |
-| **Cylinder** | Finite cylinder with end caps; parameterized by radius, height and rotation. | `![Cylinder](assets/cylinder.png)` |
-| **Plane**  | Infinite plane defined by a point & normal.               | `![Plane](assets/plane.png)`       |
-| **Portal** | Any paired "windows" implementing non‑Euclidean teleportation. See "Advanced Features" below. | `![Portal](assets/portal.png)`     |
-| **Quad**   | Rectangular object useful for billboards or area lights. | `![Quad](assets/quad.png)`         |
-| **Sphere** | Round object useful for sphere light. | `![Sphere](assets/sphere.png)`     |
-| **SpotLight** | Directional point with cone angle, used for volumetric scattering. | `![SpotLight](assets/spotlight.png)` |
-| **Triangle** | Single triangle, primitive building block for custom meshes and SAH‑BVH traversal. | `![Triangle](assets/triangle.png)` |
+| Primitive  | Description & Notes                                      |
+| ---------- | --------------------------------------------------------- |
+| **Cube**   | Axis‑aligned cube.         |
+| **Cylinder** | Finite cylinder with end caps; parameterized by radius, height and rotation. |
+| **Plane**  | Infinite plane defined by a point & normal.               |
+| **Portal** | Any paired "windows" implementing non‑Euclidean teleportation. See "Advanced Features" below. |
+| **Quad**   | Rectangular object useful for billboards or area lights. |
+| **Sphere** | Round object useful for sphere light. |
+| **SpotLight** | Directional point with cone angle, used for volumetric scattering. |
+| **Triangle** | Single triangle, primitive building block for custom meshes and SAH‑BVH traversal. |
 
 > 📌 *Each primitive stores its own transform (position, rotation, scale) and material index; the compute shader branches on `obj.type` for intersection tests.*
 
@@ -156,8 +173,8 @@ Materials in RT are defined by a compact struct in C++ and mirrored in GLSL for 
 typedef struct s_Material {
     glm::vec3 color;               // Base albedo
     float     emission;            // Emissive strength
-    float     roughness;           // [0=mirror … 1=matte]
-    float     metallic;            // [0=dielectric … 1=metal]
+    float     roughness;           // [1=mirror … 0=diffuse]
+    float     metallic;            // [probability of reflecting]
     float     refraction;          // IOR for transmissive materials
     int       type;                // 0=Lambert,1=Dielectric,2=Transparent,3=Checker...
     int       texture_index;       // Albedo texture lookup
@@ -226,6 +243,12 @@ Our RT uses [stb_image](https://github.com/nothings/stb/tree/master) to load 2D 
 
 ### 🌌 Non‑Euclidean Portals
 Portals link two planes in space, allowing rays (and the camera) to teleport seamlessly.
+
+<div align="center">
+
+
+
+</div>
 
 #### **GLSL**: portalRay()
 
