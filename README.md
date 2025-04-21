@@ -9,12 +9,13 @@
   <br>
 </p>
 
-<p align="center">
-  <video width="80%" controls> 
-  <source src="renders/sponza.mp4" type="video/mp4"> Your browser does not support the video tag.
-  </video>
-<video src="renders/sponza.mp4" width="500px"></video>
-</p>
+
+<video controls width="480">
+
+  <source src="https://github.com/TheRedShip/RT_GPU/raw/refs/heads/main/renders/sponza.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+
+</video>
 
 ## 1. Introduction
 
